@@ -23,12 +23,9 @@ public class Robot extends TimedRobot {
   private final Timer timer = new Timer();
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
-  private static final String keyboardStyle = "keyboardStyle";
-  private static final String tankStyle = "tankStyle";
   private String m_autoSelected;
   private static final boolean XboxMode = true;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
-  private final SendableChooser<String> ct_chooser = new SendableChooser<>();
 
   // Ignore ports, I’m using last year’s as place holders.
   private final TalonSRX leftMotor1 = new TalonSRX(0);
@@ -62,7 +59,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     timer.reset();
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
+    m_chooser.addOption("Custom Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
     // Initialize motor variables
     leftMotor1.configFactoryDefault(); leftMotor1.set(ControlMode.PercentOutput, 0.00);
@@ -70,9 +67,6 @@ public class Robot extends TimedRobot {
     rightMotor1.configFactoryDefault(); rightMotor1.set(ControlMode.PercentOutput, 0.00);
     // rightMotor2.configFactoryDefault(); rightMotor2.set(ControlMode.PercentOutput, 0.00);
     armMotor1.configFactoryDefault(); armMotor1.set(ControlMode.PercentOutput, 0.00);
-    ct_chooser.setDefaultOption("Tank Style (Default)", tankStyle);
-    ct_chooser.addOption("Keyboard (Debug)", keyboardStyle);
-    SmartDashboard.putData("Teleop Controls", ct_chooser);
   }
 
   /**
