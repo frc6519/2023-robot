@@ -35,4 +35,6 @@ Push the changes to GitHub using `git push origin`
 4. Start a release using `git flow release start <release name>`.
 5. Finish the release and publish it to branch `master` using `git flow release finish <realease name>` and `git push origin`
 
+- You may have to `git add` whatever you are working on.
+
 [Guide and Cheat Sheet](https://danielkummer.github.io/git-flow-cheatsheet/)
