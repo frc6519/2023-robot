@@ -20,19 +20,24 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 
 public class Robot extends TimedRobot {
+  // Epic coder variables to change
+  private static final boolean XboxMode = false;
+  private static final boolean CompetitionBot = false;
+
   private final Timer timer = new Timer();
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
-  private static final boolean XboxMode = true;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
-  // Ignore ports, I’m using last year’s as place holders.
+  // Motors
   private final TalonSRX leftMotor1 = new TalonSRX(0);
   private final TalonSRX rightMotor1 = new TalonSRX(1);
-  private final TalonSRX armMotor1 = new TalonSRX(2);
-  // private final TalonSRX rightMotor1 = new TalonSRX(2);
-  // private final TalonSRX rightMotor2 = new TalonSRX(3);
+  private final TalonSRX leftMotor2 = new TalonSRX(2);
+  private final TalonSRX rightMotor2 = new TalonSRX(3);
+
+  // Motors/Claw
+  private final TalonSRX armMotor1 = new TalonSRX(4);
 
   private final Joystick joystick1 = new Joystick(0);
   private final Joystick joystick2 = new Joystick(1);
@@ -129,14 +134,14 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. -- Important*/ 
   @Override
   public void teleopInit() {
-    macrosEnabled = true;
+    macrosEnabled = false;
     teleopStatus = true;
   }
 
   /** This function is called periodically during operator control. -- Important*/
   @Override
   public void teleopPeriodic() {
-    if (macrosEnabled) { 
+    if (macrosEnabled) {
       // int num = keyboard.getPOV();
       int num = 0;
       switch(num) {
@@ -167,11 +172,25 @@ public class Robot extends TimedRobot {
       }
     }
     if (!XboxMode) {
-      leftMotor1.set(ControlMode.PercentOutput, (joystick1.getY()/3 * -1));
-      rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
+      if(!CompetitionBot) {
+        leftMotor1.set(ControlMode.PercentOutput, (joystick1.getY()/3 * -1));
+        rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
+      } else {
+        leftMotor1.set(ControlMode.PercentOutput, joystick1.getY());
+        leftMotor2.set(ControlMode.PercentOutput, joystick1.getY());
+        rightMotor1.set(ControlMode.PercentOutput, joystick2.getY());
+        rightMotor2.set(ControlMode.PercentOutput, joystick2.getY());
+      }
     } else {
-      leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-      rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
+      if (!CompetitionBot) {
+        leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
+        rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
+      } else {
+        leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
+        leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY());
+        rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
+        rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY());
+      }
     }
     // leftMotor2.set(ControlMode.PercentOutput, joystick1.getY()/3);
     
