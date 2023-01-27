@@ -22,6 +22,9 @@ public class Robot extends TimedRobot {
   // Toggles between Comp. Bot & Test Bot.
     private static final boolean CompetitionBot = false;
 
+  // Do you have a keyboard connected?
+    private static final boolean usingKeyboard = false;
+
   // Declares default variables & device ports.
     
     // Default (Auto-Generated)
@@ -46,6 +49,8 @@ public class Robot extends TimedRobot {
     // Joystick
       private final Joystick joystick1 = new Joystick(0); 
       private final Joystick joystick2 = new Joystick(1);
+      // Keyboard pretending to be a joystick
+        private final Joystick keyboard = new Joystick(2);
    
     // Joystick
       private boolean macrosEnabled = true;   
@@ -91,23 +96,23 @@ public class Robot extends TimedRobot {
        */
         @Override
         public void autonomousInit() {
-        System.out.println("Autonomous Time!");
-        m_autoSelected = m_chooser.getSelected();
-        // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-        System.out.println("Auto selected: " + m_autoSelected);
-        macrosEnabled = false;
-        timer.reset();
-        timer.start();
-        teleopStatus = false;
-      }
+          System.out.println("Autonomous Time!");
+          m_autoSelected = m_chooser.getSelected();
+          // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+          System.out.println("Auto selected: " + m_autoSelected);
+          macrosEnabled = false;
+          timer.reset();
+          timer.start();
+          teleopStatus = false;
+        }
 
       /** 
        * This function is called once when teleop is enabled. -- Important*/ 
         @Override
         public void teleopInit() {
-        macrosEnabled = false;
-        teleopStatus = true;
-      }
+          macrosEnabled = false;
+          teleopStatus = true;
+        }
 
       /** 
        * This function is called once when the robot is disabled. */
@@ -135,86 +140,92 @@ public class Robot extends TimedRobot {
        */
         @Override
         public void robotPeriodic() {
-        // Accelorometer
-        double xAccel = accelerometer.getX();
-        double yAccel = accelerometer.getY();
+          // Accelorometer
+          double xAccel = accelerometer.getX();
+          double yAccel = accelerometer.getY();
 
-        prevXAccel = xAccel;
-        prevYAccel = yAccel;
-      }
+          prevXAccel = xAccel;
+          prevYAccel = yAccel;
+        }
 
       /** 
        * This function is called periodically during autonomous. -- Important*/
         @Override
         public void autonomousPeriodic() {
-        int time = (int) timer.get();
-        switch (m_autoSelected) {
-          case kCustomAuto:
-            // Put custom auto code here
-            break;
-          case kDefaultAuto:
-          default:
-            // Put default auto code here
-            if (time <= 14) { // Total 15s
-              System.out.println(time);
-            }
-            break;
+          int time = (int) timer.get();
+          switch (m_autoSelected) {
+            case kCustomAuto:
+              // Put custom auto code here
+              break;
+            case kDefaultAuto:
+            default:
+              // Put default auto code here
+              if (time <= 14) { // Total 15s
+                System.out.println(time);
+              }
+              break;
+          }
         }
-      }
 
       /** 
        * This function is called periodically during operator control. -- Important*/
         @Override
         public void teleopPeriodic() {
-        if (macrosEnabled) {
-          // int num = keyboard.getPOV();
-          int num = 0;
-          switch(num) {
-            case 225: // Num 1
-              System.out.println("1");
-              break;
-            case 180: // Num 2
-              System.out.println("2");
-              break;
-            case 135: // Num 3
-              System.out.println("3");
-              break;
-            case 270: // Num 4
-              System.out.println("4");
-              break;
-            case 90: // Num 6
-              System.out.println("6");
-              break;
-            case 315: // Num 7
-              System.out.println("7");
-              break;
-            case 0: // Num 8
-              System.out.println("8");
-              break;
-            case 45: // Num 9
-              System.out.println("9");
-              break;
+          if (macrosEnabled) {
+            // int num = keyboard.getPOV();
+            int num;
+            if (usingKeyboard) {
+              num = keyboard.getPOV();
+            } else {
+              num = 0;
+            }
+            switch(num) {
+              case 225: // Num 1
+                System.out.println("1");
+                break;
+              case 180: // Num 2
+                System.out.println("2");
+                break;
+              case 135: // Num 3
+                System.out.println("3");
+                break;
+              case 270: // Num 4
+                System.out.println("4");
+                break;
+              case 90: // Num 6
+                System.out.println("6");
+                break;
+              case 315: // Num 7
+                System.out.println("7");
+                break;
+              case 0: // Num 8
+                System.out.println("8");
+                break;
+              case 45: // Num 9
+                System.out.println("9");
+                break;
+            }
           }
-        }
-        if (!XboxMode) {
-          if(!CompetitionBot) {
-            leftMotor1.set(ControlMode.PercentOutput, (joystick1.getY()/3 * -1));
-            rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
+          if (!XboxMode) {
+            if(!CompetitionBot) {
+              leftMotor1.set(ControlMode.PercentOutput, (joystick1.getY()/3 * -1));
+              rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
+            } else {
+              leftMotor1.set(ControlMode.PercentOutput, joystick1.getY());
+              leftMotor2.set(ControlMode.PercentOutput, joystick1.getY());
+              rightMotor1.set(ControlMode.PercentOutput, joystick2.getY());
+              rightMotor2.set(ControlMode.PercentOutput, joystick2.getY());
+            }
           } else {
-            leftMotor1.set(ControlMode.PercentOutput, joystick1.getY());
-            leftMotor2.set(ControlMode.PercentOutput, joystick1.getY());
-            rightMotor1.set(ControlMode.PercentOutput, joystick2.getY());
-            rightMotor2.set(ControlMode.PercentOutput, joystick2.getY());
-          }
-        } else {
-          if (!CompetitionBot) {
-            leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-            rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
-          } else {
-            leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-            leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-            rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
-            rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY());
+            if (!CompetitionBot) {
+              leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
+              rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
+            } else {
+              leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
+              leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY());
+              rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
+              rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY());
+            }
           }
         }
         // leftMotor2.set(ControlMode.PercentOutput, joystick1.getY()/3);
@@ -264,7 +275,6 @@ public class Robot extends TimedRobot {
         //   // myRobot.mecanumDrive_Cartesian(xAxisRate, yAxisRate, joystick1.getTwist(),0); ADD REAL DRIVE HERE
         //   Timer.delay(0.005);		// wait for a motor update time
         // }
-      }
 
       /** 
        * This function is called periodically when disabled. */
@@ -300,5 +310,4 @@ public class Robot extends TimedRobot {
       
       return Math.atan2(-X, Math.sqrt(Y*Y + Z*Z)) * 180/Math.PI;
     } */
-
 }

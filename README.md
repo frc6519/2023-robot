@@ -11,7 +11,7 @@
 Clone the repository with the command `git clone https://github.com/vegasvortechs6519/2023-robot.git`
 
 ## Push changes to GitHub
-Commit the changes using `git commit -a -m <Describe your commit>`
+Commit the changes using `git commit -a -m "<Describe your commit>"`
 
 Push the changes to GitHub using `git push origin`
 
