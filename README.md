@@ -36,5 +36,6 @@ Push the changes to GitHub using `git push origin`
 5. Finish the release and publish it to branch `master` using `git flow release finish <realease name>` and `git push origin`
 
 - You may have to `git add` whatever you are working on.
+- `git remote set-url origin <updated link url>` incase you are getting `remote: This repository moved. Please use the new location:`
 
 [Guide and Cheat Sheet](https://danielkummer.github.io/git-flow-cheatsheet/)
