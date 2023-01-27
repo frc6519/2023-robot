@@ -8,7 +8,7 @@
 `Gradle 7.5.1` installed by WPILib
 
 ## Getting Started
-Clone the repository with the command `git clone https://github.com/RealAweSnap/frc_robotcode.git`
+Clone the repository with the command `git clone https://github.com/vegasvortechs6519/2023-robot.git`
 
 ## Push changes to GitHub
 Commit the changes using `git commit -a -m ""`
