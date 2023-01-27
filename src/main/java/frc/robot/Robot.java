@@ -3,42 +3,42 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
-
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.BuiltInAccelerometer;
-import edu.wpi.first.wpilibj.Joystick;
-
-// Xbox controlls because
-import edu.wpi.first.wpilibj.XboxController;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
 
 public class Robot extends TimedRobot {
-  // Epic coder variables to change
+  
+  // Toggle between Joystick and Xbox controls.
   private static final boolean XboxMode = false;
+
+  // Toggles between Comp. Bot & Test Bot.
   private static final boolean CompetitionBot = false;
 
+  // Sets up default variables.
   private final Timer timer = new Timer();
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
-  // Motors
+  // Drivetrain
   private final TalonSRX leftMotor1 = new TalonSRX(0);
   private final TalonSRX rightMotor1 = new TalonSRX(1);
   private final TalonSRX leftMotor2 = new TalonSRX(2);
   private final TalonSRX rightMotor2 = new TalonSRX(3);
 
-  // Motors/Claw
+  // Claw
   private final TalonSRX armMotor1 = new TalonSRX(4);
-
+  
+  // Joystick
   private final Joystick joystick1 = new Joystick(0);
   private final Joystick joystick2 = new Joystick(1);
 
@@ -60,6 +60,11 @@ public class Robot extends TimedRobot {
   double xAccel = 0;
   double yAccel = 0;
 
+  // Functions/Methods
+  // (Hover mouse over functions for their definitions.)
+
+  // Initialization - Code inside function starts (initializes) under certain conditions.
+
   @Override
   public void robotInit() {
     timer.reset();
@@ -72,23 +77,6 @@ public class Robot extends TimedRobot {
     rightMotor1.configFactoryDefault(); rightMotor1.set(ControlMode.PercentOutput, 0.00);
     // rightMotor2.configFactoryDefault(); rightMotor2.set(ControlMode.PercentOutput, 0.00);
     armMotor1.configFactoryDefault(); armMotor1.set(ControlMode.PercentOutput, 0.00);
-  }
-
-  /**
-   * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
-   * that you want ran during disabled, autonomous, teleoperated and test.
-   *
-   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
-   * SmartDashboard integrated updating.
-   */
-  @Override
-  public void robotPeriodic() {
-    // Accelorometer
-    double xAccel = accelerometer.getX();
-    double yAccel = accelerometer.getY();
-
-    prevXAccel = xAccel;
-    prevYAccel = yAccel;
   }
 
   /**
@@ -113,7 +101,50 @@ public class Robot extends TimedRobot {
     teleopStatus = false;
   }
 
-  /** This function is called periodically during autonomous. -- Important*/
+  /** 
+   * This function is called once when teleop is enabled. -- Important*/ 
+  @Override
+  public void teleopInit() {
+    macrosEnabled = false;
+    teleopStatus = true;
+  }
+
+  /** 
+   * This function is called once when the robot is disabled. */
+  @Override
+  public void disabledInit() {}
+
+  /** 
+   * This function is called once when the robot is first started up. */
+  @Override
+  public void simulationInit() {}
+
+  /** 
+   * This function is called once when test mode is enabled. */
+  @Override
+  public void testInit() {}
+
+  // Periodic -
+
+  /**
+   * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
+   * that you want ran during disabled, autonomous, teleoperated and test.
+   *
+   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
+   * SmartDashboard integrated updating.
+   */
+  @Override
+  public void robotPeriodic() {
+    // Accelorometer
+    double xAccel = accelerometer.getX();
+    double yAccel = accelerometer.getY();
+
+    prevXAccel = xAccel;
+    prevYAccel = yAccel;
+  }
+
+  /** 
+   * This function is called periodically during autonomous. -- Important*/
   @Override
   public void autonomousPeriodic() {
     int time = (int) timer.get();
@@ -131,14 +162,8 @@ public class Robot extends TimedRobot {
     }
   }
 
-  /** This function is called once when teleop is enabled. -- Important*/ 
-  @Override
-  public void teleopInit() {
-    macrosEnabled = false;
-    teleopStatus = true;
-  }
-
-  /** This function is called periodically during operator control. -- Important*/
+  /** 
+   * This function is called periodically during operator control. -- Important*/
   @Override
   public void teleopPeriodic() {
     if (macrosEnabled) {
@@ -241,30 +266,22 @@ public class Robot extends TimedRobot {
     // }
   }
 
-  /** This function is called once when the robot is disabled. */
-  @Override
-  public void disabledInit() {}
-
-  /** This function is called periodically when disabled. */
+  /** 
+   * This function is called periodically when disabled. */
   @Override
   public void disabledPeriodic() {}
 
-  /** This function is called once when test mode is enabled. */
-  @Override
-  public void testInit() {}
-
-  /** This function is called periodically during test mode. */
+  /** 
+   * This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
 
-  /** This function is called once when the robot is first started up. */
-  @Override
-  public void simulationInit() {}
-
-  /** This function is called periodically whilst in simulation. */
+  /** 
+   * This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {}
 
+  /* This code may be used later on, but currently it is not in usage. 
   public double getAccPitch() {
 	
     double Y = accelerometer.getY();
@@ -282,5 +299,6 @@ public class Robot extends TimedRobot {
     double Z = accelerometer.getZ();
     
     return Math.atan2(-X, Math.sqrt(Y*Y + Z*Z)) * 180/Math.PI;
-  }
+  } */
+
 }
