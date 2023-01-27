@@ -63,7 +63,7 @@ public class Robot extends TimedRobot {
   // Functions/Methods
   // (Hover mouse over functions for their definitions.)
 
-  // Initialization - Code inside function starts (initializes) under certain conditions.
+  // Initialization - Code that starts (initializes) under certain conditions.
 
   @Override
   public void robotInit() {
@@ -124,7 +124,7 @@ public class Robot extends TimedRobot {
   @Override
   public void testInit() {}
 
-  // Periodic -
+  // Periodic - Code that runs constantly under certain conditions.
 
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
