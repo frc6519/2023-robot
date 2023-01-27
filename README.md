@@ -1,11 +1,8 @@
-Christian and Andrew said github would be cool so now we have one.
+# Team 6519 Code for FRC 2023 Season Charged Up
 
-Setup git:
-git remote add origin https://github.com/RealAweSnap/frc_robotcode.git
+## Getting Started
+Clone the repository with the command `git clone https://github.com/RealAweSnap/frc_robotcode.git`
 
-To pull the code: (For brand new)
-git clone https://github.com/RealAweSnap/frc_robotcode
-
-git pull https://github.com/RealAweSnap/frc_robotcode
-
-git push origin master
+## Push changes to GitHub
+Commit the changes using `git commit -a -m ""`
+Push the changes to GitHub using `git push origin`
