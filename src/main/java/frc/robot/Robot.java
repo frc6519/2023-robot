@@ -52,6 +52,7 @@ public class Robot extends TimedRobot {
         private final Joystick keyboard = new Joystick(2);
       // Customization options
         private final Joystick macroStick = joystick1; // joystick1 or joystick2 (Which joystick listens for macros)
+        private final boolean debugButtons = true; // When a button is pressed we print out the buttons id, for easy debugging
    
     // Joystick
       private boolean macrosEnabled = true;   
@@ -230,6 +231,7 @@ public class Robot extends TimedRobot {
               }
             }
           }
+
           for (int i = 0; i < macroStick.getButtonCount(); i++) {
             if (macroStick.getRawButtonPressed(i)) {
               switch(i) {
@@ -237,6 +239,10 @@ public class Robot extends TimedRobot {
                   autoBalance = !autoBalance;
                   System.out.println("Auto Balance: "+autoBalance);
                   break;
+                default:
+                  if (debugButtons) {
+                    System.out.println("Button Pressed: "+i);
+                  }
               }
             }
           }
