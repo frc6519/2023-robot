@@ -16,8 +16,9 @@ import edu.wpi.first.wpilibj.XboxController;
 
 public class Robot extends TimedRobot {
   
-  // Toggle between Joystick and Xbox controls.
+  // Enables various controller support. XboxMode: Enables Xbox Support. PSMode: Enables PS4 Support. Disable both for Joystick controls.
     private static final boolean XboxMode = false;
+    private static final boolean PSMode = false;
 
   // Toggles between Comp. Bot & Test Bot.
     private static final boolean CompetitionBot = false;
@@ -55,8 +56,9 @@ public class Robot extends TimedRobot {
     // Joystick
       private boolean macrosEnabled = true;   
     
-    // Xbox
-      XboxController xcontroller =  new XboxController(0); 
+    // Controller Initialization.
+      XboxController xcontroller =  new XboxController(0);
+      PS4Controller pcontroller = new PS4Controller(0);
     
     // Accelerometer
       Accelerometer accelerometer = new BuiltInAccelerometer(); 
@@ -206,25 +208,35 @@ public class Robot extends TimedRobot {
                 break;
             }
           }
+          
+          // Checks for the Controller mode being used, and binds the controls to the controller.
           if (!XboxMode) {
             if(!CompetitionBot) {
               leftMotor1.set(ControlMode.PercentOutput, (joystick1.getY()/3 * -1));
               rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
             } else {
-              leftMotor1.set(ControlMode.PercentOutput, joystick1.getY());
-              leftMotor2.set(ControlMode.PercentOutput, joystick1.getY());
-              rightMotor1.set(ControlMode.PercentOutput, joystick2.getY());
-              rightMotor2.set(ControlMode.PercentOutput, joystick2.getY());
+                leftMotor1.set(ControlMode.PercentOutput, joystick1.getY());
+                leftMotor2.set(ControlMode.PercentOutput, joystick1.getY());
+                rightMotor1.set(ControlMode.PercentOutput, joystick2.getY());
+                rightMotor2.set(ControlMode.PercentOutput, joystick2.getY());
             }
-          } else {
-            if (!CompetitionBot) {
-              leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-              rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
+         } else if(!PSMode) {
+              leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY());
+              rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY());
             } else {
-              leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-              leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-              rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
-              rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY());
+                leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY());
+                leftMotor2.set(ControlMode.PercentOutput, pcontroller.getLeftY());
+                rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY());
+                rightMotor2.set(ControlMode.PercentOutput,pcontroller.getRightY());
+         } else {
+              if (!CompetitionBot) {
+                leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
+                rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
+              } else {
+                leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
+                leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY());
+                rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
+                rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY());
             }
           }
         }
