@@ -26,9 +26,8 @@ public class Robot extends TimedRobot {
     private static final boolean usingKeyboard = false;
 
   // Declares default variables & device ports.
-    
+
     // Default (Auto-Generated)
-    // Autobalance is not implemented yet and will always be false; Ignore the "warning"
       private final Timer timer = new Timer();
       private static final String kDefaultAuto = "Default";
       private static final String kCustomAuto = "My Auto";
@@ -51,6 +50,8 @@ public class Robot extends TimedRobot {
       private final Joystick joystick2 = new Joystick(1);
       // Keyboard pretending to be a joystick
         private final Joystick keyboard = new Joystick(2);
+      // Customization options
+        private final Joystick macroStick = joystick1; // joystick1 or joystick2 (Which joystick listens for macros)
    
     // Joystick
       private boolean macrosEnabled = true;   
@@ -229,9 +230,15 @@ public class Robot extends TimedRobot {
               }
             }
           }
-          if (joystick1.getRawButtonPressed(3)) {
-            autoBalance = !autoBalance;
-            System.out.println("Auto Balance: "+autoBalance);
+          for (int i = 0; i < macroStick.getButtonCount(); i++) {
+            if (macroStick.getRawButtonPressed(i)) {
+              switch(i) {
+                case 3:
+                  autoBalance = !autoBalance;
+                  System.out.println("Auto Balance: "+autoBalance);
+                  break;
+              }
+            }
           }
         }
         // leftMotor2.set(ControlMode.PercentOutput, joystick1.getY()/3);
