@@ -14,13 +14,11 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.cameraserver.CameraServer;
-// Camera imports (Sort camera stuff later once it's finalized)
-import edu.wpi.first.cameraserver.CameraServer;
 
 public class Robot extends TimedRobot {
   
   // Toggle between Joystick and Xbox controls.
-    private static final boolean XboxMode = false;
+    private static final boolean XboxMode = true;
 
   // Toggles between Comp. Bot & Test Bot.
     private static final boolean CompetitionBot = false;
@@ -51,17 +49,16 @@ public class Robot extends TimedRobot {
     // Joystick
       private final Joystick joystick1 = new Joystick(0); 
       private final Joystick joystick2 = new Joystick(1);
+      // Xbox
+        XboxController xcontroller =  new XboxController(0); 
       // Keyboard pretending to be a joystick
         private final Joystick keyboard = new Joystick(2);
       // Customization options
-        private final Joystick macroStick = joystick1; // joystick1 or joystick2 (Which joystick listens for macros)
+        private final XboxController macroStick = xcontroller; // joystick1 or joystick2 or xcontroller (Which joystick listens for macros)
         private final boolean debugButtons = true; // When a button is pressed we print out the buttons id, for easy debugging
    
     // Joystick
-      private boolean macrosEnabled = true;   
-
-    // Xbox
-      XboxController xcontroller =  new XboxController(0); 
+      private boolean macrosEnabled = true;
     
     // Accelerometer
       Accelerometer accelerometer = new BuiltInAccelerometer(); 
@@ -89,7 +86,6 @@ public class Robot extends TimedRobot {
         armMotor1.configFactoryDefault(); armMotor1.set(ControlMode.PercentOutput, 0.00);
 
         // Camera
-        
         CameraServer.startAutomaticCapture(1);
       }
 
