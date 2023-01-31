@@ -15,11 +15,13 @@ Commit the changes using `git commit -a -m "<Describe your commit>"`
 
 Push the changes to GitHub using `git push origin`
 
-## Build Code with Gradle
+## Run Code with Gradle
 1. Right-click on the `build.gradle` file in Visual Studio Code and press `Build Robot Code`.
 2. Make sure the build was successful within the terminal, fix any problems if not.
 3. Connect to the robot wirelessly or through a USB connection.
 4. Right-click on the `build.gradle` file in Visual Studio Code and press `Deploy Robot Code`.
 
 ## Git Commands/Extras
+![image](https://user-images.githubusercontent.com/30357859/215880660-1ce80583-4bea-488b-b3c1-4a2528101946.png)
+
 ['Git Cheat Sheet'](https://education.github.com/git-cheat-sheet-education.pdf)
