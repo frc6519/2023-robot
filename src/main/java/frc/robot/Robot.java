@@ -28,7 +28,7 @@ public class Robot extends TimedRobot {
   // Declares default variables & device ports.
     
     // Default (Auto-Generated)
-    // "teleopstatus" & "autoBalance" are disabled because auto balance is not implemented yet.
+    // Autobalance is not implemented yet and will always be false; Ignore the "warning"
       private final Timer timer = new Timer();
       private static final String kDefaultAuto = "Default";
       private static final String kCustomAuto = "My Auto";
@@ -171,7 +171,7 @@ public class Robot extends TimedRobot {
        * This function is called periodically during operator control. -- Important*/
         @Override
         public void teleopPeriodic() {
-          if (macrosEnabled) {
+          if (macrosEnabled && teleopStatus) {
             // int num = keyboard.getPOV();
             int num;
             if (usingKeyboard) {
@@ -206,26 +206,32 @@ public class Robot extends TimedRobot {
                 break;
             }
           }
-          if (!XboxMode) {
-            if(!CompetitionBot) {
-              leftMotor1.set(ControlMode.PercentOutput, (joystick1.getY()/3 * -1));
-              rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
+          if (!autoBalance) {
+            if (!XboxMode) {
+              if(!CompetitionBot) {
+                leftMotor1.set(ControlMode.PercentOutput, (joystick1.getY()/3 * -1));
+                rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
+              } else {
+                leftMotor1.set(ControlMode.PercentOutput, joystick1.getY());
+                leftMotor2.set(ControlMode.PercentOutput, joystick1.getY());
+                rightMotor1.set(ControlMode.PercentOutput, joystick2.getY());
+                rightMotor2.set(ControlMode.PercentOutput, joystick2.getY());
+              }
             } else {
-              leftMotor1.set(ControlMode.PercentOutput, joystick1.getY());
-              leftMotor2.set(ControlMode.PercentOutput, joystick1.getY());
-              rightMotor1.set(ControlMode.PercentOutput, joystick2.getY());
-              rightMotor2.set(ControlMode.PercentOutput, joystick2.getY());
+              if (!CompetitionBot) {
+                leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
+                rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
+              } else {
+                leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
+                leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY());
+                rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
+                rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY());
+              }
             }
-          } else {
-            if (!CompetitionBot) {
-              leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-              rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
-            } else {
-              leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-              leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-              rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
-              rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY());
-            }
+          }
+          if (joystick1.getRawButtonPressed(3)) {
+            autoBalance = !autoBalance;
+            System.out.println("Auto Balance: "+autoBalance);
           }
         }
         // leftMotor2.set(ControlMode.PercentOutput, joystick1.getY()/3);
@@ -291,23 +297,10 @@ public class Robot extends TimedRobot {
         @Override
         public void simulationPeriodic() {}
 
-    /* This code may be used later on, but currently it is not in usage. 
-    public double getAccPitch() {
-    
-      double Y = accelerometer.getY();
-      double Z = accelerometer.getZ();
-      
-    
-      return Math.atan2(Y,Z) *180 /Math.PI;
-    }
-    
-    public double getAccRoll()
-    {
-      
-      double X = accelerometer.getX();
-      double Y = accelerometer.getY();
-      double Z = accelerometer.getZ();
-      
-      return Math.atan2(-X, Math.sqrt(Y*Y + Z*Z)) * 180/Math.PI;
-    } */
+    /*
+     * Removed unused math methods because we probably will never use it
+     * because we are going to take a different approach.
+     * 
+     * Check github history if you want them back.
+     */
 }
