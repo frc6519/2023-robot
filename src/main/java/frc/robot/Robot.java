@@ -13,6 +13,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.cameraserver.CameraServer;
+// Camera imports (Sort camera stuff later once it's finalized)
+import edu.wpi.first.cameraserver.CameraServer;
 
 public class Robot extends TimedRobot {
   
@@ -56,7 +59,7 @@ public class Robot extends TimedRobot {
    
     // Joystick
       private boolean macrosEnabled = true;   
-    
+
     // Xbox
       XboxController xcontroller =  new XboxController(0); 
     
@@ -84,6 +87,10 @@ public class Robot extends TimedRobot {
         rightMotor1.configFactoryDefault(); rightMotor1.set(ControlMode.PercentOutput, 0.00);
         // rightMotor2.configFactoryDefault(); rightMotor2.set(ControlMode.PercentOutput, 0.00);
         armMotor1.configFactoryDefault(); armMotor1.set(ControlMode.PercentOutput, 0.00);
+
+        // Camera
+        
+        CameraServer.startAutomaticCapture(1);
       }
 
       /**
