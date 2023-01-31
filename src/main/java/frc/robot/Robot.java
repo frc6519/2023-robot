@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.XboxController;
 
 public class Robot extends TimedRobot {
   
-  // Toggle between Joystick and Xbox controls.
+  // Toggles between Joystick and Xbox controls.
     private static final boolean XboxMode = false;
 
   // Toggles between Comp. Bot & Test Bot.
@@ -47,7 +47,7 @@ public class Robot extends TimedRobot {
       private final Joystick joystick1 = new Joystick(0); 
       private final Joystick joystick2 = new Joystick(1);
    
-    // Joystick
+    // Macros
       private boolean macrosEnabled = true;   
     
     // Xbox
@@ -61,7 +61,7 @@ public class Robot extends TimedRobot {
       double yAccel = 0;
 
   // Functions/Methods
-  // (Hover mouse over functions for their definitions.)
+  // Hover over functions for their definitions.
 
     // Initialization - Code that starts (initializes) under certain conditions.
 
