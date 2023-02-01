@@ -13,12 +13,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.PS4Controller;
+import edu.wpi.first.cameraserver.CameraServer;
 
 public class Robot extends TimedRobot {
   
-  // Enables various controller support. XboxMode: Enables Xbox Support. PSMode: Enables PS4 Support. Disable both for Joystick controls.
+  // Toggle between Joystick and Xbox controls.
     private static final boolean XboxMode = false;
-    private static final boolean PSMode = false;
+    private static final boolean PS4Mode = true;
 
   // Toggles between Comp. Bot & Test Bot.
     private static final boolean CompetitionBot = false;
@@ -27,9 +29,8 @@ public class Robot extends TimedRobot {
     private static final boolean usingKeyboard = false;
 
   // Declares default variables & device ports.
-    
+
     // Default (Auto-Generated)
-    // "teleopstatus" & "autoBalance" are disabled because auto balance is not implemented yet.
       private final Timer timer = new Timer();
       private static final String kDefaultAuto = "Default";
       private static final String kCustomAuto = "My Auto";
@@ -50,15 +51,18 @@ public class Robot extends TimedRobot {
     // Joystick
       private final Joystick joystick1 = new Joystick(0); 
       private final Joystick joystick2 = new Joystick(1);
+      // Xbox
+        XboxController xcontroller =  new XboxController(0);
+      // PlayStation
+        PS4Controller pcontroller = new PS4Controller(0);
       // Keyboard pretending to be a joystick
         private final Joystick keyboard = new Joystick(2);
+      // Customization options
+        private final XboxController macroStick = xcontroller; // joystick1 or joystick2 or xcontroller (Which joystick listens for macros)
+        private final boolean debugButtons = true; // When a button is pressed we print out the buttons id, for easy debugging
    
     // Joystick
-      private boolean macrosEnabled = true;   
-    
-    // Controller Initialization.
-      XboxController xcontroller =  new XboxController(0);
-      PS4Controller pcontroller = new PS4Controller(0);
+      private boolean macrosEnabled = true;
     
     // Accelerometer
       Accelerometer accelerometer = new BuiltInAccelerometer(); 
@@ -84,6 +88,9 @@ public class Robot extends TimedRobot {
         rightMotor1.configFactoryDefault(); rightMotor1.set(ControlMode.PercentOutput, 0.00);
         // rightMotor2.configFactoryDefault(); rightMotor2.set(ControlMode.PercentOutput, 0.00);
         armMotor1.configFactoryDefault(); armMotor1.set(ControlMode.PercentOutput, 0.00);
+
+        // Camera
+        CameraServer.startAutomaticCapture(1);
       }
 
       /**
@@ -173,7 +180,7 @@ public class Robot extends TimedRobot {
        * This function is called periodically during operator control. -- Important*/
         @Override
         public void teleopPeriodic() {
-          if (macrosEnabled) {
+          if (macrosEnabled && teleopStatus) {
             // int num = keyboard.getPOV();
             int num;
             if (usingKeyboard) {
@@ -209,84 +216,55 @@ public class Robot extends TimedRobot {
             }
           }
           
-          // Checks for the Controller mode being used, and binds the controls to the controller.
-          if (!XboxMode) {
-            if(!CompetitionBot) {
-              leftMotor1.set(ControlMode.PercentOutput, (joystick1.getY()/3 * -1));
-              rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
-            } else {
+          if (!autoBalance) {
+            else if (!XboxMode) {
+              if(!CompetitionBot) {
+                leftMotor1.set(ControlMode.PercentOutput, (joystick1.getY()/3 * -1));
+                rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
+              } else {
                 leftMotor1.set(ControlMode.PercentOutput, joystick1.getY());
                 leftMotor2.set(ControlMode.PercentOutput, joystick1.getY());
                 rightMotor1.set(ControlMode.PercentOutput, joystick2.getY());
                 rightMotor2.set(ControlMode.PercentOutput, joystick2.getY());
-            }
-         } else if(!PSMode) {
-              leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY());
-              rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY());
+              }
+          } else if (!PS4Mode) {
+              if (!CompetitionBot) {
+                leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
+                rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
+            } else {
+                leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
+                leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY());
+                rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
+                rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY());
+              }
+          } else {
+              if (!CompetitionBot) {
+                leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY());
+                rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY());
             } else {
                 leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY());
                 leftMotor2.set(ControlMode.PercentOutput, pcontroller.getLeftY());
                 rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY());
                 rightMotor2.set(ControlMode.PercentOutput,pcontroller.getRightY());
-         } else {
-              if (!CompetitionBot) {
-                leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-                rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
-              } else {
-                leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-                leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-                rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
-                rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY());
+              }
+            }
+          }
+          
+          for (int i = 0; i < macroStick.getButtonCount(); i++) {
+            if (macroStick.getRawButtonPressed(i)) {
+              switch(i) {
+                case 3:
+                  autoBalance = !autoBalance;
+                  System.out.println("Auto Balance: "+autoBalance);
+                  break;
+                default:
+                  if (debugButtons) {
+                    System.out.println("Button Pressed: "+i);
+                  }
+              }
             }
           }
         }
-        // leftMotor2.set(ControlMode.PercentOutput, joystick1.getY()/3);
-        
-        // rightMotor2.set(ControlMode.PercentOutput, joystick2.getY()/3);
-        // if(teleopStatus && autoBalance) {
-        //   double xAxisRate            = xAccel;
-        //   double yAxisRate            = yAccel;
-        //   double pitchAngleDegrees    = getAccPitch();
-        //   double rollAngleDegrees     = getAccRoll();
-        //   boolean autoBalanceXMode = false;
-        //   boolean autoBalanceYMode = false;
-          
-        //   if ( !autoBalanceXMode && 
-        //       (Math.abs(pitchAngleDegrees) >= 
-        //         Math.abs(kOffBalanceAngleThresholdDegrees))) {
-        //       autoBalanceXMode = true;
-        //   }
-        //   else if ( autoBalanceXMode && 
-        //             (Math.abs(pitchAngleDegrees) <= 
-        //             Math.abs(kOonBalanceAngleThresholdDegrees))) {
-        //       autoBalanceXMode = false;
-        //   }
-        //   if ( !autoBalanceYMode && 
-        //       (Math.abs(pitchAngleDegrees) >= 
-        //         Math.abs(kOffBalanceAngleThresholdDegrees))) {
-        //       autoBalanceYMode = true;
-        //   }
-        //   else if ( autoBalanceYMode && 
-        //             (Math.abs(pitchAngleDegrees) <= 
-        //             Math.abs(kOonBalanceAngleThresholdDegrees))) {
-        //       autoBalanceYMode = false;
-        //   }
-          
-        //   // Control drive system automatically, 
-        //   // driving in reverse direction of pitch/roll angle,
-        //   // with a magnitude based upon the angle
-          
-        //   if ( autoBalanceXMode ) {
-        //       double pitchAngleRadians = pitchAngleDegrees * (Math.PI / 180.0);
-        //       xAxisRate = Math.sin(pitchAngleRadians) * -1;
-        //   }
-        //   if ( autoBalanceYMode ) {
-        //       double rollAngleRadians = rollAngleDegrees * (Math.PI / 180.0);
-        //       yAxisRate = Math.sin(rollAngleRadians) * -1;
-        //   }
-        //   // myRobot.mecanumDrive_Cartesian(xAxisRate, yAxisRate, joystick1.getTwist(),0); ADD REAL DRIVE HERE
-        //   Timer.delay(0.005);		// wait for a motor update time
-        // }
 
       /** 
        * This function is called periodically when disabled. */
@@ -303,23 +281,10 @@ public class Robot extends TimedRobot {
         @Override
         public void simulationPeriodic() {}
 
-    /* This code may be used later on, but currently it is not in usage. 
-    public double getAccPitch() {
-    
-      double Y = accelerometer.getY();
-      double Z = accelerometer.getZ();
-      
-    
-      return Math.atan2(Y,Z) *180 /Math.PI;
-    }
-    
-    public double getAccRoll()
-    {
-      
-      double X = accelerometer.getX();
-      double Y = accelerometer.getY();
-      double Z = accelerometer.getZ();
-      
-      return Math.atan2(-X, Math.sqrt(Y*Y + Z*Z)) * 180/Math.PI;
-    } */
+    /*
+     * Removed unused math methods because we probably will never use it
+     * because we are going to take a different approach.
+     * 
+     * Check github history if you want them back.
+     */
 }
