@@ -18,7 +18,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 
 public class Robot extends TimedRobot {
   
-  // Toggle between Joystick and Xbox controls.
+  // Toggle between Joystick, Xbox, or PS4 controls.
     private static final boolean XboxMode = false;
     private static final boolean PS4Mode = true;
 
@@ -216,8 +216,9 @@ public class Robot extends TimedRobot {
             }
           }
           
+          // Left some comments and fixed your indentation - Ethan 🤓
           if (!autoBalance) {
-            else if (!XboxMode) {
+            if (!XboxMode) { // Joystick
               if(!CompetitionBot) {
                 leftMotor1.set(ControlMode.PercentOutput, (joystick1.getY()/3 * -1));
                 rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
@@ -227,21 +228,21 @@ public class Robot extends TimedRobot {
                 rightMotor1.set(ControlMode.PercentOutput, joystick2.getY());
                 rightMotor2.set(ControlMode.PercentOutput, joystick2.getY());
               }
-          } else if (!PS4Mode) {
+            } else if (!PS4Mode) { // Xbox
               if (!CompetitionBot) {
-                leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-                rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
-            } else {
+                leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3 * -1);
+                rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
+              } else {
                 leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
                 leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY());
                 rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
                 rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY());
               }
-          } else {
+            } else { // PS4
               if (!CompetitionBot) {
-                leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY());
-                rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY());
-            } else {
+                leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY()/3 * -1);
+                rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY()/3);
+              } else {
                 leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY());
                 leftMotor2.set(ControlMode.PercentOutput, pcontroller.getLeftY());
                 rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY());
