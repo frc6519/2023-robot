@@ -213,7 +213,7 @@ public class Robot extends TimedRobot {
                 break;
               default:
                 if (debugButtons) {
-                  System.out.println("Button Pressed: "+num) 
+                  System.out.println("Button Pressed: "+num);
                 }
                 break;
             }
