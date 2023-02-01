@@ -54,12 +54,11 @@ public class Robot extends TimedRobot {
       // Keyboard pretending to be a joystick
         private final Joystick keyboard = new Joystick(2);
       // Customization options
-        private final XboxController macroStick = xcontroller; // joystick1 or joystick2 or xcontroller (Which joystick listens for macros)
-        private final boolean debugButtons = true; // When a button is pressed we print out the buttons id, for easy debugging
-   
-    // Joystick
-      private boolean macrosEnabled = true;
-    
+        // joystick1 or joystick2 or xcontroller (Which joystick listens for macros); Don't forget to change variable type
+        private final XboxController macroStick = xcontroller; 
+        private final boolean debugButtons = false; // When a button is pressed we print out the buttons id, for easy debugging
+        private boolean macrosEnabled = true;
+  
     // Accelerometer
       Accelerometer accelerometer = new BuiltInAccelerometer(); 
       double prevXAccel = 0;
@@ -85,7 +84,11 @@ public class Robot extends TimedRobot {
         // rightMotor2.configFactoryDefault(); rightMotor2.set(ControlMode.PercentOutput, 0.00);
         armMotor1.configFactoryDefault(); armMotor1.set(ControlMode.PercentOutput, 0.00);
 
-        // Camera
+        /*
+         * Note for camera (On HP laptop):
+         * 0 - Internal Camera
+         * 1 - External Camera
+         */
         CameraServer.startAutomaticCapture(1);
       }
 
@@ -148,7 +151,6 @@ public class Robot extends TimedRobot {
           // Accelorometer
           double xAccel = accelerometer.getX();
           double yAccel = accelerometer.getY();
-
           prevXAccel = xAccel;
           prevYAccel = yAccel;
         }
@@ -213,20 +215,26 @@ public class Robot extends TimedRobot {
           }
           if (!autoBalance) {
             if (!XboxMode) {
+              // Joystick
               if(!CompetitionBot) {
+                // Test Bot
                 leftMotor1.set(ControlMode.PercentOutput, (joystick1.getY()/3 * -1));
                 rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
               } else {
+                // Comp Bot
                 leftMotor1.set(ControlMode.PercentOutput, joystick1.getY());
                 leftMotor2.set(ControlMode.PercentOutput, joystick1.getY());
                 rightMotor1.set(ControlMode.PercentOutput, joystick2.getY());
                 rightMotor2.set(ControlMode.PercentOutput, joystick2.getY());
               }
             } else {
-              if (!CompetitionBot) {
-                leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-                rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
+              // Xbox
+              if (!CompetitionBot) { 
+                // Test Bot
+                leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3 * -1);
+                rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
               } else {
+                // Comp Bot
                 leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
                 leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY());
                 rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
