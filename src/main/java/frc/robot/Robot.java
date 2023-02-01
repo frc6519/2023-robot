@@ -211,6 +211,11 @@ public class Robot extends TimedRobot {
               case 45: // Num 9
                 System.out.println("9");
                 break;
+              default:
+                if (debugButtons) {
+                  System.out.println("Button Pressed: "+num) 
+                }
+                break;
             }
           }
           if (!autoBalance) {
@@ -222,10 +227,10 @@ public class Robot extends TimedRobot {
                 rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
               } else {
                 // Comp Bot
-                leftMotor1.set(ControlMode.PercentOutput, joystick1.getY());
-                leftMotor2.set(ControlMode.PercentOutput, joystick1.getY());
-                rightMotor1.set(ControlMode.PercentOutput, joystick2.getY());
-                rightMotor2.set(ControlMode.PercentOutput, joystick2.getY());
+                leftMotor1.set(ControlMode.PercentOutput, joystick1.getY()/3);
+                leftMotor2.set(ControlMode.PercentOutput, joystick1.getY()/3);
+                rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
+                rightMotor2.set(ControlMode.PercentOutput, joystick2.getY()/3);
               }
             } else {
               // Xbox
@@ -235,10 +240,10 @@ public class Robot extends TimedRobot {
                 rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
               } else {
                 // Comp Bot
-                leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-                leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-                rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
-                rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY());
+                leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
+                leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
+                rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
+                rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
               }
             }
           }
