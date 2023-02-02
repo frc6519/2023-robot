@@ -246,6 +246,17 @@ public class Robot extends TimedRobot {
                 rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
               }
             }
+          } else {
+            /*
+             * Auto balance goes in here, could be a function or just have the full code in here
+             * autoBalance is automagically toggled when a button is pressed on the controller, you don't need to worry about it
+             * you will have to convert their mecanum drive to our direct motors
+             * 
+             * Example at: https://gist.githubusercontent.com/kauailabs/163e909a85819c49512f/raw/e1589a2c170f041e0294b72f04c7635b91b2995c/AutoBalanceRobot.java
+             */
+            if (teleopStatus && autoBalance) {
+              System.out.println("Should be auto balancing!");
+            }
           }
 
           for (int i = 0; i < macroStick.getButtonCount(); i++) {
@@ -263,53 +274,6 @@ public class Robot extends TimedRobot {
             }
           }
         }
-        // leftMotor2.set(ControlMode.PercentOutput, joystick1.getY()/3);
-        
-        // rightMotor2.set(ControlMode.PercentOutput, joystick2.getY()/3);
-        // if(teleopStatus && autoBalance) {
-        //   double xAxisRate            = xAccel;
-        //   double yAxisRate            = yAccel;
-        //   double pitchAngleDegrees    = getAccPitch();
-        //   double rollAngleDegrees     = getAccRoll();
-        //   boolean autoBalanceXMode = false;
-        //   boolean autoBalanceYMode = false;
-          
-        //   if ( !autoBalanceXMode && 
-        //       (Math.abs(pitchAngleDegrees) >= 
-        //         Math.abs(kOffBalanceAngleThresholdDegrees))) {
-        //       autoBalanceXMode = true;
-        //   }
-        //   else if ( autoBalanceXMode && 
-        //             (Math.abs(pitchAngleDegrees) <= 
-        //             Math.abs(kOonBalanceAngleThresholdDegrees))) {
-        //       autoBalanceXMode = false;
-        //   }
-        //   if ( !autoBalanceYMode && 
-        //       (Math.abs(pitchAngleDegrees) >= 
-        //         Math.abs(kOffBalanceAngleThresholdDegrees))) {
-        //       autoBalanceYMode = true;
-        //   }
-        //   else if ( autoBalanceYMode && 
-        //             (Math.abs(pitchAngleDegrees) <= 
-        //             Math.abs(kOonBalanceAngleThresholdDegrees))) {
-        //       autoBalanceYMode = false;
-        //   }
-          
-        //   // Control drive system automatically, 
-        //   // driving in reverse direction of pitch/roll angle,
-        //   // with a magnitude based upon the angle
-          
-        //   if ( autoBalanceXMode ) {
-        //       double pitchAngleRadians = pitchAngleDegrees * (Math.PI / 180.0);
-        //       xAxisRate = Math.sin(pitchAngleRadians) * -1;
-        //   }
-        //   if ( autoBalanceYMode ) {
-        //       double rollAngleRadians = rollAngleDegrees * (Math.PI / 180.0);
-        //       yAxisRate = Math.sin(rollAngleRadians) * -1;
-        //   }
-        //   // myRobot.mecanumDrive_Cartesian(xAxisRate, yAxisRate, joystick1.getTwist(),0); ADD REAL DRIVE HERE
-        //   Timer.delay(0.005);		// wait for a motor update time
-        // }
 
       /** 
        * This function is called periodically when disabled. */
