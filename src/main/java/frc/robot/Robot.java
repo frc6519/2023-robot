@@ -218,7 +218,7 @@ public class Robot extends TimedRobot {
           
           // Left some comments and fixed your indentation - Ethan 🤓
           if (!autoBalance) {
-            if (!XboxMode) { // Joystick
+            if (!XboxMode && !PS4Mode) { // Joystick
               if(!CompetitionBot) {
                 leftMotor1.set(ControlMode.PercentOutput, (joystick1.getY()/3 * -1));
                 rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
@@ -228,7 +228,7 @@ public class Robot extends TimedRobot {
                 rightMotor1.set(ControlMode.PercentOutput, joystick2.getY());
                 rightMotor2.set(ControlMode.PercentOutput, joystick2.getY());
               }
-            } else if (!PS4Mode) { // Xbox
+            } else if (XboxMode) { // Xbox
               if (!CompetitionBot) {
                 leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3 * -1);
                 rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
@@ -239,7 +239,7 @@ public class Robot extends TimedRobot {
                 rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY());
               }
             } else { // PS4
-              if (!CompetitionBot) {
+              if (PS4Mode) {
                 leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY()/3 * -1);
                 rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY()/3);
               } else {
