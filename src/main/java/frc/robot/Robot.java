@@ -90,6 +90,11 @@ public class Robot extends TimedRobot {
         armMotor1.configFactoryDefault(); armMotor1.set(ControlMode.PercentOutput, 0.00);
 
         // Camera
+        /*
+         * Note for camera (On HP laptop):
+         * 0 - Internal Camera
+         * 1 - External Camera
+         */ 
         CameraServer.startAutomaticCapture(1);
       }
 
@@ -217,37 +222,49 @@ public class Robot extends TimedRobot {
           }
           
           // Left some comments and fixed your indentation - Ethan 🤓
-          if (!autoBalance) {
-            if (!XboxMode && !PS4Mode) { // Joystick
-              if(!CompetitionBot) {
-                leftMotor1.set(ControlMode.PercentOutput, (joystick1.getY()/3 * -1));
-                rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
-              } else {
-                leftMotor1.set(ControlMode.PercentOutput, joystick1.getY());
-                leftMotor2.set(ControlMode.PercentOutput, joystick1.getY());
-                rightMotor1.set(ControlMode.PercentOutput, joystick2.getY());
-                rightMotor2.set(ControlMode.PercentOutput, joystick2.getY());
-              }
-            } else if (XboxMode) { // Xbox
-              if (!CompetitionBot) {
-                leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3 * -1);
-                rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
-              } else {
-                leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-                leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-                rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
-                rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY());
-              }
-            } else { // PS4
-              if (PS4Mode) {
-                leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY()/3 * -1);
-                rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY()/3);
-              } else {
-                leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY());
-                leftMotor2.set(ControlMode.PercentOutput, pcontroller.getLeftY());
-                rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY());
-                rightMotor2.set(ControlMode.PercentOutput,pcontroller.getRightY());
-              }
+         // Left some comments and fixed your indentation - Ethan 🤓
+         if (!autoBalance) {
+          if (!XboxMode && !PS4Mode) { // Joystick
+            if(!CompetitionBot) {
+              leftMotor1.set(ControlMode.PercentOutput, (joystick1.getY()/3 * -1));
+              rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
+            } else {
+              leftMotor1.set(ControlMode.PercentOutput, joystick1.getY());
+              leftMotor2.set(ControlMode.PercentOutput, joystick1.getY());
+              rightMotor1.set(ControlMode.PercentOutput, joystick2.getY());
+              rightMotor2.set(ControlMode.PercentOutput, joystick2.getY());
+            }
+          } else if (XboxMode) { // Xbox
+            if (!CompetitionBot) {
+              leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3 * -1);
+              rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
+            } else {
+              leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
+              leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY());
+              rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
+              rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY());
+            }
+          } else { // PS4
+            if (PS4Mode) {
+              leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY()/3 * -1);
+              rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY()/3);
+            } else {
+              leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY());
+              leftMotor2.set(ControlMode.PercentOutput, pcontroller.getLeftY());
+              rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY());
+              rightMotor2.set(ControlMode.PercentOutput,pcontroller.getRightY());
+            }
+          }
+        } else {
+            /*
+             * Auto balance goes in here, could be a function or just have the full code in here
+             * autoBalance is automagically toggled when a button is pressed on the controller, you don't need to worry about it
+             * you will have to convert their mecanum drive to our direct motors
+             * 
+             * Example at: https://gist.githubusercontent.com/kauailabs/163e909a85819c49512f/raw/e1589a2c170f041e0294b72f04c7635b91b2995c/AutoBalanceRobot.java
+             */
+            if (teleopStatus && autoBalance) {
+              System.out.println("Should be auto balancing!");
             }
           }
           
