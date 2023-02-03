@@ -15,27 +15,13 @@ Commit the changes using `git commit -a -m "<Describe your commit>"`
 
 Push the changes to GitHub using `git push origin`
 
-## Build Code with Gradle
+## Run Code with Gradle
 1. Right-click on the `build.gradle` file in Visual Studio Code and press `Build Robot Code`.
 2. Make sure the build was successful within the terminal, fix any problems if not.
 3. Connect to the robot wirelessly or through a USB connection.
 4. Right-click on the `build.gradle` file in Visual Studio Code and press `Deploy Robot Code`.
 
-## Git Flow commands/guide
-- `git branch <>`: Creates a new branch with the name specified.
-- `git flow init`: Initializes `git flow` onto the project, and creates new branches for existing repositories.
-- `git checkout <>`: Switches to the specified branch. 
-- `git flow feature start feature_branch`: Creates a `feature branch`.
-- `git flow feature finish feature_branch`: Merges the `feature branch` back into `develop`
-- `git flow release track <release name>`: Tracks the release specified.
+## Git Commands/Extras
+![image](https://user-images.githubusercontent.com/30357859/215880660-1ce80583-4bea-488b-b3c1-4a2528101946.png)
 
-1. Intialize `git flow` on the project using `git flow init`.
-2. Create a `feature branch` using `git flow feature start <feature name>`.
-3. Work on project until development is finished, then merge it to `develop` using `git flow feature finish <feature name>`.
-4. Start a release using `git flow release start <release name>`.
-5. Finish the release and publish it to branch `master` using `git flow release finish <realease name>` and `git push origin`
-
-- You may have to `git add` whatever you are working on.
-- `git remote set-url origin <updated link url>` incase you are getting `remote: This repository moved. Please use the new location:`
-
-[Guide and Cheat Sheet](https://danielkummer.github.io/git-flow-cheatsheet/)
+['Git Cheat Sheet'](https://education.github.com/git-cheat-sheet-education.pdf)

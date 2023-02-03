@@ -16,11 +16,12 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.cameraserver.CameraServer;
 
+import com.kauailabs.navx.frc.AHRS;
+import com.kauailabs.vmx.*;
+
 public class Robot extends TimedRobot {
-  
-  // Toggle between Joystick, Xbox, or PS4 controls.
-    private static final boolean XboxMode = false;
-    private static final boolean PS4Mode = true;
+  // Toggle between Joystick and Xbox controls.
+    private static final boolean XboxMode = true;
 
   // Toggles between Comp. Bot & Test Bot.
     private static final boolean CompetitionBot = false;
@@ -51,25 +52,27 @@ public class Robot extends TimedRobot {
     // Joystick
       private final Joystick joystick1 = new Joystick(0); 
       private final Joystick joystick2 = new Joystick(1);
-      // Xbox
-        XboxController xcontroller =  new XboxController(0);
       // PlayStation
         PS4Controller pcontroller = new PS4Controller(0);
+      // Xbox
+        XboxController xcontroller =  new XboxController(0); 
       // Keyboard pretending to be a joystick
         private final Joystick keyboard = new Joystick(2);
       // Customization options
-        private final XboxController macroStick = xcontroller; // joystick1 or joystick2 or xcontroller (Which joystick listens for macros)
-        private final boolean debugButtons = true; // When a button is pressed we print out the buttons id, for easy debugging
-   
-    // Joystick
-      private boolean macrosEnabled = true;
-    
+        // joystick1 or joystick2 or xcontroller (Which joystick listens for macros); Don't forget to change variable type
+        private final XboxController macroStick = xcontroller; 
+        private final boolean debugButtons = false; // When a button is pressed we print out the buttons id, for easy debugging
+        private boolean macrosEnabled = true;
+
     // Accelerometer
       Accelerometer accelerometer = new BuiltInAccelerometer(); 
       double prevXAccel = 0;
       double prevYAccel = 0;
       double xAccel = 0;
       double yAccel = 0;
+
+    // Gyroscope
+      private final AHRS ahrs = new AHRS();
 
   // Functions/Methods
   // (Hover mouse over functions for their definitions.)
@@ -89,7 +92,6 @@ public class Robot extends TimedRobot {
         // rightMotor2.configFactoryDefault(); rightMotor2.set(ControlMode.PercentOutput, 0.00);
         armMotor1.configFactoryDefault(); armMotor1.set(ControlMode.PercentOutput, 0.00);
 
-        // Camera
         /*
          * Note for camera (On HP laptop):
          * 0 - Internal Camera
@@ -157,7 +159,6 @@ public class Robot extends TimedRobot {
           // Accelorometer
           double xAccel = accelerometer.getX();
           double yAccel = accelerometer.getY();
-
           prevXAccel = xAccel;
           prevYAccel = yAccel;
         }
@@ -218,56 +219,66 @@ public class Robot extends TimedRobot {
               case 45: // Num 9
                 System.out.println("9");
                 break;
+              default:
+                if (debugButtons) {
+                  System.out.println("Button Pressed: "+num);
+                }
+                break;
             }
           }
-          
-          // Left some comments and fixed your indentation - Ethan 🤓
-         // Left some comments and fixed your indentation - Ethan 🤓
-         if (!autoBalance) {
-          if (!XboxMode && !PS4Mode) { // Joystick
-            if(!CompetitionBot) {
-              leftMotor1.set(ControlMode.PercentOutput, (joystick1.getY()/3 * -1));
-              rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
-            } else {
-              leftMotor1.set(ControlMode.PercentOutput, joystick1.getY());
-              leftMotor2.set(ControlMode.PercentOutput, joystick1.getY());
-              rightMotor1.set(ControlMode.PercentOutput, joystick2.getY());
-              rightMotor2.set(ControlMode.PercentOutput, joystick2.getY());
+          if (!autoBalance) {
+            if (!XboxMode && !PS4Mode) { // Joystick
+              if(!CompetitionBot) {
+                leftMotor1.set(ControlMode.PercentOutput, (joystick1.getY()/3 * -1));
+                rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
+              } else {
+                // Xbox
+                if (!CompetitionBot) { 
+                  // Test Bot
+                  leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3 * -1);
+                  rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
+                } else {
+                  // Comp Bot
+                  leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
+                  leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
+                  rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
+                  rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
+                }
+              }
+            } else if (XboxMode) { // Xbox
+              if (!CompetitionBot) {
+                leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3 * -1);
+                rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
+              } else {
+                leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
+                leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY());
+                rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
+                rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY());
+              }
+            } else { // PS4
+              if (PS4Mode) {
+                leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY()/3 * -1);
+                rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY()/3);
+              } else {
+                leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY());
+                leftMotor2.set(ControlMode.PercentOutput, pcontroller.getLeftY());
+                rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY());
+                rightMotor2.set(ControlMode.PercentOutput,pcontroller.getRightY());
+              }
             }
-          } else if (XboxMode) { // Xbox
-            if (!CompetitionBot) {
-              leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3 * -1);
-              rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
-            } else {
-              leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-              leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-              rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
-              rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY());
-            }
-          } else { // PS4
-            if (PS4Mode) {
-              leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY()/3 * -1);
-              rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY()/3);
-            } else {
-              leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY());
-              leftMotor2.set(ControlMode.PercentOutput, pcontroller.getLeftY());
-              rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY());
-              rightMotor2.set(ControlMode.PercentOutput,pcontroller.getRightY());
-            }
-          }
-        } else {
-            /*
-             * Auto balance goes in here, could be a function or just have the full code in here
-             * autoBalance is automagically toggled when a button is pressed on the controller, you don't need to worry about it
-             * you will have to convert their mecanum drive to our direct motors
-             * 
-             * Example at: https://gist.githubusercontent.com/kauailabs/163e909a85819c49512f/raw/e1589a2c170f041e0294b72f04c7635b91b2995c/AutoBalanceRobot.java
-             */
+          } else {
             if (teleopStatus && autoBalance) {
               System.out.println("Should be auto balancing!");
+              /*
+              * Auto balance goes in here, could be a function or just have the full code in here
+              * autoBalance is automagically toggled when a button is pressed on the controller, you don't need to worry about it
+              * you will have to convert their mecanum drive to our direct motors
+              * 
+              * Example at: https://gist.githubusercontent.com/kauailabs/163e909a85819c49512f/raw/e1589a2c170f041e0294b72f04c7635b91b2995c/AutoBalanceRobot.java
+              */
             }
           }
-          
+   
           for (int i = 0; i < macroStick.getButtonCount(); i++) {
             if (macroStick.getRawButtonPressed(i)) {
               switch(i) {
