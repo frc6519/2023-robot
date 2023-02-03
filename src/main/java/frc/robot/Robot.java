@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.cameraserver.CameraServer;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.kauailabs.vmx.*;
 
 public class Robot extends TimedRobot {
   // Toggle between Joystick, Xbox or PS4 controls.
@@ -228,25 +227,7 @@ public class Robot extends TimedRobot {
             }
           }
           if (!autoBalance) {
-            if (!XboxMode && !PS4Mode) { // Joystick
-              if(!CompetitionBot) {
-                leftMotor1.set(ControlMode.PercentOutput, (joystick1.getY()/3 * -1));
-                rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
-              } else {
-                // Xbox
-                if (!CompetitionBot) { 
-                  // Test Bot
-                  leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3 * -1);
-                  rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
-                } else {
-                  // Comp Bot
-                  leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
-                  leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
-                  rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
-                  rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
-                }
-              }
-            } else if (XboxMode) { // Xbox
+            if (XboxMode) { // Xbox
               if (!CompetitionBot) {
                 leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3 * -1);
                 rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
@@ -256,8 +237,8 @@ public class Robot extends TimedRobot {
                 rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
                 rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY());
               }
-            } else { // PS4
-              if (PS4Mode) {
+            } else if (PS4Mode) { // PS4
+              if (!CompetitionBot) {
                 leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY()/3 * -1);
                 rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY()/3);
               } else {
@@ -265,6 +246,16 @@ public class Robot extends TimedRobot {
                 leftMotor2.set(ControlMode.PercentOutput, pcontroller.getLeftY());
                 rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY());
                 rightMotor2.set(ControlMode.PercentOutput,pcontroller.getRightY());
+              }
+            } else {
+              if(!CompetitionBot) {
+                leftMotor1.set(ControlMode.PercentOutput, (joystick1.getY()/3 * -1));
+                rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
+              } else {
+                leftMotor1.set(ControlMode.PercentOutput,  joystick1.getY()/3);
+                leftMotor2.set(ControlMode.PercentOutput,  joystick1.getY()/3);
+                rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
+                rightMotor2.set(ControlMode.PercentOutput, joystick2.getY()/3);
               }
             }
           } else {
