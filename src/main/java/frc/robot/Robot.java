@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.cameraserver.CameraServer;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -51,6 +52,8 @@ public class Robot extends TimedRobot {
     // Joystick
       private final Joystick joystick1 = new Joystick(0); 
       private final Joystick joystick2 = new Joystick(1);
+      // PlayStation
+        PS4Controller pcontroller = new PS4Controller(0);
       // Xbox
         XboxController xcontroller =  new XboxController(0); 
       // Keyboard pretending to be a joystick
@@ -60,7 +63,7 @@ public class Robot extends TimedRobot {
         private final XboxController macroStick = xcontroller; 
         private final boolean debugButtons = false; // When a button is pressed we print out the buttons id, for easy debugging
         private boolean macrosEnabled = true;
-  
+
     // Accelerometer
       Accelerometer accelerometer = new BuiltInAccelerometer(); 
       double prevXAccel = 0;
@@ -93,7 +96,7 @@ public class Robot extends TimedRobot {
          * Note for camera (On HP laptop):
          * 0 - Internal Camera
          * 1 - External Camera
-         */
+         */ 
         CameraServer.startAutomaticCapture(1);
       }
 
@@ -224,31 +227,43 @@ public class Robot extends TimedRobot {
             }
           }
           if (!autoBalance) {
-            if (!XboxMode) {
-              // Joystick
+            if (!XboxMode && !PS4Mode) { // Joystick
               if(!CompetitionBot) {
-                // Test Bot
                 leftMotor1.set(ControlMode.PercentOutput, (joystick1.getY()/3 * -1));
                 rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
               } else {
-                // Comp Bot
-                leftMotor1.set(ControlMode.PercentOutput, joystick1.getY()/3);
-                leftMotor2.set(ControlMode.PercentOutput, joystick1.getY()/3);
-                rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
-                rightMotor2.set(ControlMode.PercentOutput, joystick2.getY()/3);
+                // Xbox
+                if (!CompetitionBot) { 
+                  // Test Bot
+                  leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3 * -1);
+                  rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
+                } else {
+                  // Comp Bot
+                  leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
+                  leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
+                  rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
+                  rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
+                }
               }
-            } else {
-              // Xbox
-              if (!CompetitionBot) { 
-                // Test Bot
+            } else if (XboxMode) { // Xbox
+              if (!CompetitionBot) {
                 leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3 * -1);
                 rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
               } else {
-                // Comp Bot
-                leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
-                leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
-                rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
-                rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
+                leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
+                leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY());
+                rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
+                rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY());
+              }
+            } else { // PS4
+              if (PS4Mode) {
+                leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY()/3 * -1);
+                rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY()/3);
+              } else {
+                leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY());
+                leftMotor2.set(ControlMode.PercentOutput, pcontroller.getLeftY());
+                rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY());
+                rightMotor2.set(ControlMode.PercentOutput,pcontroller.getRightY());
               }
             }
           } else {
@@ -263,7 +278,7 @@ public class Robot extends TimedRobot {
               */
             }
           }
-
+   
           for (int i = 0; i < macroStick.getButtonCount(); i++) {
             if (macroStick.getRawButtonPressed(i)) {
               switch(i) {
