@@ -20,8 +20,9 @@ import com.kauailabs.navx.frc.AHRS;
 import com.kauailabs.vmx.*;
 
 public class Robot extends TimedRobot {
-  // Toggle between Joystick and Xbox controls.
+  // Toggle between Joystick, Xbox or PS4 controls.
     private static final boolean XboxMode = true;
+    private static final boolean PS4Mode = false;
 
   // Toggles between Comp. Bot & Test Bot.
     private static final boolean CompetitionBot = false;
