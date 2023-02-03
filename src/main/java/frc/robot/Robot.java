@@ -226,28 +226,28 @@ public class Robot extends TimedRobot {
                 break;
             }
           }
-          if (!autoBalance) {
+          if (!autoBalance) { // Autobalance is disabled
             if (XboxMode) { // Xbox
               if (!CompetitionBot) {
                 leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3 * -1);
                 rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
               } else {
-                leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-                leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-                rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
-                rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY());
+                leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
+                leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
+                rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
+                rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
               }
             } else if (PS4Mode) { // PS4
               if (!CompetitionBot) {
                 leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY()/3 * -1);
                 rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY()/3);
               } else {
-                leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY());
-                leftMotor2.set(ControlMode.PercentOutput, pcontroller.getLeftY());
-                rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY());
-                rightMotor2.set(ControlMode.PercentOutput,pcontroller.getRightY());
+                leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY()/3);
+                leftMotor2.set(ControlMode.PercentOutput, pcontroller.getLeftY()/3);
+                rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY()/3);
+                rightMotor2.set(ControlMode.PercentOutput,pcontroller.getRightY()/3);
               }
-            } else {
+            } else { // Joystick
               if(!CompetitionBot) {
                 leftMotor1.set(ControlMode.PercentOutput, (joystick1.getY()/3 * -1));
                 rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
@@ -258,9 +258,8 @@ public class Robot extends TimedRobot {
                 rightMotor2.set(ControlMode.PercentOutput, joystick2.getY()/3);
               }
             }
-          } else {
+          } else { // Autobalance is enabled!
             if (teleopStatus && autoBalance) {
-              System.out.println("Should be auto balancing!");
               /*
               * Auto balance goes in here, could be a function or just have the full code in here
               * autoBalance is automagically toggled when a button is pressed on the controller, you don't need to worry about it
@@ -268,6 +267,7 @@ public class Robot extends TimedRobot {
               * 
               * Example at: https://gist.githubusercontent.com/kauailabs/163e909a85819c49512f/raw/e1589a2c170f041e0294b72f04c7635b91b2995c/AutoBalanceRobot.java
               */
+              autoBalancePeriodic();
             }
           }
    
@@ -302,10 +302,33 @@ public class Robot extends TimedRobot {
         @Override
         public void simulationPeriodic() {}
 
-    /*
-     * Removed unused math methods because we probably will never use it
-     * because we are going to take a different approach.
-     * 
-     * Check github history if you want them back.
-     */
+        public void autoBalancePeriodic() {
+          double pitch = ahrs.getPitch();
+          System.out.println("autoBalancePeriodic: "+pitch); // Debug - Leave here
+          /*
+           * The values for motor speed and their +- may need to be changed because I don't know which
+           * way counts as a positive pitch and a negative pitch, but they will be adjusted as needed
+           */
+          if (pitch >= 10) {
+            // Drive backwards
+            if (!CompetitionBot) {
+              leftMotor1.set(ControlMode.PercentOutput, 20); // Weird values because one motor is put on backwards
+              rightMotor1.set(ControlMode.PercentOutput, -20);
+            }
+          } else if (pitch >= -10) {
+            // Drive forwards
+            if (!CompetitionBot) {
+              leftMotor1.set(ControlMode.PercentOutput, -20);
+                rightMotor1.set(ControlMode.PercentOutput, 20);
+            }
+          } else {
+            System.out.println("Already balanced"); // Debug - Leave here
+            /*
+             * By not setting autoBalance to false we keep this periodic going until the
+             * driver decides to stop balancing, by doing this we ensure that if it gets
+             * tipped by an external force that the robot will readjust itself without
+             * the driver having to restart the auto balance
+             */
+          }
+        }
 }
