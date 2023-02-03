@@ -92,6 +92,10 @@ public class Robot extends TimedRobot {
         // rightMotor2.configFactoryDefault(); rightMotor2.set(ControlMode.PercentOutput, 0.00);
         armMotor1.configFactoryDefault(); armMotor1.set(ControlMode.PercentOutput, 0.00);
 
+        if (!CompetitionBot) {
+          leftMotor1.setInverted(true);
+        }
+
         /*
          * Note for camera (On HP laptop):
          * 0 - Internal Camera
@@ -229,7 +233,7 @@ public class Robot extends TimedRobot {
           if (!autoBalance) { // Autobalance is disabled
             if (XboxMode) { // Xbox
               if (!CompetitionBot) {
-                leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3 * -1);
+                leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
                 rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
               } else {
                 leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
@@ -239,7 +243,7 @@ public class Robot extends TimedRobot {
               }
             } else if (PS4Mode) { // PS4
               if (!CompetitionBot) {
-                leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY()/3 * -1);
+                leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY()/3);
                 rightMotor1.set(ControlMode.PercentOutput,pcontroller.getRightY()/3);
               } else {
                 leftMotor1.set(ControlMode.PercentOutput, pcontroller.getLeftY()/3);
@@ -249,7 +253,7 @@ public class Robot extends TimedRobot {
               }
             } else { // Joystick
               if(!CompetitionBot) {
-                leftMotor1.set(ControlMode.PercentOutput, (joystick1.getY()/3 * -1));
+                leftMotor1.set(ControlMode.PercentOutput, joystick1.getY()/3);
                 rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
               } else {
                 leftMotor1.set(ControlMode.PercentOutput,  joystick1.getY()/3);
@@ -312,13 +316,13 @@ public class Robot extends TimedRobot {
           if (pitch >= 10) {
             // Drive backwards
             if (!CompetitionBot) {
-              leftMotor1.set(ControlMode.PercentOutput, 20); // Weird values because one motor is put on backwards
+              leftMotor1.set(ControlMode.PercentOutput, -20); // Weird values because one motor is put on backwards
               rightMotor1.set(ControlMode.PercentOutput, -20);
             }
           } else if (pitch >= -10) {
             // Drive forwards
             if (!CompetitionBot) {
-              leftMotor1.set(ControlMode.PercentOutput, -20);
+              leftMotor1.set(ControlMode.PercentOutput, 20);
                 rightMotor1.set(ControlMode.PercentOutput, 20);
             }
           } else {
