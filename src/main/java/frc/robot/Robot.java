@@ -15,8 +15,10 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.cameraserver.CameraServer;
 
+import com.kauailabs.navx.frc.AHRS;
+import com.kauailabs.vmx.*;
+
 public class Robot extends TimedRobot {
-  
   // Toggle between Joystick and Xbox controls.
     private static final boolean XboxMode = true;
 
@@ -65,6 +67,9 @@ public class Robot extends TimedRobot {
       double prevYAccel = 0;
       double xAccel = 0;
       double yAccel = 0;
+
+    // Gyroscope
+      private final AHRS ahrs = new AHRS();
 
   // Functions/Methods
   // (Hover mouse over functions for their definitions.)
@@ -247,15 +252,15 @@ public class Robot extends TimedRobot {
               }
             }
           } else {
-            /*
-             * Auto balance goes in here, could be a function or just have the full code in here
-             * autoBalance is automagically toggled when a button is pressed on the controller, you don't need to worry about it
-             * you will have to convert their mecanum drive to our direct motors
-             * 
-             * Example at: https://gist.githubusercontent.com/kauailabs/163e909a85819c49512f/raw/e1589a2c170f041e0294b72f04c7635b91b2995c/AutoBalanceRobot.java
-             */
             if (teleopStatus && autoBalance) {
               System.out.println("Should be auto balancing!");
+              /*
+              * Auto balance goes in here, could be a function or just have the full code in here
+              * autoBalance is automagically toggled when a button is pressed on the controller, you don't need to worry about it
+              * you will have to convert their mecanum drive to our direct motors
+              * 
+              * Example at: https://gist.githubusercontent.com/kauailabs/163e909a85819c49512f/raw/e1589a2c170f041e0294b72f04c7635b91b2995c/AutoBalanceRobot.java
+              */
             }
           }
 
