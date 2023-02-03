@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.cameraserver.CameraServer;
 
@@ -72,7 +73,8 @@ public class Robot extends TimedRobot {
       double yAccel = 0;
 
     // Gyroscope
-      private final AHRS ahrs = new AHRS();
+      // private final AHRS ahrs = new AHRS();
+      private static final AHRS ahrs = new AHRS(Port.kUSB); 
 
   // Functions/Methods
   // (Hover mouse over functions for their definitions.)
@@ -95,6 +97,8 @@ public class Robot extends TimedRobot {
         if (!CompetitionBot) {
           leftMotor1.setInverted(true);
         }
+
+        ahrs.calibrate();
 
         /*
          * Note for camera (On HP laptop):
@@ -272,6 +276,7 @@ public class Robot extends TimedRobot {
               * 
               * Example at: https://gist.githubusercontent.com/kauailabs/163e909a85819c49512f/raw/e1589a2c170f041e0294b72f04c7635b91b2995c/AutoBalanceRobot.java
               */
+              // ahrs.calibrate();
               autoBalancePeriodic();
             }
           }
@@ -308,34 +313,42 @@ public class Robot extends TimedRobot {
         public void simulationPeriodic() {}
 
         public void autoBalancePeriodic() {
-          double pitch = ahrs.getRawGyroX();
-          double roll = ahrs.getRoll();
-          double yaw = ahrs.getYaw();
-          System.out.println("autoBalancePeriodic: "+pitch+roll+yaw); // Debug - Leave here
-          /*
-           * The values for motor speed and their +- may need to be changed because I don't know which
-           * way counts as a positive pitch and a negative pitch, but they will be adjusted as needed
-           */
-          if (pitch >= 10) {
-            // Drive backwards
-            if (!CompetitionBot) {
-              leftMotor1.set(ControlMode.PercentOutput, -20); // Weird values because one motor is put on backwards
-              rightMotor1.set(ControlMode.PercentOutput, -20);
-            }
-          } else if (pitch >= -10) {
-            // Drive forwards
-            if (!CompetitionBot) {
-              leftMotor1.set(ControlMode.PercentOutput, 20);
-                rightMotor1.set(ControlMode.PercentOutput, 20);
-            }
+          if (ahrs.isCalibrating()) {
+            System.out.println("Calibrating..");
+          } else if (!ahrs.isConnected()) {
+            System.out.println("Gyro not connected!");
           } else {
-            System.out.println("Already balanced"); // Debug - Leave here
+            double pitch = ahrs.getPitch();
+            double roll = ahrs.getRoll();
+            double yaw = ahrs.getYaw();
+            System.out.println("autoBalancePeriodic: "+pitch+roll+yaw); // Debug - Leave here
             /*
-             * By not setting autoBalance to false we keep this periodic going until the
-             * driver decides to stop balancing, by doing this we ensure that if it gets
-             * tipped by an external force that the robot will readjust itself without
-             * the driver having to restart the auto balance
-             */
+            * The values for motor speed and their +- may need to be changed because I don't know which
+            * way counts as a positive pitch and a negative pitch, but they will be adjusted as needed
+            */
+            if (pitch >= 7) {
+              // Drive backwards
+              System.out.println("Go backwards");
+              if (!CompetitionBot) {
+                leftMotor1.set(ControlMode.PercentOutput, -0.25); // Weird values because one motor is put on backwards
+                rightMotor1.set(ControlMode.PercentOutput, -0.25);
+              }
+            } else if (pitch <= -3) {
+              // Drive forwards
+              System.out.println("Go forwards");
+              if (!CompetitionBot) {
+                leftMotor1.set(ControlMode.PercentOutput, 0.25);
+                rightMotor1.set(ControlMode.PercentOutput, 0.25);
+              }
+            } else {
+              System.out.println("Already balanced"); // Debug - Leave here
+              /*
+              * By not setting autoBalance to false we keep this periodic going until the
+              * driver decides to stop balancing, by doing this we ensure that if it gets
+              * tipped by an external force that the robot will readjust itself without
+              * the driver having to restart the auto balance
+              */
+            }
           }
         }
       }
