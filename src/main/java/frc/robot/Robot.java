@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.cameraserver.CameraServer;
+// import edu.wpi.first.cscore.UsbCamera;
 
 import com.kauailabs.navx.frc.AHRS;
 
@@ -37,7 +38,11 @@ public class Robot extends TimedRobot {
       private static final String kDefaultAuto = "Default";
       private static final String kCustomAuto = "My Auto";
       private String m_autoSelected;
+      private static final String cPOV = "POV Camera";
+      private static final String cLimelight = "Limelight"; // <--  Placeholder
+      private String c_autoSelected;
       private final SendableChooser<String> m_chooser = new SendableChooser<>();
+      private final SendableChooser<String> c_chooser = new SendableChooser<>();
       private boolean teleopStatus = false;  
       private boolean autoBalance = false;
 
@@ -72,6 +77,10 @@ public class Robot extends TimedRobot {
       double xAccel = 0;
       double yAccel = 0;
 
+    // Cameras
+      // UsbCamera POV = new UsbCamera("POV", "dev/video0");
+      // UsbCamera Limelight = new UsbCamera("Limelight", "dev/video1");
+
     // Gyroscope
       // private final AHRS ahrs = new AHRS();
       private static final AHRS ahrs = new AHRS(Port.kUSB); 
@@ -86,6 +95,9 @@ public class Robot extends TimedRobot {
         timer.reset();
         m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
         m_chooser.addOption("Custom Auto", kCustomAuto);
+        c_chooser.setDefaultOption("POV Camera", cPOV);
+        c_chooser.addOption("Limelight", cLimelight);
+        SmartDashboard.putData("Camera Options",c_chooser);
         SmartDashboard.putData("Auto choices", m_chooser);
         // Initialize motor variables
         leftMotor1.configFactoryDefault(); leftMotor1.set(ControlMode.PercentOutput, 0.00);
@@ -104,7 +116,12 @@ public class Robot extends TimedRobot {
          * Note for camera (On HP laptop):
          * 0 - Internal Camera
          * 1 - External Camera
+         * 
+         * (On roborio)
+         * 0 - Microsoft Camera
+         * 1 - Limelight (Not present yet)
          */ 
+        CameraServer.startAutomaticCapture(0);
         CameraServer.startAutomaticCapture(1);
       }
 
@@ -122,6 +139,7 @@ public class Robot extends TimedRobot {
         public void autonomousInit() {
           System.out.println("Autonomous Time!");
           m_autoSelected = m_chooser.getSelected();
+          c_autoSelected = m_chooser.getSelected();
           // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
           System.out.println("Auto selected: " + m_autoSelected);
           macrosEnabled = false;
@@ -169,8 +187,18 @@ public class Robot extends TimedRobot {
           double yAccel = accelerometer.getY();
           prevXAccel = xAccel;
           prevYAccel = yAccel;
-        }
 
+          // Camera
+          switch (c_autoSelected) {
+            case cLimelight:
+              // CameraServer.getServer().setSource(Limelight);
+              break;
+            case cPOV:
+            default:
+              // CameraServer.getServer().setSource(POV);
+              break;
+          }
+        }
       /** 
        * This function is called periodically during autonomous. -- Important*/
         @Override
@@ -342,6 +370,8 @@ public class Robot extends TimedRobot {
               }
             } else {
               System.out.println("Already balanced"); // Debug - Leave here
+              leftMotor1.set(ControlMode.PercentOutput, 0.00);
+              rightMotor1.set(ControlMode.PercentOutput, 0.00);
               /*
               * By not setting autoBalance to false we keep this periodic going until the
               * driver decides to stop balancing, by doing this we ensure that if it gets
