@@ -359,4 +359,19 @@ public class Robot extends TimedRobot {
             }
           }
         }
+
+        public void drive(String option, double speed) {
+          if (option == "forward" || option == "backwards") {
+            double power = speed;
+            if (option == "backwards") {
+              power = power *-1;
+            }
+            if (!CompetitionBot) {
+              leftMotor1.set(ControlMode.PercentOutput, power);
+              rightMotor1.set(ControlMode.PercentOutput, power);
+            }
+          } else {
+            System.out.println("Bad coder detected!!!!");
+          }
+        }
       }
