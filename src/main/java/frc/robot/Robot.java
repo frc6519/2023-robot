@@ -38,9 +38,6 @@ public class Robot extends TimedRobot {
       private static final String kDefaultAuto = "Default";
       private static final String kCustomAuto = "My Auto";
       private String m_autoSelected;
-      private static final String cPOV = "POV Camera";
-      private static final String cLimelight = "Limelight"; // <--  Placeholder
-      private String c_autoSelected;
       private final SendableChooser<String> m_chooser = new SendableChooser<>();
       private final SendableChooser<String> c_chooser = new SendableChooser<>();
       private boolean teleopStatus = false;  
@@ -77,10 +74,6 @@ public class Robot extends TimedRobot {
       double xAccel = 0;
       double yAccel = 0;
 
-    // Cameras - Network tables & Smart dashboard needed & Limelight needed eventually & I probably did this wrong (Ignore i'll fix it myself)
-      // UsbCamera POV = new UsbCamera("POV", "dev/video0");
-      // UsbCamera Limelight = new UsbCamera("Limelight", "dev/video1");
-
     // Gyroscope
       // private final AHRS ahrs = new AHRS();
       private static final AHRS ahrs = new AHRS(Port.kUSB); 
@@ -95,8 +88,6 @@ public class Robot extends TimedRobot {
         timer.reset();
         m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
         m_chooser.addOption("Custom Auto", kCustomAuto);
-        c_chooser.setDefaultOption("POV Camera", cPOV);
-        c_chooser.addOption("Limelight", cLimelight);
         SmartDashboard.putData("Camera Options",c_chooser);
         SmartDashboard.putData("Auto choices", m_chooser);
         // Initialize motor variables
@@ -122,7 +113,6 @@ public class Robot extends TimedRobot {
          * 1 - Limelight (Not present yet)
          */ 
         CameraServer.startAutomaticCapture(0);
-        CameraServer.startAutomaticCapture(1);
       }
 
       /**
@@ -139,8 +129,7 @@ public class Robot extends TimedRobot {
         public void autonomousInit() {
           System.out.println("Autonomous Time!");
           m_autoSelected = m_chooser.getSelected();
-          c_autoSelected = m_chooser.getSelected();
-          // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+          m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
           System.out.println("Auto selected: " + m_autoSelected);
           macrosEnabled = false;
           timer.reset();
@@ -187,17 +176,6 @@ public class Robot extends TimedRobot {
           double yAccel = accelerometer.getY();
           prevXAccel = xAccel;
           prevYAccel = yAccel;
-
-          // Camera
-          switch (c_autoSelected) {
-            case cLimelight:
-              // CameraServer.getServer().setSource(Limelight);
-              break;
-            case cPOV:
-            default:
-              // CameraServer.getServer().setSource(POV);
-              break;
-          }
         }
       /** 
        * This function is called periodically during autonomous. -- Important*/
