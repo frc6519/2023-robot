@@ -77,7 +77,7 @@ public class Robot extends TimedRobot {
       double xAccel = 0;
       double yAccel = 0;
 
-    // Cameras
+    // Cameras - Network tables & Smart dashboard needed & Limelight needed eventually & I probably did this wrong (Ignore i'll fix it myself)
       // UsbCamera POV = new UsbCamera("POV", "dev/video0");
       // UsbCamera Limelight = new UsbCamera("Limelight", "dev/video1");
 
