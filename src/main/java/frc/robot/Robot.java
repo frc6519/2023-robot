@@ -96,7 +96,6 @@ public class Robot extends TimedRobot {
         rightMotor1.configFactoryDefault(); rightMotor1.set(ControlMode.PercentOutput, 0.00);
         // rightMotor2.configFactoryDefault(); rightMotor2.set(ControlMode.PercentOutput, 0.00);
         armMotor1.configFactoryDefault(); armMotor1.set(ControlMode.PercentOutput, 0.00);
-
         if (!CompetitionBot) {
           leftMotor1.setInverted(true);
         }
@@ -184,15 +183,22 @@ public class Robot extends TimedRobot {
           int time = (int) timer.get();
           switch (m_autoSelected) {
             case kCustomAuto:
-              // Put custom auto code here
+              /*
+               * Put untested autonomous code here!
+               */
+              /*
+               * Arm power test
+               * (!) Do not run, very untested no thought went into it (!)
+               */
+              if (between(0, 1, time)) {
+                armMotor1.set(ControlMode.Position,1);
+              }
               break;
             case kDefaultAuto:
             default:
-              // Put default auto code here
-              // if (time <= 14) { // Total 15s
-              //   System.out.println(time);
-              // }
-              // break;
+              /*
+               * Autonomous code here!
+               */
               if (between(0,2,time)) {
                 drive(0.2);
               } else if (between(3, 4,time)) {
@@ -217,7 +223,7 @@ public class Robot extends TimedRobot {
             if (usingKeyboard) {
               num = keyboard.getPOV();
             } else {
-              num = 0;
+              num = -1;
             }
             switch(num) {
               case 225: // Num 1
@@ -299,20 +305,17 @@ public class Robot extends TimedRobot {
               autoBalancePeriodic();
             }
           }
-          
-          if (teleopStatus) {
-            for (int i = 0; i < macroStick.getButtonCount(); i++) {
-              if (macroStick.getRawButtonPressed(i)) {
-                switch(i) {
-                  case 3:
-                    autoBalance = !autoBalance;
-                    System.out.println("Auto Balance: "+autoBalance);
-                    break;
-                  default:
-                    if (debugButtons) {
-                      System.out.println("Button Pressed: "+i);
-                    }
-                }
+          for (int i = 0; i < macroStick.getButtonCount(); i++) {
+            if (macroStick.getRawButtonPressed(i)) {
+              switch(i) {
+                case 3:
+                  autoBalance = !autoBalance;
+                  System.out.println("Auto Balance: "+autoBalance);
+                  break;
+                default:
+                  if (debugButtons) {
+                    System.out.println("Button Pressed: "+i);
+                  }
               }
             }
           }
@@ -351,22 +354,16 @@ public class Robot extends TimedRobot {
               // Drive backwards
               System.out.println("Go backwards");
               if (!CompetitionBot) {
-                // leftMotor1.set(ControlMode.PercentOutput, -0.25); // Weird values because one motor is put on backwards
-                // rightMotor1.set(ControlMode.PercentOutput, -0.25);
                 drive(-0.25);
               }
             } else if (pitch <= -3) {
               // Drive forwards
               System.out.println("Go forwards");
               if (!CompetitionBot) {
-                // leftMotor1.set(ControlMode.PercentOutput, 0.25);
-                // rightMotor1.set(ControlMode.PercentOutput, 0.25);
                 drive(0.25);
               }
             } else {
               System.out.println("Already balanced"); // Debug - Leave here
-              // leftMotor1.set(ControlMode.PercentOutput, 0.00);
-              // rightMotor1.set(ControlMode.PercentOutput, 0.00);
               resetMotors();
               /*
               * By not setting autoBalance to false we keep this periodic going until the
