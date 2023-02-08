@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.cameraserver.CameraServer;
-// import edu.wpi.first.cscore.UsbCamera;
 
 import com.kauailabs.navx.frc.AHRS;
 
@@ -66,6 +65,7 @@ public class Robot extends TimedRobot {
         private final XboxController macroStick = xcontroller; 
         private final boolean debugButtons = false; // When a button is pressed we print out the buttons id, for easy debugging
         private boolean macrosEnabled = true;
+        private float turnSpeed = 0.15f;
 
     // Accelerometer
       Accelerometer accelerometer = new BuiltInAccelerometer(); 
@@ -189,10 +189,21 @@ public class Robot extends TimedRobot {
             case kDefaultAuto:
             default:
               // Put default auto code here
-              if (time <= 14) { // Total 15s
-                System.out.println(time);
+              // if (time <= 14) { // Total 15s
+              //   System.out.println(time);
+              // }
+              // break;
+              if (between(0,2,time)) {
+                drive(0.15);
+              } else if (between(3, 4,time)) {
+                drive(-0.15);
+              } else if (between(5, 6, time)) {
+                rotate(-90);
+              } else if (between(7, 8, time)) {
+                rotate(90);
+              } else {
+                resetMotors();
               }
-              break;
           }
         }
 
@@ -262,15 +273,17 @@ public class Robot extends TimedRobot {
                 rightMotor2.set(ControlMode.PercentOutput,pcontroller.getRightY()/3);
               }
             } else { // Joystick
-              if(!CompetitionBot) {
-                leftMotor1.set(ControlMode.PercentOutput, joystick1.getY()/3);
-                rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
-              } else {
-                leftMotor1.set(ControlMode.PercentOutput,  joystick1.getY()/3);
-                leftMotor2.set(ControlMode.PercentOutput,  joystick1.getY()/3);
-                rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
-                rightMotor2.set(ControlMode.PercentOutput, joystick2.getY()/3);
-              }
+              
+                if(!CompetitionBot) {
+                  leftMotor1.set(ControlMode.PercentOutput, joystick1.getY()/3);
+                  rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
+                } else {
+                  leftMotor1.set(ControlMode.PercentOutput,  joystick1.getY()/3);
+                  leftMotor2.set(ControlMode.PercentOutput,  joystick1.getY()/3);
+                  rightMotor1.set(ControlMode.PercentOutput, joystick2.getY()/3);
+                  rightMotor2.set(ControlMode.PercentOutput, joystick2.getY()/3);
+                }
+              
             }
           } else {
             if (teleopStatus && autoBalance) {
@@ -286,18 +299,20 @@ public class Robot extends TimedRobot {
               autoBalancePeriodic();
             }
           }
-   
-          for (int i = 0; i < macroStick.getButtonCount(); i++) {
-            if (macroStick.getRawButtonPressed(i)) {
-              switch(i) {
-                case 3:
-                  autoBalance = !autoBalance;
-                  System.out.println("Auto Balance: "+autoBalance);
-                  break;
-                default:
-                  if (debugButtons) {
-                    System.out.println("Button Pressed: "+i);
-                  }
+          
+          if (teleopStatus) {
+            for (int i = 0; i < macroStick.getButtonCount(); i++) {
+              if (macroStick.getRawButtonPressed(i)) {
+                switch(i) {
+                  case 3:
+                    autoBalance = !autoBalance;
+                    System.out.println("Auto Balance: "+autoBalance);
+                    break;
+                  default:
+                    if (debugButtons) {
+                      System.out.println("Button Pressed: "+i);
+                    }
+                }
               }
             }
           }
@@ -327,7 +342,7 @@ public class Robot extends TimedRobot {
             double pitch = ahrs.getPitch();
             double roll = ahrs.getRoll();
             double yaw = ahrs.getYaw();
-            System.out.println("autoBalancePeriodic: "+pitch+roll+yaw); // Debug - Leave here
+            System.out.println("autoBalancePeriodic: \nPitch: "+pitch+"\nRoll: "+roll+"\nYaw: "+yaw); // Debug - Leave here
             /*
             * The values for motor speed and their +- may need to be changed because I don't know which
             * way counts as a positive pitch and a negative pitch, but they will be adjusted as needed
@@ -360,18 +375,38 @@ public class Robot extends TimedRobot {
           }
         }
 
-        public void drive(String option, double speed) {
-          if (option == "forward" || option == "backwards") {
-            double power = speed;
-            if (option == "backwards") {
-              power = power *-1;
-            }
+        public void drive(double speed) {
             if (!CompetitionBot) {
-              leftMotor1.set(ControlMode.PercentOutput, power);
-              rightMotor1.set(ControlMode.PercentOutput, power);
+              leftMotor1.set(ControlMode.PercentOutput, speed);
+              rightMotor1.set(ControlMode.PercentOutput, speed);
             }
+        }
+
+        public void rotate(double angle) {
+          double currentAngle = ahrs.getYaw();
+          if (!between(angle-1,angle+1,currentAngle)) {
+            if (!CompetitionBot) {
+              if (angle >= -1) { // Left
+                rightMotor1.set(ControlMode.PercentOutput, turnSpeed);
+              } else { // Right
+                leftMotor1.set(ControlMode.PercentOutput, turnSpeed);
+              }
+            }
+          }
+        }
+
+        public void resetMotors() {
+          if (!CompetitionBot) {
+            leftMotor1.set(ControlMode.PercentOutput, 0);
+            rightMotor1.set(ControlMode.PercentOutput, 0);
+          }
+        }
+
+        public boolean between(double start, double end, double time) {
+          if (start <= time && end >= time) {
+            return true;
           } else {
-            System.out.println("Bad coder detected!!!!");
+            return false;
           }
         }
       }
