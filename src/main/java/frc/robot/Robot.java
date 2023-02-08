@@ -65,7 +65,7 @@ public class Robot extends TimedRobot {
         private final XboxController macroStick = xcontroller; 
         private final boolean debugButtons = false; // When a button is pressed we print out the buttons id, for easy debugging
         private boolean macrosEnabled = true;
-        private float turnSpeed = 0.15f;
+        private float turnSpeed = 0.2f;
 
     // Accelerometer
       Accelerometer accelerometer = new BuiltInAccelerometer(); 
@@ -194,9 +194,9 @@ public class Robot extends TimedRobot {
               // }
               // break;
               if (between(0,2,time)) {
-                drive(0.15);
+                drive(0.2);
               } else if (between(3, 4,time)) {
-                drive(-0.15);
+                drive(-0.2);
               } else if (between(5, 6, time)) {
                 rotate(-90);
               } else if (between(7, 8, time)) {
@@ -351,20 +351,23 @@ public class Robot extends TimedRobot {
               // Drive backwards
               System.out.println("Go backwards");
               if (!CompetitionBot) {
-                leftMotor1.set(ControlMode.PercentOutput, -0.25); // Weird values because one motor is put on backwards
-                rightMotor1.set(ControlMode.PercentOutput, -0.25);
+                // leftMotor1.set(ControlMode.PercentOutput, -0.25); // Weird values because one motor is put on backwards
+                // rightMotor1.set(ControlMode.PercentOutput, -0.25);
+                drive(-0.25);
               }
             } else if (pitch <= -3) {
               // Drive forwards
               System.out.println("Go forwards");
               if (!CompetitionBot) {
-                leftMotor1.set(ControlMode.PercentOutput, 0.25);
-                rightMotor1.set(ControlMode.PercentOutput, 0.25);
+                // leftMotor1.set(ControlMode.PercentOutput, 0.25);
+                // rightMotor1.set(ControlMode.PercentOutput, 0.25);
+                drive(0.25);
               }
             } else {
               System.out.println("Already balanced"); // Debug - Leave here
-              leftMotor1.set(ControlMode.PercentOutput, 0.00);
-              rightMotor1.set(ControlMode.PercentOutput, 0.00);
+              // leftMotor1.set(ControlMode.PercentOutput, 0.00);
+              // rightMotor1.set(ControlMode.PercentOutput, 0.00);
+              resetMotors();
               /*
               * By not setting autoBalance to false we keep this periodic going until the
               * driver decides to stop balancing, by doing this we ensure that if it gets
