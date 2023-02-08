@@ -18,8 +18,7 @@ public class Program {
         WPIMathJNI.Helper.setExtractOnStaticLoad(false);
         CameraServerJNI.Helper.setExtractOnStaticLoad(false);
 
-        CombinedRuntimeLoader.loadLibraries(Program.class, "wpiutiljni", "wpimathjni", "ntcorejni",
-                "cscorejnicvstatic");
+        CombinedRuntimeLoader.loadLibraries(Program.class, "wpiutiljni", "wpimathjni", "ntcorejni","cscorejnicvstatic");
         new Program().run();
     }
 
@@ -28,8 +27,8 @@ public class Program {
         NetworkTable table = inst.getTable("datatable");
         DoubleSubscriber xSub = table.getDoubleTopic("x").subscribe(0.0);
         DoubleSubscriber ySub = table.getDoubleTopic("y").subscribe(0.0);
-        inst.startClient4("example client");
-        inst.setServer("localhost"); // where TEAM=190, 294, etc, or use inst.setServer("hostname") or similar
+        inst.startClient4("pi");
+        inst.setServer("6519"); // where TEAM=190, 294, etc, or use inst.setServer("hostname") or similar
         inst.startDSClient(); // recommended if running on DS computer; this gets the robot IP from the DS
         while (true) {
             try {
