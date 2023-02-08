@@ -379,6 +379,11 @@ public class Robot extends TimedRobot {
             if (!CompetitionBot) {
               leftMotor1.set(ControlMode.PercentOutput, speed);
               rightMotor1.set(ControlMode.PercentOutput, speed);
+            } else {
+              leftMotor1.set(ControlMode.PercentOutput, speed);
+              leftMotor2.set(ControlMode.PercentOutput, speed);
+              rightMotor1.set(ControlMode.PercentOutput, speed);
+              rightMotor2.set(ControlMode.PercentOutput, speed);
             }
         }
 
@@ -391,6 +396,14 @@ public class Robot extends TimedRobot {
               } else { // Right
                 leftMotor1.set(ControlMode.PercentOutput, turnSpeed);
               }
+            } else {
+              if (angle >= 1) { // Left
+                rightMotor1.set(ControlMode.PercentOutput, turnSpeed);
+                rightMotor2.set(ControlMode.PercentOutput, turnSpeed);
+              } else { // Right
+                leftMotor1.set(ControlMode.PercentOutput, turnSpeed);
+                leftMotor2.set(ControlMode.PercentOutput, turnSpeed);
+              }
             }
           }
         }
@@ -399,6 +412,11 @@ public class Robot extends TimedRobot {
           if (!CompetitionBot) {
             leftMotor1.set(ControlMode.PercentOutput, 0);
             rightMotor1.set(ControlMode.PercentOutput, 0);
+          } else {
+            leftMotor1.set(ControlMode.PercentOutput, 0);
+            leftMotor2.set(ControlMode.PercentOutput, 0);
+            rightMotor1.set(ControlMode.PercentOutput, 0);
+            rightMotor2.set(ControlMode.PercentOutput, 0);
           }
         }
 
