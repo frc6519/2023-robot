@@ -135,6 +135,10 @@ public class Robot extends TimedRobot {
           timer.reset();
           timer.start();
           teleopStatus = false;
+          if (m_autoSelected == kCustomAuto) {
+            System.out.println("Arm control mode on!");
+            armTesting = true;
+          }
         }
 
       /** 
