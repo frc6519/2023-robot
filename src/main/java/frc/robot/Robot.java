@@ -66,6 +66,7 @@ public class Robot extends TimedRobot {
         private final boolean debugButtons = false; // When a button is pressed we print out the buttons id, for easy debugging
         private boolean macrosEnabled = true;
         private float turnSpeed = 0.2f;
+        private boolean armTesting = false; // Don't change, this updates automatically
 
     // Accelerometer
       Accelerometer accelerometer = new BuiltInAccelerometer(); 
@@ -185,13 +186,7 @@ public class Robot extends TimedRobot {
               /*
                * Put untested autonomous code here!
                */
-              /*
-               * Arm power test
-               * (!) Do not run, very untested no thought went into it (!)
-               */
-              if (between(0, 1, time)) {
-                armMotor1.set(ControlMode.Position,1);
-              }
+              armTesting = true;
               break;
             case kDefaultAuto:
             default:
@@ -257,6 +252,10 @@ public class Robot extends TimedRobot {
             }
           }
           if (!autoBalance) { // Autobalance is disabled
+            if (armTesting) { // Arm testing, temporary
+              armMotor1.set(ControlMode.Position,xcontroller.getLeftTriggerAxis()/3);
+              System.out.println("Set arm motor to position: "+xcontroller.getLeftTriggerAxis()/3);
+            }
             if (XboxMode) { // Xbox
               if (!CompetitionBot) {
                 leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
