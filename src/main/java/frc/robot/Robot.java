@@ -3,6 +3,8 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
+import javax.xml.xpath.XPathConstants;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
@@ -253,6 +255,7 @@ public class Robot extends TimedRobot {
           }
           if (!autoBalance) { // Autobalance is disabled
             if (armTesting) { // Arm testing, temporary
+              System.out.println(xcontroller.getLeftTriggerAxis()/3);
               armMotor1.set(ControlMode.Position,xcontroller.getLeftTriggerAxis()/3);
               System.out.println("Set arm motor to position: "+xcontroller.getLeftTriggerAxis()/3);
             }
