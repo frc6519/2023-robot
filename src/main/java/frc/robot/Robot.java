@@ -82,7 +82,6 @@ public class Robot extends TimedRobot {
   // (Hover mouse over functions for their definitions.)
 
     // Initialization - Code that starts (initializes) under certain conditions.
-
       @Override
       public void robotInit() {
         timer.reset();
