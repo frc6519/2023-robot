@@ -67,7 +67,6 @@ public class Robot extends TimedRobot {
         private final boolean debugButtons = false; // When a button is pressed we print out the buttons id, for easy debugging
         private boolean macrosEnabled = true;
         private float turnSpeed = 0.2f;
-        private boolean armTesting = false; // Don't change, this updates automatically
         private double armPosition = 0;
 
     // Accelerometer
@@ -135,10 +134,6 @@ public class Robot extends TimedRobot {
           timer.reset();
           timer.start();
           teleopStatus = false;
-          if (m_autoSelected == kCustomAuto) {
-            System.out.println("Arm control mode on!");
-            armTesting = true;
-          }
         }
 
       /** 
@@ -191,7 +186,6 @@ public class Robot extends TimedRobot {
               /*
                * Put untested autonomous code here!
                */
-              armTesting = true;
               break;
             case kDefaultAuto:
             default:
@@ -268,12 +262,9 @@ public class Robot extends TimedRobot {
             }
           }
           if (!autoBalance) { // Autobalance is disabled
-            if (armTesting) { // Arm testing, temporary
-              System.out.println(xcontroller.getLeftTriggerAxis()/3);
-              armMotor1.set(ControlMode.Position,xcontroller.getLeftTriggerAxis()/3);
-              System.out.println("Set arm motor to position: "+xcontroller.getLeftTriggerAxis()/3);
-              armPosition = (xcontroller.getLeftTriggerAxis()/3);
-            }
+             /*
+              *   Specific arm testing is no longer needed, will remove comment before merge
+              */
             if (XboxMode) { // Xbox
               if (!CompetitionBot) {
                 leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
@@ -283,6 +274,10 @@ public class Robot extends TimedRobot {
                 leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
                 rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
                 rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
+                if (!usingKeyboard) {
+                  armMotor1.set(ControlMode.Position,xcontroller.getLeftTriggerAxis()/3);
+                  armPosition = (xcontroller.getLeftTriggerAxis()/3);
+                }
               }
             } else if (PS4Mode) { // PS4
               if (!CompetitionBot) {
