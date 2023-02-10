@@ -26,7 +26,7 @@ public class Robot extends TimedRobot {
     private static final boolean PS4Mode = false;
 
   // Toggles between Comp. Bot & Test Bot.
-    private static final boolean CompetitionBot = false;
+    private static final boolean CompetitionBot = true;
 
   // Do you have a keyboard connected?
     private static final boolean usingKeyboard = false;
@@ -44,13 +44,13 @@ public class Robot extends TimedRobot {
       private boolean autoBalance = false;
 
     // Drivetrain
-      private final TalonSRX leftMotor1 = new TalonSRX(0); 
-      private final TalonSRX rightMotor1 = new TalonSRX(1);
-      private final TalonSRX leftMotor2 = new TalonSRX(2);
-      private final TalonSRX rightMotor2 = new TalonSRX(3);
+      private final TalonSRX leftMotor1 = new TalonSRX(1); 
+      private final TalonSRX rightMotor1 = new TalonSRX(2);
+      private final TalonSRX leftMotor2 = new TalonSRX(3);
+      private final TalonSRX rightMotor2 = new TalonSRX(4);
 
     // Claw
-      private final TalonSRX armMotor1 = new TalonSRX(4);
+      private final TalonSRX armMotor1 = new TalonSRX(5);
 
     // Joystick
       private final Joystick joystick1 = new Joystick(0); 
@@ -60,11 +60,11 @@ public class Robot extends TimedRobot {
       // Xbox
         XboxController xcontroller =  new XboxController(0); 
       // Keyboard pretending to be a joystick
-        private final Joystick keyboard = new Joystick(2);
+        private final Joystick keyboard = new Joystick(1);
       // Customization options
         // joystick1 or joystick2 or xcontroller (Which joystick listens for macros); Don't forget to change variable type
         private final XboxController macroStick = xcontroller; 
-        private final boolean debugButtons = false; // When a button is pressed we print out the buttons id, for easy debugging
+        private final boolean debugButtons = true; // When a button is pressed we print out the buttons id, for easy debugging
         private boolean macrosEnabled = true;
         private float turnSpeed = 0.2f;
         private double armPosition = 0;
@@ -221,38 +221,46 @@ public class Robot extends TimedRobot {
               case 225: // Num 1
                 armMotor1.set(ControlMode.Position,0.05);
                 armPosition = 0.05;
+                System.out.println(armPosition);
                 break;
               case 180: // Num 2
                 if ((armPosition - 0.005) >= 0) {
                   armPosition = (armPosition - 0.005);
                   armMotor1.set(ControlMode.Position, armPosition);
+                  System.out.println(armPosition);
                 }
                 break;
               case 135: // Num 3
                 armMotor1.set(ControlMode.Position,0.05);
                 armPosition = 0.05;
+                System.out.println(armPosition);
                 break;
               case 270: // Num 4
                 armMotor1.set(ControlMode.Position,0.10);
                 armPosition = 0.10;
+                System.out.println(armPosition);
                 break;
               case 90: // Num 6
                 armMotor1.set(ControlMode.Position,0.10);
                 armPosition = 0.10;
+                System.out.println(armPosition);
                 break;
               case 315: // Num 7
                 armMotor1.set(ControlMode.Position,0.15);
                 armPosition = 0.15;
+                System.out.println(armPosition);
                 break;
               case 0: // Num 8
                 if ((armPosition + 0.005) <= 0.33) {
                   armPosition = (armPosition + 0.005);
                   armMotor1.set(ControlMode.Position, armPosition);
+                  System.out.println(armPosition);
                 }
                 break;
               case 45: // Num 9
                 armMotor1.set(ControlMode.Position,0.15);
                 armPosition = 0.15;
+                System.out.println(armPosition);
                 break;
               default:
                 if (debugButtons) {
@@ -275,7 +283,7 @@ public class Robot extends TimedRobot {
                 rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
                 rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
                 if (!usingKeyboard) {
-                  armMotor1.set(ControlMode.Position,xcontroller.getLeftTriggerAxis()/3);
+                  armMotor1.set(ControlMode.PercentOutput,xcontroller.getLeftTriggerAxis()/3);
                   armPosition = (xcontroller.getLeftTriggerAxis()/3);
                 }
               }
