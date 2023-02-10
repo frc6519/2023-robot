@@ -68,6 +68,7 @@ public class Robot extends TimedRobot {
         private boolean macrosEnabled = true;
         private float turnSpeed = 0.2f;
         private boolean armTesting = false; // Don't change, this updates automatically
+        private double armPosition = 0;
 
     // Accelerometer
       Accelerometer accelerometer = new BuiltInAccelerometer(); 
@@ -77,7 +78,6 @@ public class Robot extends TimedRobot {
       double yAccel = 0;
 
     // Gyroscope
-      // private final AHRS ahrs = new AHRS();
       private static final AHRS ahrs = new AHRS(Port.kUSB); 
 
   // Functions/Methods
@@ -217,7 +217,6 @@ public class Robot extends TimedRobot {
         @Override
         public void teleopPeriodic() {
           if (macrosEnabled && teleopStatus) {
-            // int num = keyboard.getPOV();
             int num;
             if (usingKeyboard) {
               num = keyboard.getPOV();
@@ -226,28 +225,36 @@ public class Robot extends TimedRobot {
             }
             switch(num) {
               case 225: // Num 1
-                System.out.println("1");
+                armMotor1.set(ControlMode.Position,0.05);
+                armPosition = 0.05;
                 break;
               case 180: // Num 2
-                System.out.println("2");
+                armPosition = (armPosition - 0.005);
+                armMotor1.set(ControlMode.Position, armPosition);
                 break;
               case 135: // Num 3
-                System.out.println("3");
+                armMotor1.set(ControlMode.Position,0.05);
+                armPosition = 0.05;
                 break;
               case 270: // Num 4
-                System.out.println("4");
+                armMotor1.set(ControlMode.Position,0.10);
+                armPosition = 0.10;
                 break;
               case 90: // Num 6
-                System.out.println("6");
+                armMotor1.set(ControlMode.Position,0.10);
+                armPosition = 0.10;
                 break;
               case 315: // Num 7
-                System.out.println("7");
+                armMotor1.set(ControlMode.Position,0.15);
+                armPosition = 0.15;
                 break;
               case 0: // Num 8
-                System.out.println("8");
+                armPosition = (armPosition + 0.005);
+                armMotor1.set(ControlMode.Position, armPosition);
                 break;
               case 45: // Num 9
-                System.out.println("9");
+                armMotor1.set(ControlMode.Position,0.15);
+                armPosition = 0.15;
                 break;
               default:
                 if (debugButtons) {
@@ -261,6 +268,7 @@ public class Robot extends TimedRobot {
               System.out.println(xcontroller.getLeftTriggerAxis()/3);
               armMotor1.set(ControlMode.Position,xcontroller.getLeftTriggerAxis()/3);
               System.out.println("Set arm motor to position: "+xcontroller.getLeftTriggerAxis()/3);
+              armPosition = (xcontroller.getLeftTriggerAxis()/3);
             }
             if (XboxMode) { // Xbox
               if (!CompetitionBot) {
