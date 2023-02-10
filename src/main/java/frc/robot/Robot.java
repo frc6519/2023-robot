@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
@@ -25,7 +26,7 @@ public class Robot extends TimedRobot {
     private static final boolean PS4Mode = false;
 
   // Toggles between Comp. Bot & Test Bot.
-    private static final boolean CompetitionBot = false;
+    private static final boolean CompetitionBot = true;
 
   // Do you have a keyboard connected?
     private static final boolean usingKeyboard = false;
@@ -43,13 +44,13 @@ public class Robot extends TimedRobot {
       private boolean autoBalance = false;
 
     // Drivetrain
-      private final TalonSRX leftMotor1 = new TalonSRX(0); 
-      private final TalonSRX rightMotor1 = new TalonSRX(1);
-      private final TalonSRX leftMotor2 = new TalonSRX(2);
-      private final TalonSRX rightMotor2 = new TalonSRX(3);
+      private final TalonSRX leftMotor1 = new TalonSRX(1); 
+      private final TalonSRX rightMotor1 = new TalonSRX(2);
+      private final TalonSRX leftMotor2 = new TalonSRX(3);
+      private final TalonSRX rightMotor2 = new TalonSRX(4);
 
     // Claw
-      private final TalonSRX armMotor1 = new TalonSRX(4);
+      private final TalonSRX armMotor1 = new TalonSRX(5);
 
     // Joystick
       private final Joystick joystick1 = new Joystick(0); 
@@ -59,13 +60,14 @@ public class Robot extends TimedRobot {
       // Xbox
         XboxController xcontroller =  new XboxController(0); 
       // Keyboard pretending to be a joystick
-        private final Joystick keyboard = new Joystick(2);
+        private final Joystick keyboard = new Joystick(1);
       // Customization options
         // joystick1 or joystick2 or xcontroller (Which joystick listens for macros); Don't forget to change variable type
         private final XboxController macroStick = xcontroller; 
-        private final boolean debugButtons = false; // When a button is pressed we print out the buttons id, for easy debugging
+        private final boolean debugButtons = true; // When a button is pressed we print out the buttons id, for easy debugging
         private boolean macrosEnabled = true;
         private float turnSpeed = 0.2f;
+        private double armPosition = 0;
 
     // Accelerometer
       Accelerometer accelerometer = new BuiltInAccelerometer(); 
@@ -75,7 +77,6 @@ public class Robot extends TimedRobot {
       double yAccel = 0;
 
     // Gyroscope
-      // private final AHRS ahrs = new AHRS();
       private static final AHRS ahrs = new AHRS(Port.kUSB); 
 
   // Functions/Methods
@@ -91,9 +92,9 @@ public class Robot extends TimedRobot {
         SmartDashboard.putData("Auto choices", m_chooser);
         // Initialize motor variables
         leftMotor1.configFactoryDefault(); leftMotor1.set(ControlMode.PercentOutput, 0.00);
-        // leftMotor2.configFactoryDefault(); leftMotor2.set(ControlMode.PercentOutput, 0.00);
+        leftMotor2.configFactoryDefault(); leftMotor2.set(ControlMode.PercentOutput, 0.00);
         rightMotor1.configFactoryDefault(); rightMotor1.set(ControlMode.PercentOutput, 0.00);
-        // rightMotor2.configFactoryDefault(); rightMotor2.set(ControlMode.PercentOutput, 0.00);
+        rightMotor2.configFactoryDefault(); rightMotor2.set(ControlMode.PercentOutput, 0.00);
         armMotor1.configFactoryDefault(); armMotor1.set(ControlMode.PercentOutput, 0.00);
         if (!CompetitionBot) {
           leftMotor1.setInverted(true);
@@ -185,13 +186,6 @@ public class Robot extends TimedRobot {
               /*
                * Put untested autonomous code here!
                */
-              /*
-               * Arm power test
-               * (!) Do not run, very untested no thought went into it (!)
-               */
-              if (between(0, 1, time)) {
-                armMotor1.set(ControlMode.Position,1);
-              }
               break;
             case kDefaultAuto:
             default:
@@ -217,7 +211,6 @@ public class Robot extends TimedRobot {
         @Override
         public void teleopPeriodic() {
           if (macrosEnabled && teleopStatus) {
-            // int num = keyboard.getPOV();
             int num;
             if (usingKeyboard) {
               num = keyboard.getPOV();
@@ -226,28 +219,48 @@ public class Robot extends TimedRobot {
             }
             switch(num) {
               case 225: // Num 1
-                System.out.println("1");
+                armMotor1.set(ControlMode.Position,0.05);
+                armPosition = 0.05;
+                System.out.println(armPosition);
                 break;
               case 180: // Num 2
-                System.out.println("2");
+                if ((armPosition - 0.005) >= 0) {
+                  armPosition = (armPosition - 0.005);
+                  armMotor1.set(ControlMode.Position, armPosition);
+                  System.out.println(armPosition);
+                }
                 break;
               case 135: // Num 3
-                System.out.println("3");
+                armMotor1.set(ControlMode.Position,0.05);
+                armPosition = 0.05;
+                System.out.println(armPosition);
                 break;
               case 270: // Num 4
-                System.out.println("4");
+                armMotor1.set(ControlMode.Position,0.10);
+                armPosition = 0.10;
+                System.out.println(armPosition);
                 break;
               case 90: // Num 6
-                System.out.println("6");
+                armMotor1.set(ControlMode.Position,0.10);
+                armPosition = 0.10;
+                System.out.println(armPosition);
                 break;
               case 315: // Num 7
-                System.out.println("7");
+                armMotor1.set(ControlMode.Position,0.15);
+                armPosition = 0.15;
+                System.out.println(armPosition);
                 break;
               case 0: // Num 8
-                System.out.println("8");
+                if ((armPosition + 0.005) <= 0.33) {
+                  armPosition = (armPosition + 0.005);
+                  armMotor1.set(ControlMode.Position, armPosition);
+                  System.out.println(armPosition);
+                }
                 break;
               case 45: // Num 9
-                System.out.println("9");
+                armMotor1.set(ControlMode.Position,0.15);
+                armPosition = 0.15;
+                System.out.println(armPosition);
                 break;
               default:
                 if (debugButtons) {
@@ -257,6 +270,9 @@ public class Robot extends TimedRobot {
             }
           }
           if (!autoBalance) { // Autobalance is disabled
+             /*
+              *   Specific arm testing is no longer needed, will remove comment before merge
+              */
             if (XboxMode) { // Xbox
               if (!CompetitionBot) {
                 leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
@@ -266,6 +282,10 @@ public class Robot extends TimedRobot {
                 leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
                 rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
                 rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
+                if (!usingKeyboard) {
+                  armMotor1.set(ControlMode.PercentOutput,xcontroller.getLeftTriggerAxis()/3);
+                  armPosition = (xcontroller.getLeftTriggerAxis()/3);
+                }
               }
             } else if (PS4Mode) { // PS4
               if (!CompetitionBot) {
