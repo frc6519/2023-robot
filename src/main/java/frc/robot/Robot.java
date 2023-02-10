@@ -229,8 +229,10 @@ public class Robot extends TimedRobot {
                 armPosition = 0.05;
                 break;
               case 180: // Num 2
-                armPosition = (armPosition - 0.005);
-                armMotor1.set(ControlMode.Position, armPosition);
+                if ((armPosition - 0.005) >= 0) {
+                  armPosition = (armPosition - 0.005);
+                  armMotor1.set(ControlMode.Position, armPosition);
+                }
                 break;
               case 135: // Num 3
                 armMotor1.set(ControlMode.Position,0.05);
@@ -249,8 +251,10 @@ public class Robot extends TimedRobot {
                 armPosition = 0.15;
                 break;
               case 0: // Num 8
-                armPosition = (armPosition + 0.005);
-                armMotor1.set(ControlMode.Position, armPosition);
+                if ((armPosition + 0.005) <= 0.33) {
+                  armPosition = (armPosition + 0.005);
+                  armMotor1.set(ControlMode.Position, armPosition);
+                }
                 break;
               case 45: // Num 9
                 armMotor1.set(ControlMode.Position,0.15);
