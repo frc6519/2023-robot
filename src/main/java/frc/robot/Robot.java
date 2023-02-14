@@ -6,8 +6,6 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import edu.wpi.first.wpilibj.BuiltInAccelerometer;
-import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,46 +24,35 @@ public class Robot extends TimedRobot {
 
   // Declares default variables & device ports.
 
-    // Default (Auto-Generated)
-      private final Timer timer = new Timer();
-      private static final String kDefaultAuto = "Default";
-      private static final String kCustomAuto = "My Auto";
-      private String m_autoSelected;
-      private final SendableChooser<String> m_chooser = new SendableChooser<>();
-      private boolean teleopStatus = false;  
-      private boolean autoBalance = false;
-
-    // Drivetrain
-      private final TalonSRX leftMotor1 = new TalonSRX(1); 
-      private final TalonSRX rightMotor1 = new TalonSRX(2);
-      private final TalonSRX leftMotor2 = new TalonSRX(3);
-      private final TalonSRX rightMotor2 = new TalonSRX(4);
-
-    // Claw
-      private final TalonSRX armMotor1 = new TalonSRX(5);
-
-    // Xbox
-      XboxController xcontroller =  new XboxController(0); 
-    // Keyboard pretending to be a joystick
-      private final Joystick keyboard = new Joystick(1);
-    // Customization options
-      // joystick1 or joystick2 or xcontroller (Which joystick listens for macros); Don't forget to change variable type
-      private final XboxController macroStick = xcontroller; 
-      private final boolean debugButtons = false; // When a button is pressed we print out the buttons id, for easy debugging
-      private boolean macrosEnabled = true;
-      private float turnSpeed = 0.2f;
-      private double armPosition = 0;
-      private int pitchOffset = 0;
-
-    // Accelerometer
-      Accelerometer accelerometer = new BuiltInAccelerometer(); 
-      double prevXAccel = 0;
-      double prevYAccel = 0;
-      double xAccel = 0;
-      double yAccel = 0;
-
-    // Gyroscope
-      private static final AHRS ahrs = new AHRS(Port.kUSB); 
+  // Default (Auto-Generated)
+    private final Timer timer = new Timer();
+    private static final String kDefaultAuto = "Default";
+    private static final String kCustomAuto = "My Auto";
+    private String m_autoSelected;
+    private final SendableChooser<String> m_chooser = new SendableChooser<>();
+    private boolean teleopStatus = false;  
+    private boolean autoBalance = false;
+  // Drivetrain
+    private final TalonSRX leftMotor1 = new TalonSRX(1); 
+    private final TalonSRX rightMotor1 = new TalonSRX(2);
+    private final TalonSRX leftMotor2 = new TalonSRX(3);
+    private final TalonSRX rightMotor2 = new TalonSRX(4);
+  // Claw
+    private final TalonSRX armMotor1 = new TalonSRX(5);
+  // Xbox
+    XboxController xcontroller =  new XboxController(0); 
+  // Keyboard pretending to be a joystick
+    private final Joystick keyboard = new Joystick(1);
+  // Customization options
+    // joystick1 or joystick2 or xcontroller (Which joystick listens for macros); Don't forget to change variable type
+    private final XboxController macroStick = xcontroller; 
+    private final boolean debugButtons = false; // When a button is pressed we print out the buttons id, for easy debugging
+    private boolean macrosEnabled = true;
+    private float turnSpeed = 0.2f;
+    private double armPosition = 0;
+    private int pitchOffset = 0;
+  // Gyroscope
+    private static final AHRS ahrs = new AHRS(Port.kUSB); 
 
   // Functions/Methods
       @Override
@@ -129,13 +116,7 @@ public class Robot extends TimedRobot {
     // Periodic - Code that runs constantly under certain conditions.
 
         @Override
-        public void robotPeriodic() {
-          // Accelorometer
-          double xAccel = accelerometer.getX();
-          double yAccel = accelerometer.getY();
-          prevXAccel = xAccel;
-          prevYAccel = yAccel;
-        }
+        public void robotPeriodic() {}
 
         @Override
         public void autonomousPeriodic() {
