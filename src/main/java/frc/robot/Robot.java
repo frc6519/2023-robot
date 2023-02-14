@@ -55,6 +55,7 @@ public class Robot extends TimedRobot {
       private boolean macrosEnabled = true;
       private float turnSpeed = 0.2f;
       private double armPosition = 0;
+      private int pitchOffset = 0;
 
     // Accelerometer
       Accelerometer accelerometer = new BuiltInAccelerometer(); 
@@ -205,7 +206,6 @@ public class Robot extends TimedRobot {
                 }
                 break;
             }
-            System.out.println(armPosition);
           }
           if (!autoBalance) {
             leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
@@ -249,20 +249,15 @@ public class Robot extends TimedRobot {
 
         public void autoBalancePeriodic() {
           if (ahrs.isCalibrating()) {
-            System.out.println("Calibrating..");
+            System.out.println("The Gryo is calibrating..");
           } else if (!ahrs.isConnected()) {
-            System.out.println("Gyro not connected!");
+            System.out.println("The Gyro not connected or cannot be read.");
           } else {
             double pitch = ahrs.getPitch();
-            double roll = ahrs.getRoll();
-            double yaw = ahrs.getYaw();
-            System.out.println("autoBalancePeriodic: \nPitch: "+pitch+"\nRoll: "+roll+"\nYaw: "+yaw);
-            if (pitch >= 7) {
-              // Drive backwards
+            if (pitch >= (5+pitchOffset)) {
               System.out.println("Go backwards");
               drive(-0.25);
-            } else if (pitch <= -3) {
-              // Drive forwards
+            } else if (pitch <= (-5+pitchOffset)) {
               System.out.println("Go forwards");
               drive(0.25);
             } else {
