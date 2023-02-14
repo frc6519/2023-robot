@@ -22,7 +22,7 @@ import com.kauailabs.navx.frc.AHRS;
 public class Robot extends TimedRobot {
 
   // Do you have a keyboard connected?
-    private static final boolean usingKeyboard = false;
+    private static final boolean usingKeyboard = true;
 
   // Declares default variables & device ports.
 
@@ -51,7 +51,7 @@ public class Robot extends TimedRobot {
     // Customization options
       // joystick1 or joystick2 or xcontroller (Which joystick listens for macros); Don't forget to change variable type
       private final XboxController macroStick = xcontroller; 
-      private final boolean debugButtons = true; // When a button is pressed we print out the buttons id, for easy debugging
+      private final boolean debugButtons = false; // When a button is pressed we print out the buttons id, for easy debugging
       private boolean macrosEnabled = true;
       private float turnSpeed = 0.2f;
       private double armPosition = 0;
@@ -106,7 +106,7 @@ public class Robot extends TimedRobot {
        * This function is called once when teleop is enabled. -- Important*/ 
         @Override
         public void teleopInit() {
-          macrosEnabled = false;
+          macrosEnabled = true;
           teleopStatus = true;
         }
 
@@ -163,11 +163,7 @@ public class Robot extends TimedRobot {
         public void teleopPeriodic() {
           if (macrosEnabled && teleopStatus) {
             int num;
-            if (usingKeyboard) {
-              num = keyboard.getPOV();
-            } else {
-              num = -1;
-            }
+            num = keyboard.getPOV();
             switch(num) {
               case 225: // Num 1
                 armMotors(0.05);
@@ -175,13 +171,16 @@ public class Robot extends TimedRobot {
               case 180: // Num 2
                 if ((armPosition - 0.005) >= 0) {
                   armPosition = (armPosition - 0.005);
-                  armMotors(armPosition);
+                } else {
+                  armPosition = 0;
                 }
+                armMotors(armPosition);
                 break;
               case 135: // Num 3
                 armMotors(0.05);
                 break;
               case 270: // Num 4
+                armMotors(0.10);
                 break;
               case 90: // Num 6
                 armMotors(0.10);
@@ -190,10 +189,12 @@ public class Robot extends TimedRobot {
                 armMotors(0.15);
                 break;
               case 0: // Num 8
-                if ((armPosition + 0.005) <= 0.33) {
+                if ((armPosition + 0.005) <= 0.15) {
                   armPosition = (armPosition + 0.005);
-                  armMotors(armPosition);
+                } else {
+                  armPosition = 0.15;
                 }
+                armMotors(armPosition);
                 break;
               case 45: // Num 9
                 armMotors(0.15);
@@ -204,6 +205,7 @@ public class Robot extends TimedRobot {
                 }
                 break;
             }
+            System.out.println(armPosition);
           }
           if (!autoBalance) {
             leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
