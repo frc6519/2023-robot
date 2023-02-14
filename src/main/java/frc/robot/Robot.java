@@ -7,8 +7,6 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
@@ -26,10 +24,6 @@ public class Robot extends TimedRobot {
 
   // Default (Auto-Generated)
     private final Timer timer = new Timer();
-    private static final String kDefaultAuto = "Default";
-    private static final String kCustomAuto = "My Auto";
-    private String m_autoSelected;
-    private final SendableChooser<String> m_chooser = new SendableChooser<>();
     private boolean teleopStatus = false;  
     private boolean autoBalance = false;
   // Drivetrain
@@ -58,9 +52,6 @@ public class Robot extends TimedRobot {
       @Override
       public void robotInit() {
         timer.reset();
-        m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-        m_chooser.addOption("Custom Auto", kCustomAuto);
-        SmartDashboard.putData("Auto choices", m_chooser);
         // Initialize motor variables
         leftMotor1.configFactoryDefault(); leftMotor1.set(ControlMode.PercentOutput, 0.00);
         leftMotor2.configFactoryDefault(); leftMotor2.set(ControlMode.PercentOutput, 0.00);
@@ -81,9 +72,6 @@ public class Robot extends TimedRobot {
         @Override
         public void autonomousInit() {
           System.out.println("Autonomous Time!");
-          m_autoSelected = m_chooser.getSelected();
-          m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-          System.out.println("Auto selected: " + m_autoSelected);
           macrosEnabled = false;
           timer.reset();
           timer.start();
@@ -121,22 +109,16 @@ public class Robot extends TimedRobot {
         @Override
         public void autonomousPeriodic() {
           int time = (int) timer.get();
-          switch (m_autoSelected) {
-            case kCustomAuto:
-              break;
-            case kDefaultAuto:
-            default:
-              if (between(0,2,time)) {
-                drive(0.2);
-              } else if (between(3, 4,time)) {
-                drive(-0.2);
-              } else if (between(5, 6, time)) {
-                rotate(-90);
-              } else if (between(7, 8, time)) {
-                rotate(90);
-              } else {
-                resetMotors();
-              }
+          if (between(0,2,time)) {
+            drive(0.2);
+          } else if (between(3, 4,time)) {
+            drive(-0.2);
+          } else if (between(5, 6, time)) {
+            rotate(-90);
+          } else if (between(7, 8, time)) {
+            rotate(90);
+          } else {
+            resetMotors();
           }
         }
 
