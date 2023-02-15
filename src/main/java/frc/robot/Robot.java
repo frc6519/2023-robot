@@ -78,30 +78,11 @@ public class Robot extends TimedRobot {
           teleopStatus = false;
         }
 
-      /** 
-       * This function is called once when teleop is enabled. -- Important*/ 
         @Override
         public void teleopInit() {
           macrosEnabled = true;
           teleopStatus = true;
         }
-
-      /** 
-       * This function is called once when the robot is disabled. */
-        @Override
-        public void disabledInit() {}
-
-      /** 
-       * This function is called once when the robot is first started up. */
-        @Override
-        public void simulationInit() {}
-
-      /** 
-       * This function is called once when test mode is enabled. */
-        @Override
-        public void testInit() {}
-
-    // Periodic - Code that runs constantly under certain conditions.
 
         @Override
         public void robotPeriodic() {}
@@ -199,16 +180,6 @@ public class Robot extends TimedRobot {
             }
           }
         }
-
-
-        @Override
-        public void disabledPeriodic() {}
-
-        @Override
-        public void testPeriodic() {}
-
-        @Override
-        public void simulationPeriodic() {}
 
         public void autoBalancePeriodic() {
           if (ahrs.isCalibrating()) {
