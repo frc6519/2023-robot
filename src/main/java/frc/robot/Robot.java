@@ -16,8 +16,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 public class Robot extends TimedRobot {
   // Autonomous & Teleop vars
-  private final Timer timer = new Timer();
-  private boolean teleopStatus = false;  
+  private final Timer timer = new Timer(); 
   private boolean autoBalance = false;
   // Motors
   private final TalonSRX leftMotor1 = new TalonSRX(1); 
@@ -55,13 +54,10 @@ public class Robot extends TimedRobot {
     System.out.println("Autonomous Time!");
     timer.reset();
     timer.start();
-    teleopStatus = false;
   }
 
   @Override
-  public void teleopInit() {
-    teleopStatus = true;
-  }
+  public void teleopInit() {}
 
   @Override
   public void robotPeriodic() {}
@@ -96,7 +92,7 @@ public class Robot extends TimedRobot {
       rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
       armMotors(xcontroller.getLeftTriggerAxis()/6);
     } else {
-      if (teleopStatus && autoBalance) {
+      if (autoBalance) {
         autoBalancePeriodic();
       }
     }
