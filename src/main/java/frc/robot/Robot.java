@@ -17,7 +17,7 @@ import com.kauailabs.navx.frc.AHRS;
 public class Robot extends TimedRobot {
 
   // Do you have a keyboard connected?
-    private static final boolean usingKeyboard = true;
+    private static final boolean usingKeyboard = false;
 
   // Declares default variables & device ports.
 
@@ -34,7 +34,6 @@ public class Robot extends TimedRobot {
     private final TalonSRX armMotor1 = new TalonSRX(5);
   // Xbox
     XboxController xcontroller =  new XboxController(0);
-    XboxController armController = new XboxController(1);
   // Customization options
     // joystick1 or joystick2 or xcontroller (Which joystick listens for macros); Don't forget to change variable type
     private final XboxController macroStick = xcontroller; 
@@ -110,7 +109,8 @@ public class Robot extends TimedRobot {
             rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
             rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
             if (!usingKeyboard) {
-              armMotors(armController.getRightTriggerAxis());
+              armMotors(xcontroller.getLeftTriggerAxis()/6);
+              System.out.println(xcontroller.getLeftTriggerAxis()/6);
             }
           } else {
             if (teleopStatus && autoBalance) {
@@ -190,5 +190,6 @@ public class Robot extends TimedRobot {
 
         public void armMotors(double power) {
           armMotor1.set(ControlMode.Position,power);
+          System.out.println(power);
         }
       }
