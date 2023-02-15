@@ -33,6 +33,7 @@ public class Robot extends TimedRobot {
   private final boolean debugButtons = false; // When a button is pressed we print out the buttons id, for easy debugging
   private float turnSpeed = 0.2f;
   private int pitchOffset = 0;
+  private double currentAngle;
   // Gyroscope
   private static final AHRS ahrs = new AHRS(Port.kUSB); 
 
@@ -60,7 +61,9 @@ public class Robot extends TimedRobot {
   public void teleopInit() {}
 
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic() {
+    currentAngle = ahrs.getYaw();
+  }
 
   @Override
   public void autonomousPeriodic() {
@@ -72,7 +75,7 @@ public class Robot extends TimedRobot {
     } else if (between(5, 6, time)) {
       rotate(-90);
     } else if (between(7, 8, time)) {
-      rotate(90);
+      rotate(0);
     } else {
       resetMotors();
     }
@@ -140,7 +143,6 @@ public class Robot extends TimedRobot {
   }
 
   public void rotate(double angle) {
-    double currentAngle = ahrs.getYaw();
     if (!between(angle-1,angle+1,currentAngle)) {
       if (angle >= 1) {
         rightMotor1.set(ControlMode.PercentOutput, turnSpeed);
