@@ -103,52 +103,60 @@ public class Robot extends TimedRobot {
           }
         }
 
+        @Override
+        public void disabledPeriodic() {};
+        @Override
+        public void simulationPeriodic() {};
 
         @Override
         public void teleopPeriodic() {
           if (macrosEnabled && teleopStatus) {
-            int num;
-            num = keyboard.getPOV();
-            switch(num) {
-              case 225: // Num 1
-                armMotors(0.05);
-                break;
-              case 180: // Num 2
-                if ((armPosition - 0.005) >= 0) {
-                  armPosition = (armPosition - 0.005);
-                } else {
-                  armPosition = 0;
-                }
-                armMotors(armPosition);
-                break;
-              case 135: // Num 3
-                armMotors(0.05);
-                break;
-              case 270: // Num 4
-                armMotors(0.10);
-                break;
-              case 90: // Num 6
-                armMotors(0.10);
-                break;
-              case 315: // Num 7
-                armMotors(0.15);
-                break;
-              case 0: // Num 8
-                if ((armPosition + 0.005) <= 0.15) {
-                  armPosition = (armPosition + 0.005);
-                } else {
-                  armPosition = 0.15;
-                }
-                armMotors(armPosition);
-                break;
-              case 45: // Num 9
-                armMotors(0.15);
-                break;
-              default:
-                if (debugButtons) {
-                  System.out.println("Button Pressed: "+num);
-                }
-                break;
+            if (keyboard.isConnected()) {
+              int num = keyboard.getPOV();
+              switch(num) {
+                case 225: // Num 1
+                  armMotors(0.05);
+                  break;
+                case 180: // Num 2
+                  if ((armPosition - 0.005) >= 0) {
+                    armPosition = (armPosition - 0.0025);
+                  } else {
+                    armPosition = 0;
+                  }
+                  armMotors(armPosition);
+                  break;
+                case 135: // Num 3
+                  armMotors(0.05);
+                  break;
+                case 270: // Num 4
+                  armMotors(0.10);
+                  break;
+                case 90: // Num 6
+                  armMotors(0.10);
+                  break;
+                case 315: // Num 7
+                  armMotors(0.15);
+                  break;
+                case 0: // Num 8
+                  if ((armPosition + 0.005) <= 0.15) {
+                    armPosition = (armPosition + 0.0025);
+                  } else {
+                    armPosition = 0.15;
+                  }
+                  armMotors(armPosition);
+                  break;
+                case 45: // Num 9
+                  armMotors(0.15);
+                  break;
+                default:
+                  if (debugButtons) {
+                    System.out.println("Button Pressed: "+num);
+                  }
+                  break;
+              }
+              System.out.println(armPosition);
+            } else {
+              System.out.println("Keyboard not detected!");
             }
           }
           if (!autoBalance) {
