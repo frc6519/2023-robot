@@ -16,9 +16,6 @@ import com.kauailabs.navx.frc.AHRS;
 
 public class Robot extends TimedRobot {
 
-  // Do you have a keyboard connected?
-    private static final boolean usingKeyboard = false;
-
   // Declares default variables & device ports.
 
   // Default (Auto-Generated)
@@ -108,16 +105,13 @@ public class Robot extends TimedRobot {
             leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
             rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
             rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
-            if (!usingKeyboard) {
-              armMotors(xcontroller.getLeftTriggerAxis()/6);
-              System.out.println(xcontroller.getLeftTriggerAxis()/6);
-            }
+            armMotors(xcontroller.getLeftTriggerAxis()/6);
           } else {
             if (teleopStatus && autoBalance) {
               autoBalancePeriodic();
             }
           }
-          for (int i = 0; i < macroStick.getButtonCount(); i++) {
+          for (int i = 1; i < macroStick.getButtonCount(); i++) {
             if (macroStick.getRawButtonPressed(i)) {
               switch(i) {
                 case 3:
@@ -190,6 +184,5 @@ public class Robot extends TimedRobot {
 
         public void armMotors(double power) {
           armMotor1.set(ControlMode.Position,power);
-          System.out.println(power);
         }
       }
