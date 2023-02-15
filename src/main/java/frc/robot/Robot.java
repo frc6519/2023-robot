@@ -15,14 +15,11 @@ import edu.wpi.first.cameraserver.CameraServer;
 import com.kauailabs.navx.frc.AHRS;
 
 public class Robot extends TimedRobot {
-
-  // Declares default variables & device ports.
-
-  // Default (Auto-Generated)
+  // Autonomous & Teleop vars
     private final Timer timer = new Timer();
     private boolean teleopStatus = false;  
     private boolean autoBalance = false;
-  // Drivetrain
+  // Motors
     private final TalonSRX leftMotor1 = new TalonSRX(1); 
     private final TalonSRX rightMotor1 = new TalonSRX(2);
     private final TalonSRX leftMotor2 = new TalonSRX(3);
@@ -44,20 +41,12 @@ public class Robot extends TimedRobot {
       @Override
       public void robotInit() {
         timer.reset();
-        // Initialize motor variables
         leftMotor1.configFactoryDefault(); leftMotor1.set(ControlMode.PercentOutput, 0.00);
         leftMotor2.configFactoryDefault(); leftMotor2.set(ControlMode.PercentOutput, 0.00);
         rightMotor1.configFactoryDefault(); rightMotor1.set(ControlMode.PercentOutput, 0.00);
         rightMotor2.configFactoryDefault(); rightMotor2.set(ControlMode.PercentOutput, 0.00);
         armMotor1.configFactoryDefault(); armMotor1.set(ControlMode.PercentOutput, 0.00);
-
         ahrs.calibrate();
-
-        /*
-         * (On roborio)
-         * 0 - Microsoft Camera
-         * 1 - Limelight (Not present yet)
-         */ 
         CameraServer.startAutomaticCapture(0);
       }
 
@@ -157,10 +146,10 @@ public class Robot extends TimedRobot {
         public void rotate(double angle) {
           double currentAngle = ahrs.getYaw();
           if (!between(angle-1,angle+1,currentAngle)) {
-            if (angle >= 1) { // Left
+            if (angle >= 1) {
               rightMotor1.set(ControlMode.PercentOutput, turnSpeed);
               rightMotor2.set(ControlMode.PercentOutput, turnSpeed);
-            } else { // Right
+            } else {
               leftMotor1.set(ControlMode.PercentOutput, turnSpeed);
               leftMotor2.set(ControlMode.PercentOutput, turnSpeed);
             }
