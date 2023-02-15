@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
@@ -34,16 +33,13 @@ public class Robot extends TimedRobot {
   // Claw
     private final TalonSRX armMotor1 = new TalonSRX(5);
   // Xbox
-    XboxController xcontroller =  new XboxController(0); 
-  // Keyboard pretending to be a joystick
-    private final Joystick keyboard = new Joystick(1);
+    XboxController xcontroller =  new XboxController(0);
+    XboxController armController = new XboxController(1);
   // Customization options
     // joystick1 or joystick2 or xcontroller (Which joystick listens for macros); Don't forget to change variable type
     private final XboxController macroStick = xcontroller; 
     private final boolean debugButtons = false; // When a button is pressed we print out the buttons id, for easy debugging
-    private boolean macrosEnabled = true;
     private float turnSpeed = 0.2f;
-    private double armPosition = 0;
     private int pitchOffset = 0;
   // Gyroscope
     private static final AHRS ahrs = new AHRS(Port.kUSB); 
@@ -72,7 +68,6 @@ public class Robot extends TimedRobot {
         @Override
         public void autonomousInit() {
           System.out.println("Autonomous Time!");
-          macrosEnabled = false;
           timer.reset();
           timer.start();
           teleopStatus = false;
@@ -80,7 +75,6 @@ public class Robot extends TimedRobot {
 
         @Override
         public void teleopInit() {
-          macrosEnabled = true;
           teleopStatus = true;
         }
 
@@ -110,63 +104,13 @@ public class Robot extends TimedRobot {
 
         @Override
         public void teleopPeriodic() {
-          if (macrosEnabled && teleopStatus) {
-            if (keyboard.isConnected()) {
-              int num = keyboard.getPOV();
-              switch(num) {
-                case 225: // Num 1
-                  armMotors(0.05);
-                  break;
-                case 180: // Num 2
-                  if ((armPosition - 0.005) >= 0) {
-                    armPosition = (armPosition - 0.0025);
-                  } else {
-                    armPosition = 0;
-                  }
-                  armMotors(armPosition);
-                  break;
-                case 135: // Num 3
-                  armMotors(0.05);
-                  break;
-                case 270: // Num 4
-                  armMotors(0.10);
-                  break;
-                case 90: // Num 6
-                  armMotors(0.10);
-                  break;
-                case 315: // Num 7
-                  armMotors(0.15);
-                  break;
-                case 0: // Num 8
-                  if ((armPosition + 0.005) <= 0.15) {
-                    armPosition = (armPosition + 0.0025);
-                  } else {
-                    armPosition = 0.15;
-                  }
-                  armMotors(armPosition);
-                  break;
-                case 45: // Num 9
-                  armMotors(0.15);
-                  break;
-                default:
-                  if (debugButtons) {
-                    System.out.println("Button Pressed: "+num);
-                  }
-                  break;
-              }
-              System.out.println(armPosition);
-            } else {
-              System.out.println("Keyboard not detected!");
-            }
-          }
           if (!autoBalance) {
             leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
             leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
             rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
             rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
             if (!usingKeyboard) {
-              armMotor1.set(ControlMode.PercentOutput,xcontroller.getLeftTriggerAxis()/3);
-              armPosition = (xcontroller.getLeftTriggerAxis()/3);
+              armMotors(armController.getRightTriggerAxis());
             }
           } else {
             if (teleopStatus && autoBalance) {
@@ -246,6 +190,5 @@ public class Robot extends TimedRobot {
 
         public void armMotors(double power) {
           armMotor1.set(ControlMode.Position,power);
-          armPosition = power;
         }
       }
