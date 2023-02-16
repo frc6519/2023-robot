@@ -21,8 +21,8 @@ public class Robot extends TimedRobot {
   private boolean autoBalance = false;
   // Motors
   private final TalonSRX leftMotor1 = new TalonSRX(1); 
-  private final TalonSRX rightMotor1 = new TalonSRX(2);
-  private final TalonSRX leftMotor2 = new TalonSRX(3);
+  private final TalonSRX rightMotor1 = new TalonSRX(3);
+  private final TalonSRX leftMotor2 = new TalonSRX(2);
   private final TalonSRX rightMotor2 = new TalonSRX(4);
   // Claw
   private final TalonSRX armMotor1 = new TalonSRX(5);
@@ -50,7 +50,8 @@ public class Robot extends TimedRobot {
     armMotor1.configFactoryDefault(); armMotor1.set(ControlMode.PercentOutput, 0.00);
     ahrs.calibrate();
     CameraServer.startAutomaticCapture(0);
-
+    leftMotor1.setInverted(true);
+    leftMotor2.setInverted(true);
     SmartDashboard.putString("Autobalance: ",String.valueOf(autoBalance));
     SmartDashboard.putString("Control Mode: ",controlMode);
     SmartDashboard.putNumber("Left Motor1 Output: ",0);
