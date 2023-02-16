@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.SerialPort.Port;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.cameraserver.CameraServer;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -25,15 +26,15 @@ public class Robot extends TimedRobot {
   private final TalonSRX rightMotor2 = new TalonSRX(4);
   // Claw
   private final TalonSRX armMotor1 = new TalonSRX(5);
-  // Xbox
+  // Xbox Controller
   XboxController xcontroller =  new XboxController(0);
   // Customization options
-  // joystick1 or joystick2 or xcontroller (Which joystick listens for macros); Don't forget to change variable type
   private final XboxController macroStick = xcontroller; 
   private final boolean debugButtons = false; // When a button is pressed we print out the buttons id, for easy debugging
   private float turnSpeed = 0.2f;
   private int pitchOffset = 0;
   private double currentAngle;
+  private String controlMode = "Disabled";
   // Gyroscope
   private static final AHRS ahrs = new AHRS(Port.kUSB); 
 
@@ -48,6 +49,9 @@ public class Robot extends TimedRobot {
     armMotor1.configFactoryDefault(); armMotor1.set(ControlMode.PercentOutput, 0.00);
     ahrs.calibrate();
     CameraServer.startAutomaticCapture(0);
+
+    SmartDashboard.putString("Autobalance: ",String.valueOf(autoBalance));
+    SmartDashboard.putString("Control Mode: ",controlMode);
   }
 
   @Override
@@ -55,14 +59,17 @@ public class Robot extends TimedRobot {
     System.out.println("Autonomous Time!");
     timer.reset();
     timer.start();
+    controlMode = "Autonomous";
   }
 
   @Override
-  public void teleopInit() {}
+  public void teleopInit() { controlMode = "Teleop";}
 
   @Override
   public void robotPeriodic() {
     currentAngle = ahrs.getYaw();
+    SmartDashboard.putString("Autobalance: ",String.valueOf(autoBalance));
+    SmartDashboard.putString("Control Mode: ",controlMode);
   }
 
   @Override
@@ -82,7 +89,7 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledPeriodic() {};
+  public void disabledPeriodic() {controlMode = "Disabled";};
   @Override
   public void simulationPeriodic() {};
 
@@ -93,11 +100,9 @@ public class Robot extends TimedRobot {
       leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
       rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
       rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
-      armMotors(xcontroller.getLeftTriggerAxis()/6);
+      armMotor(xcontroller.getLeftTriggerAxis()/6);
     } else {
-      if (autoBalance) {
-        autoBalancePeriodic();
-      }
+      autoBalancePeriodic();
     }
     for (int i = 1; i < macroStick.getButtonCount(); i++) {
       if (macroStick.getRawButtonPressed(i)) {
@@ -169,7 +174,7 @@ public class Robot extends TimedRobot {
     }
   }
 
-  public void armMotors(double power) {
+  public void armMotor(double power) {
     armMotor1.set(ControlMode.Position,power);
   }
 }
