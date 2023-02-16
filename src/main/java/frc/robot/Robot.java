@@ -34,7 +34,7 @@ public class Robot extends TimedRobot {
   private float turnSpeed = 0.2f;
   private int pitchOffset = 0;
   private double currentAngle;
-  private double upRateLimit = 2;
+  private int upRateLimit = 6;
   private String controlMode = "Disabled";
   // Gyroscope
   private static final AHRS ahrs = new AHRS(Port.kUSB); 
@@ -79,13 +79,15 @@ public class Robot extends TimedRobot {
       SmartDashboard.putNumber("Roll: ",ahrs.getRoll());
       SmartDashboard.putNumber("Pitch: ",ahrs.getPitch());
       SmartDashboard.putNumber("Yaw: ",ahrs.getYaw());
+      SmartDashboard.putBoolean("Gyro connected: ", true);
     } else {
       SmartDashboard.putNumber("Roll: ",-999);
       SmartDashboard.putNumber("Pitch: ",-999);
       SmartDashboard.putNumber("Yaw: ",-999);
+      SmartDashboard.putBoolean("Gyro connected: ", false);
     }
     SmartDashboard.putString("Control Mode: ",controlMode);
-    SmartDashboard.putNumber("Up speed rate limit: ", upRateLimit);
+    SmartDashboard.putNumber("Up speed rate limit: ", Integer.valueOf(upRateLimit));
   }
 
   @Override
@@ -137,10 +139,10 @@ public class Robot extends TimedRobot {
             System.out.println("Auto Balance: "+autoBalance);
             break;
           case 2:
-            if (upRateLimit == 2) {
+            if (upRateLimit == 3) {
               upRateLimit = 6;
             } else {
-              upRateLimit = 2;
+              upRateLimit = 3;
             }
             System.out.println("Up speed rate limit: "+upRateLimit);
             break;
