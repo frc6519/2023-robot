@@ -52,6 +52,7 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putString("Autobalance: ",String.valueOf(autoBalance));
     SmartDashboard.putString("Control Mode: ",controlMode);
+    SmartDashboard.putNumber("Arm Output: ",0);
   }
 
   @Override
@@ -69,6 +70,9 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     currentAngle = ahrs.getYaw();
     SmartDashboard.putString("Autobalance: ",String.valueOf(autoBalance));
+    SmartDashboard.putNumber("Roll: ",ahrs.getRoll());
+    SmartDashboard.putNumber("Pitch: ",ahrs.getPitch());
+    SmartDashboard.putNumber("Yaw: ",ahrs.getYaw());
     SmartDashboard.putString("Control Mode: ",controlMode);
   }
 
@@ -176,5 +180,6 @@ public class Robot extends TimedRobot {
 
   public void armMotor(double power) {
     armMotor1.set(ControlMode.Position,power);
+    SmartDashboard.putNumber("Arm Output: ",power);
   }
 }
