@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.cameraserver.CameraServer;
-
+import frc.robot.LimelightHelpers;
 import com.kauailabs.navx.frc.AHRS;
 
 public class Robot extends TimedRobot {
@@ -114,46 +114,51 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    if (!autoBalance) {
-      leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
-      leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
-      rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
-      rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
-      SmartDashboard.putNumber("Left Motor1 Output: ",xcontroller.getLeftY()/3);
-      SmartDashboard.putNumber("Left Motor2 Output: ",xcontroller.getLeftY()/3);
-      SmartDashboard.putNumber("Right Motor1 Output: ",xcontroller.getRightY()/3);
-      SmartDashboard.putNumber("Right Motor2 Output: ",xcontroller.getRightY()/3);
-      if (xcontroller.getLeftTriggerAxis() >= 0.01) {
-        armMotor(xcontroller.getLeftTriggerAxis()/upRateLimit);
-      } else {
-        armMotor(xcontroller.getRightTriggerAxis()/12*-1);
-      }
-      // armMotor(xcontroller.getRightTriggerAxis()/6*-1);
-    } else {
-      autoBalancePeriodic();
-    }
-    for (int i = 1; i < macroStick.getButtonCount(); i++) {
-      if (macroStick.getRawButtonPressed(i)) {
-        switch(i) {
-          case 3:
-            autoBalance = !autoBalance;
-            System.out.println("Auto Balance: "+autoBalance);
-            break;
-          case 2:
-            if (upRateLimit == 3) {
-              upRateLimit = 6;
-            } else {
-              upRateLimit = 3;
-            }
-            System.out.println("Up speed rate limit: "+upRateLimit);
-            break;
-          default:
-            if (debugButtons) {
-              System.out.println("Button Pressed: "+i);
-            }
-        }
-      }
-    }
+    // Limelight -- Temp
+    double targetXAxis = LimelightHelpers.getTX("");
+    double targetYAxis = LimelightHelpers.getTY("");
+    
+    System.out.println(targetXAxis+'\n'+targetYAxis);
+
+    // if (!autoBalance) {
+    //   leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
+    //   leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
+    //   rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
+    //   rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
+    //   SmartDashboard.putNumber("Left Motor1 Output: ",xcontroller.getLeftY()/3);
+    //   SmartDashboard.putNumber("Left Motor2 Output: ",xcontroller.getLeftY()/3);
+    //   SmartDashboard.putNumber("Right Motor1 Output: ",xcontroller.getRightY()/3);
+    //   SmartDashboard.putNumber("Right Motor2 Output: ",xcontroller.getRightY()/3);
+    //   if (xcontroller.getLeftTriggerAxis() >= 0.01) {
+    //     armMotor(xcontroller.getLeftTriggerAxis()/upRateLimit);
+    //   } else {
+    //     armMotor(xcontroller.getRightTriggerAxis()/12*-1);
+    //   }
+    // } else {
+    //   autoBalancePeriodic();
+    // }
+    // for (int i = 1; i < macroStick.getButtonCount(); i++) {
+    //   if (macroStick.getRawButtonPressed(i)) {
+    //     switch(i) {
+    //       case 3:
+    //         autoBalance = !autoBalance;
+    //         System.out.println("Auto Balance: "+autoBalance);
+    //         break;
+    //       case 2:
+    //         if (upRateLimit == 3) {
+    //           upRateLimit = 6;
+    //         } else {
+    //           upRateLimit = 3;
+    //         }
+    //         System.out.println("Up speed rate limit: "+upRateLimit);
+    //         break;
+    //       default:
+    //         if (debugButtons) {
+    //           System.out.println("Button Pressed: "+i);
+    //         }
+    //     }
+    //   }
+    // }
   }
 
   public void autoBalancePeriodic() {
