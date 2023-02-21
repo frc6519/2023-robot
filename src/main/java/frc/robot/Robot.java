@@ -36,7 +36,8 @@ public class Robot extends TimedRobot {
   private double currentAngle;
   private int upRateLimit = 6;
   private String controlMode = "Disabled";
-  private int limelightmode = 1;
+  private int limelightprofile = 0;
+  private final int maxlimelightprofiles = 2;
   // Gyroscope
   private static final AHRS ahrs = new AHRS(Port.kUSB); 
 
@@ -60,6 +61,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Right Motor1 Output: ",0);
     SmartDashboard.putNumber("Right Motor2 Output: ",0);
     SmartDashboard.putNumber("Arm Output: ",0);
+    SmartDashboard.putNumber("Pipeline: ", limelightprofile);
   }
 
   @Override
@@ -90,6 +92,7 @@ public class Robot extends TimedRobot {
     }
     SmartDashboard.putString("Control Mode: ",controlMode);
     SmartDashboard.putNumber("Up speed rate limit: ", Integer.valueOf(upRateLimit));
+    SmartDashboard.putNumber("Pipeline: ", limelightprofile);
   }
 
   @Override
@@ -153,13 +156,13 @@ public class Robot extends TimedRobot {
             System.out.println("Up speed rate limit: "+upRateLimit);
             break;
           case 4:
-            if (limelightmode == 1) {
-              limelightmode = 0;
+            if (limelightprofile == maxlimelightprofiles) {
+              limelightprofile = 0;
             } else {
-              limelightmode = 1;
+              limelightprofile++;
             }
-            System.out.println("Limelight mode: "+limelightmode);
-            LimelightHelpers.setPipelineIndex("", limelightmode);
+            System.out.println("Limelight mode: "+limelightprofile);
+            LimelightHelpers.setPipelineIndex("", limelightprofile);
             break;
           default:
             if (debugButtons) {
