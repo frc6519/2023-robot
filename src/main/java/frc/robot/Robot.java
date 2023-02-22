@@ -117,8 +117,24 @@ public class Robot extends TimedRobot {
     // Limelight -- Temp
     double targetXAxis = LimelightHelpers.getTX("");
     double targetYAxis = LimelightHelpers.getTY("");
+    double targetArea = LimelightHelpers.getTA("");
     
+    if (targetXAxis != 0) {
+      if (targetXAxis > 0) {
+        leftMotor1.set(ControlMode.PercentOutput, 0.33);
+        leftMotor2.set(ControlMode.PercentOutput, 0.33);
+      } else {
+        rightMotor1.set(ControlMode.PercentOutput,0.33);
+        rightMotor2.set(ControlMode.PercentOutput,0.33);
+      }
+    }
+
+    SmartDashboard.putNumber("LimelightX", targetXAxis);
+    SmartDashboard.putNumber("LimelightY", targetYAxis);
+    SmartDashboard.putNumber("LimelightArea", targetArea);
+
     System.out.println(targetXAxis+'\n'+targetYAxis);
+
 
     // if (!autoBalance) {
     //   leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
