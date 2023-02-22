@@ -62,6 +62,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Right Motor2 Output: ",0);
     SmartDashboard.putNumber("Arm Output: ",0);
     SmartDashboard.putNumber("Pipeline: ", limelightprofile);
+    SmartDashboard.putNumber("Limelight X: ", -999);
+    SmartDashboard.putNumber("Limelight Y: ", -999);
   }
 
   @Override
@@ -93,6 +95,10 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Control Mode: ",controlMode);
     SmartDashboard.putNumber("Up speed rate limit: ", Integer.valueOf(upRateLimit));
     SmartDashboard.putNumber("Pipeline: ", limelightprofile);
+    double targetXAxis = LimelightHelpers.getTX("");
+    double targetYAxis = LimelightHelpers.getTY("");    
+    SmartDashboard.putNumber("Limelight X: ", targetXAxis);
+    SmartDashboard.putNumber("Limelight Y: ", targetYAxis);
   }
 
   @Override
@@ -119,9 +125,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Limelight -- Temp
-    double targetXAxis = LimelightHelpers.getTX("");
-    double targetYAxis = LimelightHelpers.getTY("");    
-    // System.out.println(targetXAxis+'\n'+targetYAxis);
 
     if (!autoBalance) {
       leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
