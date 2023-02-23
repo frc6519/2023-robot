@@ -26,7 +26,7 @@ public class Robot extends TimedRobot {
     private static final boolean PS4Mode = false;
 
   // Toggles between Comp. Bot & Test Bot.
-    private static final boolean CompetitionBot = true;
+    private static final boolean CompetitionBot = false;
 
   // Do you have a keyboard connected?
     private static final boolean usingKeyboard = false;
@@ -44,8 +44,8 @@ public class Robot extends TimedRobot {
       private boolean autoBalance = false;
 
     // Drivetrain
-      private final TalonSRX leftMotor1 = new TalonSRX(1); 
-      private final TalonSRX rightMotor1 = new TalonSRX(2);
+      private final TalonSRX leftMotor1 = new TalonSRX(0);  // 1
+      private final TalonSRX rightMotor1 = new TalonSRX(1); // 2
       private final TalonSRX leftMotor2 = new TalonSRX(3);
       private final TalonSRX rightMotor2 = new TalonSRX(4);
 
