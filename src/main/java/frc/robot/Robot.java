@@ -38,6 +38,10 @@ public class Robot extends TimedRobot {
   private String controlMode = "Disabled";
   private int limelightprofile = 0;
   private final int maxlimelightprofiles = 2;
+  private double l1 = 0;
+  private double l2 = 0;
+  private double r1 = 0;
+  private double r2 = 0;
   // Gyroscope
   private static final AHRS ahrs = new AHRS(Port.kUSB); 
 
@@ -99,6 +103,7 @@ public class Robot extends TimedRobot {
     double targetYAxis = LimelightHelpers.getTY("");    
     SmartDashboard.putNumber("Limelight X: ", targetXAxis);
     SmartDashboard.putNumber("Limelight Y: ", targetYAxis);
+    motorOutput();
   }
 
   @Override
@@ -127,14 +132,10 @@ public class Robot extends TimedRobot {
     // Limelight -- Temp
 
     if (!autoBalance) {
-      leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
-      leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3);
-      rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
-      rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()/3);
-      SmartDashboard.putNumber("Left Motor1 Output: ",xcontroller.getLeftY()/3);
-      SmartDashboard.putNumber("Left Motor2 Output: ",xcontroller.getLeftY()/3);
-      SmartDashboard.putNumber("Right Motor1 Output: ",xcontroller.getRightY()/3);
-      SmartDashboard.putNumber("Right Motor2 Output: ",xcontroller.getRightY()/3);
+      leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3); l1 = xcontroller.getLeftY()/3;
+      leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3); l2 = xcontroller.getLeftY()/3;
+      rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3); r1 = xcontroller.getRightY()/3;
+      rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()/3); r2 = xcontroller.getRightY()/3;
       if (xcontroller.getLeftTriggerAxis() >= 0.01) {
         armMotor(xcontroller.getLeftTriggerAxis()/upRateLimit);
       } else {
@@ -177,10 +178,10 @@ public class Robot extends TimedRobot {
   }
 
   public void autoBalancePeriodic() {
-    if (ahrs.isCalibrating()) {
-      System.out.println("The Gryo is calibrating..");
-    } else if (!ahrs.isConnected()) {
+    if (!ahrs.isConnected()) {
       System.out.println("The Gyro not connected or cannot be read.");
+    } else if (ahrs.isCalibrating()) {
+      System.out.println("The Gryo is calibrating..");
     } else {
       double pitch = ahrs.getPitch();
       if (pitch >= (5+pitchOffset)) {
@@ -197,41 +198,29 @@ public class Robot extends TimedRobot {
   }
 
   public void drive(double speed) {
-    leftMotor1.set(ControlMode.PercentOutput, speed);
-    leftMotor2.set(ControlMode.PercentOutput, speed);
-    rightMotor1.set(ControlMode.PercentOutput, speed);
-    rightMotor2.set(ControlMode.PercentOutput, speed);
-    SmartDashboard.putNumber("Left Motor1 Output: ",speed);
-    SmartDashboard.putNumber("Left Motor2 Output: ",speed);
-    SmartDashboard.putNumber("Right Motor1 Output: ",speed);
-    SmartDashboard.putNumber("Right Motor2 Output: ",speed);
+    leftMotor1.set(ControlMode.PercentOutput, speed); l1 = speed;
+    leftMotor2.set(ControlMode.PercentOutput, speed); l2 = speed;
+    rightMotor1.set(ControlMode.PercentOutput, speed); r1 = speed;
+    rightMotor2.set(ControlMode.PercentOutput, speed); r2 = speed;
   }
 
   public void rotate(double angle) {
     if (!between(angle-1,angle+1,currentAngle)) {
       if (angle >= 1) {
-        rightMotor1.set(ControlMode.PercentOutput, turnSpeed);
-        rightMotor2.set(ControlMode.PercentOutput, turnSpeed);
-        SmartDashboard.putNumber("Right Motor1 Output: ",turnSpeed);
-        SmartDashboard.putNumber("Right Motor2 Output: ",turnSpeed);
+        rightMotor1.set(ControlMode.PercentOutput, turnSpeed); r1 = turnSpeed;
+        rightMotor2.set(ControlMode.PercentOutput, turnSpeed); r2 = turnSpeed;
       } else {
-        leftMotor1.set(ControlMode.PercentOutput, turnSpeed);
-        leftMotor2.set(ControlMode.PercentOutput, turnSpeed);
-        SmartDashboard.putNumber("Left Motor1 Output: ",turnSpeed);
-        SmartDashboard.putNumber("Left Motor2 Output: ",turnSpeed);
+        leftMotor1.set(ControlMode.PercentOutput, turnSpeed); l1 = turnSpeed;
+        leftMotor2.set(ControlMode.PercentOutput, turnSpeed); l2 = turnSpeed;
       }
     }
   }
 
   public void resetMotors() {
-    leftMotor1.set(ControlMode.PercentOutput, 0);
-    leftMotor2.set(ControlMode.PercentOutput, 0);
-    rightMotor1.set(ControlMode.PercentOutput, 0);
-    rightMotor2.set(ControlMode.PercentOutput, 0);
-    SmartDashboard.putNumber("Left Motor1 Output: ",0);
-    SmartDashboard.putNumber("Left Motor2 Output: ",0);
-    SmartDashboard.putNumber("Right Motor1 Output: ",0);
-    SmartDashboard.putNumber("Right Motor2 Output: ",0);
+    leftMotor1.set(ControlMode.PercentOutput, 0); l1 = 0;
+    leftMotor2.set(ControlMode.PercentOutput, 0); l2 = 0;
+    rightMotor1.set(ControlMode.PercentOutput, 0); r1 = 0;
+    rightMotor2.set(ControlMode.PercentOutput, 0); r2 = 0;
   }
 
   public boolean between(double start, double end, double time) {
@@ -245,5 +234,12 @@ public class Robot extends TimedRobot {
   public void armMotor(double power) {
     armMotor1.set(ControlMode.PercentOutput,power);
     SmartDashboard.putNumber("Arm Output: ",power);
+  }
+
+  public void motorOutput() {
+    SmartDashboard.putNumber("Left Motor1 Output: ",l1);
+    SmartDashboard.putNumber("Left Motor2 Output: ",l2);
+    SmartDashboard.putNumber("Right Motor1 Output: ",r1);
+    SmartDashboard.putNumber("Right Motor2 Output: ",r2);
   }
 }
