@@ -132,10 +132,10 @@ public class Robot extends TimedRobot {
     // Limelight -- Temp
 
     if (!autoBalance) {
-      leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3); l1 = xcontroller.getLeftY()/3;
-      leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3); l2 = xcontroller.getLeftY()/3;
-      rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3); r1 = xcontroller.getRightY()/3;
-      rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()/3); r2 = xcontroller.getRightY()/3;
+      leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/2); l1 = xcontroller.getLeftY()/3;
+      leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()/2); l2 = xcontroller.getLeftY()/3;
+      rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/2); r1 = xcontroller.getRightY()/3;
+      rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()/2); r2 = xcontroller.getRightY()/3;
       if (xcontroller.getLeftTriggerAxis() >= 0.01) {
         armMotor(xcontroller.getLeftTriggerAxis()/upRateLimit);
       } else {
@@ -152,10 +152,10 @@ public class Robot extends TimedRobot {
             System.out.println("Auto Balance: "+autoBalance);
             break;
           case 2:
-            if (upRateLimit == 3) {
+            if (upRateLimit == 1) {
               upRateLimit = 6;
             } else {
-              upRateLimit = 3;
+              upRateLimit = 1;
             }
             System.out.println("Up speed rate limit: "+upRateLimit);
             break;
