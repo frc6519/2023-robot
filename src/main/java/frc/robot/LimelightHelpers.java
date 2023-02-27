@@ -777,4 +777,8 @@ public class LimelightHelpers {
 
         return results;
     }
+
+    public static Object getDefault() {
+        return null;
+    }
 }

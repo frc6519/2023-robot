@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.cameraserver.CameraServer;
 import frc.robot.LimelightHelpers;
+import frc.robot.LimelightHelpers.LimelightTarget_Detector;
+
 import com.kauailabs.navx.frc.AHRS;
 
 public class Robot extends TimedRobot {
@@ -118,14 +120,28 @@ public class Robot extends TimedRobot {
     double targetXAxis = LimelightHelpers.getTX("");
     double targetYAxis = LimelightHelpers.getTY("");
     double targetArea = LimelightHelpers.getTA("");
-    
-    if (targetXAxis != 0) {
-      if (targetXAxis > 0) {
-        leftMotor1.set(ControlMode.PercentOutput, 0.33);
-        leftMotor2.set(ControlMode.PercentOutput, 0.33);
-      } else {
-        rightMotor1.set(ControlMode.PercentOutput,0.33);
-        rightMotor2.set(ControlMode.PercentOutput,0.33);
+
+    double testId = LimelightHelpers.getFiducialID(controlMode);
+
+    System.out.println(testId);
+
+    //Might not need toggle system for this code if the targetArea works
+    //Most likely unreliable but can still try to test
+    while (targetArea == 100) {
+      //From here needs to be put in toggle system if targetArea doesn't work
+      if (targetXAxis != 0) {
+        if (targetXAxis > 0) {
+          leftMotor1.set(ControlMode.PercentOutput, 0.33);
+          leftMotor2.set(ControlMode.PercentOutput, 0.33);
+        } else if (targetXAxis < 0) {
+          rightMotor1.set(ControlMode.PercentOutput,0.33);
+          rightMotor2.set(ControlMode.PercentOutput,0.33);
+        } else {
+          leftMotor1.set(ControlMode.PercentOutput, 0.33);
+          leftMotor2.set(ControlMode.PercentOutput, 0.33);
+          rightMotor1.set(ControlMode.PercentOutput,0.33);
+          rightMotor2.set(ControlMode.PercentOutput,0.33);
+        }
       }
     }
 
