@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.LimelightHelpers;
 import com.kauailabs.navx.frc.AHRS;
 
@@ -130,20 +131,24 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Limelight -- Temp
-    double targetXAxis = LimelightHelpers.getTX("");
+    // double targetXAxis = LimelightHelpers.getTX("limelight");
+    double targetXAxis = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
+    double targetArea = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
     System.out.println(targetXAxis);
-    if (targetXAxis != 0) {
-      if (targetXAxis > -2) {
-        rightMotor1.set(ControlMode.PercentOutput, 0.2);
-        rightMotor2.set(ControlMode.PercentOutput, 0.2);
-        leftMotor1.set(ControlMode.PercentOutput, -0.2);
-        leftMotor2.set(ControlMode.PercentOutput, -0.2);
-      } else if (targetXAxis < 2) {
-        leftMotor1.set(ControlMode.PercentOutput, 0.2);
-        leftMotor2.set(ControlMode.PercentOutput, 0.2);
-        rightMotor1.set(ControlMode.PercentOutput, -0.2);
-        rightMotor2.set(ControlMode.PercentOutput, -0.2);
+    if (!between(-5,5,targetXAxis) && between(2, 10, targetArea)) {
+      if (targetXAxis > 0) {
+        rightMotor1.set(ControlMode.PercentOutput, 0.175);
+        rightMotor2.set(ControlMode.PercentOutput, 0.175);
+        leftMotor1.set(ControlMode.PercentOutput, -0.175);
+        leftMotor2.set(ControlMode.PercentOutput, -0.175);
+      } else if (targetXAxis < 0) {
+        leftMotor1.set(ControlMode.PercentOutput, 0.175);
+        leftMotor2.set(ControlMode.PercentOutput, 0.175);
+        rightMotor1.set(ControlMode.PercentOutput, -0.175);
+        rightMotor2.set(ControlMode.PercentOutput, -0.175);
       }
+    } else {
+      resetMotors();
     }
 
     // if (!autoBalance) {
