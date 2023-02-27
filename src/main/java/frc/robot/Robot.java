@@ -128,7 +128,7 @@ public class Robot extends TimedRobot {
         public void autonomousInit() {
           System.out.println("Autonomous Time!");
           m_autoSelected = m_chooser.getSelected();
-          m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+          // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
           System.out.println("Auto selected: " + m_autoSelected);
           macrosEnabled = false;
           timer.reset();
