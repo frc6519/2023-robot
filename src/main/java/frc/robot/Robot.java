@@ -132,69 +132,71 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     // Limelight -- Temp
     // double targetXAxis = LimelightHelpers.getTX("limelight");
-    double targetXAxis = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
-    double targetArea = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
-    System.out.println(targetXAxis);
-    if (!between(-5,5,targetXAxis) && between(2, 10, targetArea)) {
-      if (targetXAxis > 0) {
-        rightMotor1.set(ControlMode.PercentOutput, 0.175);
-        rightMotor2.set(ControlMode.PercentOutput, 0.175);
-        leftMotor1.set(ControlMode.PercentOutput, -0.175);
-        leftMotor2.set(ControlMode.PercentOutput, -0.175);
-      } else if (targetXAxis < 0) {
-        leftMotor1.set(ControlMode.PercentOutput, 0.175);
-        leftMotor2.set(ControlMode.PercentOutput, 0.175);
-        rightMotor1.set(ControlMode.PercentOutput, -0.175);
-        rightMotor2.set(ControlMode.PercentOutput, -0.175);
+    if (upRateLimit == 1) {
+      double targetXAxis = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
+      double targetArea = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
+      System.out.println(targetXAxis);
+      if (!between(-2.5,2.5,targetXAxis)) {
+        if (targetXAxis > 0) {
+          rightMotor1.set(ControlMode.PercentOutput, 0.175);
+          rightMotor2.set(ControlMode.PercentOutput, 0.175);
+          leftMotor1.set(ControlMode.PercentOutput, -0.175);
+          leftMotor2.set(ControlMode.PercentOutput, -0.175);
+        } else if (targetXAxis < 0) {
+          leftMotor1.set(ControlMode.PercentOutput, 0.175);
+          leftMotor2.set(ControlMode.PercentOutput, 0.175);
+          rightMotor1.set(ControlMode.PercentOutput, -0.175);
+          rightMotor2.set(ControlMode.PercentOutput, -0.175);
+        }
+      } else {
+        resetMotors();
       }
     } else {
-      resetMotors();
+      if (!autoBalance) {
+        leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3); l1 = xcontroller.getLeftY()/3;
+        leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3); l2 = xcontroller.getLeftY()/3;
+        rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3); r1 = xcontroller.getRightY()/3;
+        rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()/3); r2 = xcontroller.getRightY()/3;
+        if (xcontroller.getLeftTriggerAxis() >= 0.01) {
+          armMotor(xcontroller.getLeftTriggerAxis()/upRateLimit);
+        } else {
+          armMotor(xcontroller.getRightTriggerAxis()/12*-1);
+        }
+      } else {
+        autoBalancePeriodic();
+      }
     }
-
-    // if (!autoBalance) {
-    //   leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3); l1 = xcontroller.getLeftY()/3;
-    //   leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3); l2 = xcontroller.getLeftY()/3;
-    //   rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3); r1 = xcontroller.getRightY()/3;
-    //   rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()/3); r2 = xcontroller.getRightY()/3;
-    //   if (xcontroller.getLeftTriggerAxis() >= 0.01) {
-    //     armMotor(xcontroller.getLeftTriggerAxis()/upRateLimit);
-    //   } else {
-    //     armMotor(xcontroller.getRightTriggerAxis()/12*-1);
-    //   }
-    // } else {
-    //   autoBalancePeriodic();
-    // }
-    // for (int i = 1; i < macroStick.getButtonCount(); i++) {
-    //   if (macroStick.getRawButtonPressed(i)) {
-    //     switch(i) {
-    //       case 3:
-    //         autoBalance = !autoBalance;
-    //         System.out.println("Auto Balance: "+autoBalance);
-    //         break;
-    //       case 2:
-    //         if (upRateLimit == 1) {
-    //           upRateLimit = 6;
-    //         } else {
-    //           upRateLimit = 1;
-    //         }
-    //         System.out.println("Up speed rate limit: "+upRateLimit);
-    //         break;
-    //       case 4:
-    //         if (limelightprofile == maxlimelightprofiles) {
-    //           limelightprofile = 0;
-    //         } else {
-    //           limelightprofile++;
-    //         }
-    //         System.out.println("Limelight mode: "+limelightprofile);
-    //         LimelightHelpers.setPipelineIndex("", limelightprofile);
-    //         break;
-    //       default:
-    //         if (debugButtons) {
-    //           System.out.println("Button Pressed: "+i);
-    //         }
-    //     }
-    //   }
-    // }
+      for (int i = 1; i < macroStick.getButtonCount(); i++) {
+        if (macroStick.getRawButtonPressed(i)) {
+          switch(i) {
+            case 3:
+              autoBalance = !autoBalance;
+              System.out.println("Auto Balance: "+autoBalance);
+              break;
+            case 2:
+              if (upRateLimit == 1) {
+                upRateLimit = 6;
+              } else {
+                upRateLimit = 1;
+              }
+              System.out.println("Up speed rate limit: "+upRateLimit);
+              break;
+            case 4:
+              if (limelightprofile == maxlimelightprofiles) {
+                limelightprofile = 0;
+              } else {
+                limelightprofile++;
+              }
+              System.out.println("Limelight mode: "+limelightprofile);
+              LimelightHelpers.setPipelineIndex("", limelightprofile);
+              break;
+            default:
+              if (debugButtons) {
+                System.out.println("Button Pressed: "+i);
+              }
+          }
+        }
+      }
   }
 
   public void autoBalancePeriodic() {
