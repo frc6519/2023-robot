@@ -6,10 +6,12 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.SerialPort.Port;
+import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.cameraserver.CameraServer;
 // import frc.robot.LimelightHelpers;
@@ -38,6 +40,7 @@ public class Robot extends TimedRobot {
   private double currentAngle;
   private int upRateLimit = 6;
   private String controlMode = "Disabled";
+  private final double driveSpeed = 0.75;
   // Gyroscope
   private static final AHRS ahrs = new AHRS(Port.kUSB); 
 
@@ -156,14 +159,14 @@ public class Robot extends TimedRobot {
 
 
     if (!autoBalance) {
-      leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-      leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY());
-      rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY());
-      rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY());
-      SmartDashboard.putNumber("Left Motor1 Output: ",xcontroller.getLeftY());
-      SmartDashboard.putNumber("Left Motor2 Output: ",xcontroller.getLeftY());
-      SmartDashboard.putNumber("Right Motor1 Output: ",xcontroller.getRightY());
-      SmartDashboard.putNumber("Right Motor2 Output: ",xcontroller.getRightY());
+      leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()*driveSpeed);
+      leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()*driveSpeed);
+      rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()*driveSpeed);
+      rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()*driveSpeed);
+      SmartDashboard.putNumber("Left Motor1 Output: ",xcontroller.getLeftY()*driveSpeed);
+      SmartDashboard.putNumber("Left Motor2 Output: ",xcontroller.getLeftY()*driveSpeed);
+      SmartDashboard.putNumber("Right Motor1 Output: ",xcontroller.getRightY()*driveSpeed);
+      SmartDashboard.putNumber("Right Motor2 Output: ",xcontroller.getRightY()*driveSpeed);
       if (xcontroller.getLeftTriggerAxis() >= 0.01) {
         armMotor(xcontroller.getLeftTriggerAxis()/upRateLimit);
       } else {
