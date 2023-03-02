@@ -10,18 +10,23 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.SerialPort.Port;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import frc.robot.LimelightHelpers;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoMode;
+// import frc.robot.LimelightHelpers;
+// import frc.robot.LimelightHelpers.LimelightTarget_Detector;
+import edu.wpi.first.cscore.VideoMode.PixelFormat;
+
 import com.kauailabs.navx.frc.AHRS;
 
 public class Robot extends TimedRobot {
   // Autonomous & Teleop vars
-  private final Timer timer = new Timer(); 
+  private final Timer timer = new Timer();
   private boolean autoBalance = false;
   // Motors
-  private final TalonSRX leftMotor1 = new TalonSRX(1); 
+  private final TalonSRX leftMotor1 = new TalonSRX(0); 
   private final TalonSRX rightMotor1 = new TalonSRX(3);
   private final TalonSRX leftMotor2 = new TalonSRX(2);
   private final TalonSRX rightMotor2 = new TalonSRX(4);
@@ -37,12 +42,7 @@ public class Robot extends TimedRobot {
   private double currentAngle;
   private int upRateLimit = 6;
   private String controlMode = "Disabled";
-  private int limelightprofile = 0;
-  private final int maxlimelightprofiles = 2;
-  private double l1 = 0;
-  private double l2 = 0;
-  private double r1 = 0;
-  private double r2 = 0;
+  private final double driveSpeed = 0.30;
   // Gyroscope
   private static final AHRS ahrs = new AHRS(Port.kUSB); 
 
@@ -56,7 +56,8 @@ public class Robot extends TimedRobot {
     rightMotor2.configFactoryDefault(); rightMotor2.set(ControlMode.PercentOutput, 0.00);
     armMotor1.configFactoryDefault(); armMotor1.set(ControlMode.PercentOutput, 0.00);
     ahrs.calibrate();
-    CameraServer.startAutomaticCapture(0);
+    UsbCamera cam = CameraServer.startAutomaticCapture(0);
+    cam.setPixelFormat(PixelFormat.kMJPEG);
     leftMotor1.setInverted(true);
     leftMotor2.setInverted(true);
     SmartDashboard.putString("Autobalance: ",String.valueOf(autoBalance));
@@ -66,9 +67,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Right Motor1 Output: ",0);
     SmartDashboard.putNumber("Right Motor2 Output: ",0);
     SmartDashboard.putNumber("Arm Output: ",0);
-    SmartDashboard.putNumber("Pipeline: ", limelightprofile);
-    SmartDashboard.putNumber("Limelight X: ", -999);
-    SmartDashboard.putNumber("Limelight Y: ", -999);
   }
 
   @Override
@@ -99,12 +97,6 @@ public class Robot extends TimedRobot {
     }
     SmartDashboard.putString("Control Mode: ",controlMode);
     SmartDashboard.putNumber("Up speed rate limit: ", Integer.valueOf(upRateLimit));
-    SmartDashboard.putNumber("Pipeline: ", limelightprofile);
-    double targetXAxis = LimelightHelpers.getTX("");
-    double targetYAxis = LimelightHelpers.getTY("");    
-    SmartDashboard.putNumber("Limelight X: ", targetXAxis);
-    SmartDashboard.putNumber("Limelight Y: ", targetYAxis);
-    motorOutput();
   }
 
   @Override
@@ -130,79 +122,91 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    // Limelight -- Temp
-    // double targetXAxis = LimelightHelpers.getTX("limelight");
-    // if (upRateLimit == 1) {
-    //   double targetXAxis = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
-    //   System.out.println(targetXAxis);
-    //   if (!between(-2.5,2.5,targetXAxis)) {
-    //     if (targetXAxis > 0) {
-    //       rightMotor1.set(ControlMode.PercentOutput, 0.175);
-    //       rightMotor2.set(ControlMode.PercentOutput, 0.175);
-    //       leftMotor1.set(ControlMode.PercentOutput, -0.175);
-    //       leftMotor2.set(ControlMode.PercentOutput, -0.175);
-    //     } else if (targetXAxis < 0) {
-    //       leftMotor1.set(ControlMode.PercentOutput, 0.175);
-    //       leftMotor2.set(ControlMode.PercentOutput, 0.175);
-    //       rightMotor1.set(ControlMode.PercentOutput, -0.175);
-    //       rightMotor2.set(ControlMode.PercentOutput, -0.175);
-    //     }
-    //   } else {
-    //     resetMotors();
-    //   }
-    // } else {
-      if (!autoBalance) {
-        leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3); l1 = xcontroller.getLeftY()/3;
-        leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()/3); l2 = xcontroller.getLeftY()/3;
-        rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()/3); r1 = xcontroller.getRightY()/3;
-        rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()/3); r2 = xcontroller.getRightY()/3;
-        if (xcontroller.getLeftTriggerAxis() >= 0.01) {
-          armMotor(xcontroller.getLeftTriggerAxis()/upRateLimit);
-        } else {
-          armMotor(xcontroller.getRightTriggerAxis()/12*-1);
-        }
+  //   // Limelight -- Temp
+  //   double targetXAxis = LimelightHelpers.getTX("");
+  //   double targetYAxis = LimelightHelpers.getTY("");
+  //   double targetArea = LimelightHelpers.getTA("");
+  //   double testId = LimelightHelpers.getFiducialID(controlMode);
+
+  //   System.out.println(testId);
+
+  //   //Might not need toggle system for this code if the targetArea works
+  //   //Most likely unreliable but can still try to test
+  //   //while (targetArea == 100) {
+  //     //From here needs to be put in toggle system if targetArea doesn't work
+  //   if (targetXAxis != 0) {
+  //     if (targetXAxis > 0) {
+  //       rightMotor1.set(ControlMode.PercentOutput, 0.2);
+  //       rightMotor2.set(ControlMode.PercentOutput, 0.2);
+  //       leftMotor1.set(ControlMode.PercentOutput, -0.2);
+  //       leftMotor2.set(ControlMode.PercentOutput, -0.2);
+  //     } else if (targetXAxis < 0) {
+  //       leftMotor1.set(ControlMode.PercentOutput, 0.2);
+  //       leftMotor2.set(ControlMode.PercentOutput, 0.2);
+  //       rightMotor1.set(ControlMode.PercentOutput, -0.2);
+  //       rightMotor2.set(ControlMode.PercentOutput, -0.2);
+  //     } else {
+  //       //leftMotor1.set(ControlMode.PercentOutput, 0.33);
+  //       //leftMotor2.set(ControlMode.PercentOutput, 0.33);
+  //       //rightMotor1.set(ControlMode.PercentOutput,0.33);
+  //       //rightMotor2.set(ControlMode.PercentOutput,0.33);
+  //     }
+  //   }
+  // //}
+
+  //   SmartDashboard.putNumber("LimelightX", targetXAxis);
+  //   SmartDashboard.putNumber("LimelightY", targetYAxis);
+  //   SmartDashboard.putNumber("LimelightArea", targetArea);
+
+  //   System.out.println(targetXAxis+'\n'+targetYAxis);
+
+
+    if (!autoBalance) {
+      leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()*driveSpeed);
+      leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()*driveSpeed);
+      rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()*driveSpeed);
+      rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()*driveSpeed);
+      SmartDashboard.putNumber("Left Motor1 Output: ",xcontroller.getLeftY()*driveSpeed);
+      SmartDashboard.putNumber("Left Motor2 Output: ",xcontroller.getLeftY()*driveSpeed);
+      SmartDashboard.putNumber("Right Motor1 Output: ",xcontroller.getRightY()*driveSpeed);
+      SmartDashboard.putNumber("Right Motor2 Output: ",xcontroller.getRightY()*driveSpeed);
+      if (xcontroller.getLeftTriggerAxis() >= 0.01) {
+        armMotor(xcontroller.getLeftTriggerAxis()/upRateLimit);
       } else {
-        autoBalancePeriodic();
+        armMotor(xcontroller.getRightTriggerAxis()/12*-1);
       }
-    // }
-      for (int i = 1; i < macroStick.getButtonCount(); i++) {
-        if (macroStick.getRawButtonPressed(i)) {
-          switch(i) {
-            case 3:
-              autoBalance = !autoBalance;
-              System.out.println("Auto Balance: "+autoBalance);
-              break;
-            case 2:
-              if (upRateLimit == 1) {
-                upRateLimit = 6;
-              } else {
-                upRateLimit = 1;
-              }
-              System.out.println("Up speed rate limit: "+upRateLimit);
-              break;
-            case 4:
-              if (limelightprofile == maxlimelightprofiles) {
-                limelightprofile = 0;
-              } else {
-                limelightprofile++;
-              }
-              System.out.println("Limelight mode: "+limelightprofile);
-              LimelightHelpers.setPipelineIndex("", limelightprofile);
-              break;
-            default:
-              if (debugButtons) {
-                System.out.println("Button Pressed: "+i);
-              }
-          }
+    } else {
+      autoBalancePeriodic();
+    }
+    for (int i = 1; i < macroStick.getButtonCount(); i++) {
+      if (macroStick.getRawButtonPressed(i)) {
+        switch(i) {
+          case 3:
+            autoBalance = !autoBalance;
+            System.out.println("Auto Balance: "+autoBalance);
+            break;
+          case 2:
+            if (upRateLimit == 3) {
+              upRateLimit = 6;
+            } else {
+              upRateLimit = 3;
+            }
+            System.out.println("Up speed rate limit: "+upRateLimit);
+            break;
+          default:
+            if (debugButtons) {
+              System.out.println("Button Pressed: "+i);
+            }
         }
       }
+    }
   }
 
   public void autoBalancePeriodic() {
-    if (!ahrs.isConnected()) {
-      System.out.println("The Gyro not connected or cannot be read.");
-    } else if (ahrs.isCalibrating()) {
+    if (ahrs.isCalibrating()) {
       System.out.println("The Gryo is calibrating..");
+    } else if (!ahrs.isConnected()) {
+      System.out.println("The Gyro not connected or cannot be read.");
     } else {
       double pitch = ahrs.getPitch();
       if (pitch >= (5+pitchOffset)) {
@@ -219,29 +223,41 @@ public class Robot extends TimedRobot {
   }
 
   public void drive(double speed) {
-    leftMotor1.set(ControlMode.PercentOutput, speed); l1 = speed;
-    leftMotor2.set(ControlMode.PercentOutput, speed); l2 = speed;
-    rightMotor1.set(ControlMode.PercentOutput, speed); r1 = speed;
-    rightMotor2.set(ControlMode.PercentOutput, speed); r2 = speed;
+    leftMotor1.set(ControlMode.PercentOutput, speed);
+    leftMotor2.set(ControlMode.PercentOutput, speed);
+    rightMotor1.set(ControlMode.PercentOutput, speed);
+    rightMotor2.set(ControlMode.PercentOutput, speed);
+    SmartDashboard.putNumber("Left Motor1 Output: ",speed);
+    SmartDashboard.putNumber("Left Motor2 Output: ",speed);
+    SmartDashboard.putNumber("Right Motor1 Output: ",speed);
+    SmartDashboard.putNumber("Right Motor2 Output: ",speed);
   }
 
   public void rotate(double angle) {
     if (!between(angle-1,angle+1,currentAngle)) {
       if (angle >= 1) {
-        rightMotor1.set(ControlMode.PercentOutput, turnSpeed); r1 = turnSpeed;
-        rightMotor2.set(ControlMode.PercentOutput, turnSpeed); r2 = turnSpeed;
+        rightMotor1.set(ControlMode.PercentOutput, turnSpeed);
+        rightMotor2.set(ControlMode.PercentOutput, turnSpeed);
+        SmartDashboard.putNumber("Right Motor1 Output: ",turnSpeed);
+        SmartDashboard.putNumber("Right Motor2 Output: ",turnSpeed);
       } else {
-        leftMotor1.set(ControlMode.PercentOutput, turnSpeed); l1 = turnSpeed;
-        leftMotor2.set(ControlMode.PercentOutput, turnSpeed); l2 = turnSpeed;
+        leftMotor1.set(ControlMode.PercentOutput, turnSpeed);
+        leftMotor2.set(ControlMode.PercentOutput, turnSpeed);
+        SmartDashboard.putNumber("Left Motor1 Output: ",turnSpeed);
+        SmartDashboard.putNumber("Left Motor2 Output: ",turnSpeed);
       }
     }
   }
 
   public void resetMotors() {
-    leftMotor1.set(ControlMode.PercentOutput, 0); l1 = 0;
-    leftMotor2.set(ControlMode.PercentOutput, 0); l2 = 0;
-    rightMotor1.set(ControlMode.PercentOutput, 0); r1 = 0;
-    rightMotor2.set(ControlMode.PercentOutput, 0); r2 = 0;
+    leftMotor1.set(ControlMode.PercentOutput, 0);
+    leftMotor2.set(ControlMode.PercentOutput, 0);
+    rightMotor1.set(ControlMode.PercentOutput, 0);
+    rightMotor2.set(ControlMode.PercentOutput, 0);
+    SmartDashboard.putNumber("Left Motor1 Output: ",0);
+    SmartDashboard.putNumber("Left Motor2 Output: ",0);
+    SmartDashboard.putNumber("Right Motor1 Output: ",0);
+    SmartDashboard.putNumber("Right Motor2 Output: ",0);
   }
 
   public boolean between(double start, double end, double time) {
@@ -255,12 +271,5 @@ public class Robot extends TimedRobot {
   public void armMotor(double power) {
     armMotor1.set(ControlMode.PercentOutput,power);
     SmartDashboard.putNumber("Arm Output: ",power);
-  }
-
-  public void motorOutput() {
-    SmartDashboard.putNumber("Left Motor1 Output: ",l1);
-    SmartDashboard.putNumber("Left Motor2 Output: ",l2);
-    SmartDashboard.putNumber("Right Motor1 Output: ",r1);
-    SmartDashboard.putNumber("Right Motor2 Output: ",r2);
   }
 }
