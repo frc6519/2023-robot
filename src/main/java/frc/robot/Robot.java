@@ -63,10 +63,7 @@ public class Robot extends TimedRobot {
     leftMotor2.setInverted(true);
     SmartDashboard.putString("Autobalance: ",String.valueOf(autoBalance));
     SmartDashboard.putString("Control Mode: ",controlMode);
-    SmartDashboard.putNumber("Left Motor1 Output: ",0);
-    SmartDashboard.putNumber("Left Motor2 Output: ",0);
-    SmartDashboard.putNumber("Right Motor1 Output: ",0);
-    SmartDashboard.putNumber("Right Motor2 Output: ",0);
+    motorUpdate(0,0,0,0);
     SmartDashboard.putNumber("Arm Output: ",0);
   }
 
@@ -158,6 +155,7 @@ public class Robot extends TimedRobot {
             break;
           case 1:
             limelightmode = !limelightmode;
+            break;
           default:
             if (debugButtons) {
               System.out.println("Button Pressed: "+i);
@@ -169,18 +167,18 @@ public class Robot extends TimedRobot {
 
   public void limelightPeriodic() {
     double targetXAxis = LimelightHelpers.getTX("");
-    double speedNerf = 10;
+    double targetYAxis = LimelightHelpers.getTY("");
+    double targetArea = LimelightHelpers.getTA("");
+    double speedNerf = 100;
 
-    if (targetXAxis != 0) {
-      if (between(-2.5,2.5, targetXAxis)) {
-        leftMotor1.set(ControlMode.PercentOutput, targetXAxis/speedNerf);
-        leftMotor2.set(ControlMode.PercentOutput, targetXAxis/speedNerf);
-        rightMotor1.set(ControlMode.PercentOutput, (targetXAxis/speedNerf)*-1);
-        rightMotor2.set(ControlMode.PercentOutput, (targetXAxis/speedNerf)*-1);
-        motorUpdate(targetXAxis/speedNerf,targetXAxis/speedNerf,(targetXAxis/speedNerf)*-1,(targetXAxis/speedNerf)*-1);
-      } else {
-        resetMotors();
-      }
+    if (!between(-2.5,2.5, targetXAxis)) {
+      leftMotor1.set(ControlMode.PercentOutput, targetXAxis/speedNerf);
+      leftMotor2.set(ControlMode.PercentOutput, targetXAxis/speedNerf);
+      rightMotor1.set(ControlMode.PercentOutput, (targetXAxis/speedNerf)*-1);
+      rightMotor2.set(ControlMode.PercentOutput, (targetXAxis/speedNerf)*-1);
+      motorUpdate(targetXAxis/speedNerf,targetXAxis/speedNerf,(targetXAxis/speedNerf)*-1,(targetXAxis/speedNerf)*-1);
+    } else {
+      resetMotors();
     }
 
     SmartDashboard.putNumber("LimelightX", targetXAxis);
