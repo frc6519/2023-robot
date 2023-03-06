@@ -43,7 +43,6 @@ public class Robot extends TimedRobot {
   private float turnSpeed = 0.2f;
   private int pitchOffset = 0;
   private double currentAngle;
-  private int upRateLimit = 6;
   private double driveSpeed = 0.30;
   private double tmpDriveSpeed = driveSpeed;
   // Gyroscope
@@ -100,7 +99,6 @@ public class Robot extends TimedRobot {
       SmartDashboard.putBoolean("Gyro calibrating: ", false);
     }
     SmartDashboard.putString("Control Mode: ",controlMode);
-    SmartDashboard.putNumber("Up speed rate limit: ", Integer.valueOf(upRateLimit));
   }
 
   @Override
@@ -128,8 +126,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     if (batteryVoltage <= 8.00) {
       System.out.println("Should stop the robot, or reduce speed");
-      tmpSpeed = driveSpeed;
-      driveSpeed = driveSpeed/2;
+      driveSpeed = tmpSpeed/2;
     } else {
       System.out.println("Battery usage is fine"); 
       driveSpeed = tmpSpeed;
@@ -141,7 +138,7 @@ public class Robot extends TimedRobot {
       rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()*driveSpeed);
       motorUpdate(xcontroller.getLeftY()*driveSpeed,xcontroller.getLeftY()*driveSpeed,xcontroller.getRightY()*driveSpeed,xcontroller.getRightY()*driveSpeed);
       if (xcontroller.getLeftTriggerAxis() >= 0.01) {
-        armMotor(xcontroller.getLeftTriggerAxis()/upRateLimit);
+        armMotor(xcontroller.getLeftTriggerAxis());
       } else {
         armMotor(xcontroller.getRightTriggerAxis()/12*-1);
       }
@@ -157,13 +154,6 @@ public class Robot extends TimedRobot {
         switch(i) {
           case 3:
             autoBalance = !autoBalance;
-            break;
-          case 2:
-            if (upRateLimit == 3) {
-              upRateLimit = 6;
-            } else {
-              upRateLimit = 3;
-            }
             break;
           case 1:
             limelightmode = !limelightmode;
