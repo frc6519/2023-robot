@@ -44,7 +44,8 @@ public class Robot extends TimedRobot {
   private int pitchOffset = 0;
   private double currentAngle;
   private int upRateLimit = 6;
-  private final double driveSpeed = 0.30;
+  private double driveSpeed = 0.30;
+  private double tmpDriveSpeed = driveSpeed;
   // Gyroscope
   private static final AHRS ahrs = new AHRS(Port.kUSB); 
 
@@ -125,6 +126,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    if (batteryVoltage <= 8.00) {
+      System.out.println("Should stop the robot, or reduce speed");
+    } else {
+      System.out.println("Battery usage is fine"); 
+    }
     if (!autoBalance && !limelightmode) {
       leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()*driveSpeed);
       leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()*driveSpeed);
