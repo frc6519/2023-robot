@@ -15,8 +15,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoMode;
-// import frc.robot.LimelightHelpers;
-// import frc.robot.LimelightHelpers.LimelightTarget_Detector;
+import frc.robot.LimelightHelpers;
+import frc.robot.LimelightHelpers.LimelightTarget_Detector;
 import edu.wpi.first.cscore.VideoMode.PixelFormat;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -66,6 +66,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Control Mode: ",controlMode);
     motorUpdate(0,0,0,0);
     SmartDashboard.putNumber("Arm Output: ",0);
+    SmartDashboard.putNumber("Max speed: ",tmpSpeed);
   }
 
   @Override
@@ -99,6 +100,7 @@ public class Robot extends TimedRobot {
       SmartDashboard.putBoolean("Gyro calibrating: ", false);
     }
     SmartDashboard.putString("Control Mode: ",controlMode);
+    tmpSpeed = SmartDashboard.getNumber("Max speed: ");
   }
 
   @Override
@@ -109,9 +111,9 @@ public class Robot extends TimedRobot {
     } else if (between(3, 4,time)) {
       drive(-0.2);
     } else if (between(5, 6, time)) {
-      gyro_rotate(-90);
+      rotate(-turnSpeed);
     } else if (between(7, 8, time)) {
-      gyro_rotate(0);
+      rotate(turnSpeed);
     } else {
       resetMotors();
     }
