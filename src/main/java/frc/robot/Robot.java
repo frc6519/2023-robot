@@ -128,8 +128,11 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     if (batteryVoltage <= 8.00) {
       System.out.println("Should stop the robot, or reduce speed");
+      tmpSpeed = driveSpeed;
+      driveSpeed = driveSpeed/2;
     } else {
       System.out.println("Battery usage is fine"); 
+      driveSpeed = tmpSpeed;
     }
     if (!autoBalance && !limelightmode) {
       leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()*driveSpeed);
