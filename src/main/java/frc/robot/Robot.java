@@ -27,6 +27,7 @@ public class Robot extends TimedRobot {
   private boolean autoBalance = false;
   private boolean limelightmode = false;
   private String controlMode = "Disabled";
+  private double batteryVoltage = -1;
   // Motors
   private final TalonSRX leftMotor1 = new TalonSRX(1); // Confirm these ids later
   private final TalonSRX leftMotor2 = new TalonSRX(2);
@@ -81,6 +82,8 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     currentAngle = ahrs.getYaw();
+    batteryVoltage = DriverStation.getInstance().getBatteryVoltage();
+    SmartDashboard.putNumber("Battery Voltage: ",batteryVoltage);
     SmartDashboard.putString("Autobalance: ",String.valueOf(autoBalance));
     if (ahrs.isConnected()) {
       SmartDashboard.putNumber("Roll: ",ahrs.getRoll());
