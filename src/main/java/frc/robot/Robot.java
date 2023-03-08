@@ -6,20 +6,18 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoMode.PixelFormat;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SerialPort.Port;
+import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.SerialPort.Port;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.cscore.VideoMode;
-import frc.robot.LimelightHelpers;
-import frc.robot.LimelightHelpers.LimelightTarget_Detector;
-import edu.wpi.first.cscore.VideoMode.PixelFormat;
-
-import com.kauailabs.navx.frc.AHRS;
 
 public class Robot extends TimedRobot {
   // Autonomous & Teleop vars
@@ -44,7 +42,8 @@ public class Robot extends TimedRobot {
   private int pitchOffset = 0;
   private double currentAngle;
   private double driveSpeed = 0.30;
-  private double tmpDriveSpeed = driveSpeed;
+  private int pipelineIndex = 0;
+  // private double tmpDriveSpeed = driveSpeed;
   // Gyroscope
   private static final AHRS ahrs = new AHRS(Port.kUSB); 
 
@@ -66,7 +65,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Control Mode: ",controlMode);
     motorUpdate(0,0,0,0);
     SmartDashboard.putNumber("Arm Output: ",0);
-    SmartDashboard.putNumber("Max speed: ",tmpSpeed);
+    SmartDashboard.putNumber("Max speed: ",driveSpeed);
   }
 
   @Override
@@ -83,7 +82,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     currentAngle = ahrs.getYaw();
-    batteryVoltage = DriverStation.getInstance().getBatteryVoltage();
+    batteryVoltage = 12;
     SmartDashboard.putNumber("Battery Voltage: ",batteryVoltage);
     SmartDashboard.putString("Autobalance: ",String.valueOf(autoBalance));
     if (ahrs.isConnected()) {
@@ -100,7 +99,8 @@ public class Robot extends TimedRobot {
       SmartDashboard.putBoolean("Gyro calibrating: ", false);
     }
     SmartDashboard.putString("Control Mode: ",controlMode);
-    tmpSpeed = SmartDashboard.getNumber("Max speed: ");
+    // tmpSpeed = SmartDashboard.getNumber("Max speed: ");
+    // tmpDriveSpeed = 0.30;
   }
 
   @Override
@@ -126,13 +126,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    if (batteryVoltage <= 8.00) {
-      System.out.println("Should stop the robot, or reduce speed");
-      driveSpeed = tmpSpeed/2;
-    } else {
-      System.out.println("Battery usage is fine"); 
-      driveSpeed = tmpSpeed;
-    }
+    // if (batteryVoltage <= 8.00) {
+    //   System.out.println("Should stop the robot, or reduce speed");
+    //   driveSpeed = tmpDriveSpeed/2;
+    // } else {
+    //   System.out.println("Battery usage is fine"); 
+    //   driveSpeed = tmpDriveSpeed;
+    // }
     if (!autoBalance && !limelightmode) {
       leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()*driveSpeed);
       leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()*driveSpeed);
@@ -142,18 +142,25 @@ public class Robot extends TimedRobot {
       if (xcontroller.getLeftTriggerAxis() >= 0.01) {
         armMotor(xcontroller.getLeftTriggerAxis());
       } else {
-        armMotor(xcontroller.getRightTriggerAxis()/12*-1);
+        armMotor(xcontroller.getRightTriggerAxis()*-1);
       }
     } else {
       if (autoBalance && !limelightmode) {
         autoBalancePeriodic();
       } else if(!autoBalance && limelightmode) {
-        limelightPeriodic()
+        limelightPeriodic();
       }
     }
     for (int i = 1; i < macroStick.getButtonCount(); i++) {
       if (macroStick.getRawButtonPressed(i)) {
         switch(i) {
+          case 4:
+            if (pipelineIndex >= 3) {
+              pipelineIndex = 0;
+            } else {
+              pipelineIndex++;
+            }
+            LimelightHelpers.setPipelineIndex("", pipelineIndex);
           case 3:
             autoBalance = !autoBalance;
             break;
