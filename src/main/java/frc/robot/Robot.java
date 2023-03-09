@@ -11,11 +11,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoMode.PixelFormat;
-import edu.wpi.first.wpilibj.BuiltInAccelerometer;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort.Port;
-import edu.wpi.first.wpilibj.interfaces.Accelerometer;
-import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
@@ -48,7 +44,6 @@ public class Robot extends TimedRobot {
   // private double tmpDriveSpeed = driveSpeed;
   // Gyroscope
   private static final AHRS ahrs = new AHRS(Port.kUSB); 
-  private final Accelerometer accelerometer = new BuiltInAccelerometer();
 
   // Functions/Methods
   @Override
