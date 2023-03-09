@@ -11,6 +11,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoMode.PixelFormat;
+import edu.wpi.first.hal.PowerJNI;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -23,7 +24,7 @@ public class Robot extends TimedRobot {
   private boolean autoBalance = false;
   private boolean limelightmode = false;
   private String controlMode = "Disabled";
-  private double batteryVoltage = -1;
+  private double batteryVoltage = PowerJNI.getVinVoltage();
   // Motors
   private final TalonSRX leftMotor1 = new TalonSRX(1); // Confirm these ids later
   private final TalonSRX leftMotor2 = new TalonSRX(2);
@@ -41,7 +42,7 @@ public class Robot extends TimedRobot {
   private double currentAngle;
   private double driveSpeed = 0.7;
   private int pipelineIndex = 0;
-  // private double tmpDriveSpeed = driveSpeed;
+  private double tmpDriveSpeed = driveSpeed;
   // Gyroscope
   private static final AHRS ahrs = new AHRS(Port.kUSB); 
 
@@ -81,7 +82,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     currentAngle = ahrs.getYaw();
-    batteryVoltage = 12;
+    batteryVoltage = PowerJNI.getVinVoltage();
     SmartDashboard.putNumber("Battery Voltage: ",batteryVoltage);
     SmartDashboard.putString("Autobalance: ",String.valueOf(autoBalance));
     if (ahrs.isConnected()) {
@@ -98,8 +99,6 @@ public class Robot extends TimedRobot {
       SmartDashboard.putBoolean("Gyro calibrating: ", false);
     }
     SmartDashboard.putString("Control Mode: ",controlMode);
-    // tmpSpeed = SmartDashboard.getNumber("Max speed: ");
-    // tmpDriveSpeed = 0.30;
   }
 
   @Override
@@ -125,13 +124,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    // if (batteryVoltage <= 8.00) {
-    //   System.out.println("Should stop the robot, or reduce speed");
-    //   driveSpeed = tmpDriveSpeed/2;
-    // } else {
-    //   System.out.println("Battery usage is fine"); 
-    //   driveSpeed = tmpDriveSpeed;
-    // }
+    if (batteryVoltage <= 8.00) {
+      System.out.println("Should stop the robot, or reduce speed");
+      driveSpeed = tmpDriveSpeed/2;
+    } else {
+      System.out.println("Battery usage is fine"); 
+      driveSpeed = tmpDriveSpeed;
+    }
     if (!autoBalance && !limelightmode) {
       leftMotor1.set(ControlMode.PercentOutput, xcontroller.getLeftY()*driveSpeed);
       leftMotor2.set(ControlMode.PercentOutput, xcontroller.getLeftY()*driveSpeed);
@@ -195,6 +194,9 @@ public class Robot extends TimedRobot {
     double targetXAxis = LimelightHelpers.getTX("");
     double targetYAxis = LimelightHelpers.getTY("");
     double targetArea = LimelightHelpers.getTA("");
+    SmartDashboard.putNumber("LimelightX", targetXAxis);
+    SmartDashboard.putNumber("LimelightY", targetYAxis);
+    SmartDashboard.putNumber("LimelightArea", targetArea);
     double speedNerf = 85;
 
     if (!between(-2.5,2.5, targetXAxis)) {
@@ -206,10 +208,6 @@ public class Robot extends TimedRobot {
     } else {
       resetMotors();
     }
-
-    SmartDashboard.putNumber("LimelightX", targetXAxis);
-    SmartDashboard.putNumber("LimelightY", targetYAxis);
-    SmartDashboard.putNumber("LimelightArea", targetArea);
 
     System.out.println(targetXAxis+'\n'+targetYAxis);
   }
