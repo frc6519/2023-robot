@@ -11,8 +11,10 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoMode.PixelFormat;
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort.Port;
+import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -41,11 +43,12 @@ public class Robot extends TimedRobot {
   private float turnSpeed = 0.2f;
   private int pitchOffset = 0;
   private double currentAngle;
-  private double driveSpeed = 0.30;
+  private double driveSpeed = 0.7;
   private int pipelineIndex = 0;
   // private double tmpDriveSpeed = driveSpeed;
   // Gyroscope
   private static final AHRS ahrs = new AHRS(Port.kUSB); 
+  private final Accelerometer accelerometer = new BuiltInAccelerometer();
 
   // Functions/Methods
   @Override
@@ -66,6 +69,7 @@ public class Robot extends TimedRobot {
     motorUpdate(0,0,0,0);
     SmartDashboard.putNumber("Arm Output: ",0);
     SmartDashboard.putNumber("Max speed: ",driveSpeed);
+    SmartDashboard.putBoolean("Limelight:", limelightmode);
   }
 
   @Override
@@ -151,21 +155,37 @@ public class Robot extends TimedRobot {
         limelightPeriodic();
       }
     }
+    System.out.println(driveSpeed);
     for (int i = 1; i < macroStick.getButtonCount(); i++) {
       if (macroStick.getRawButtonPressed(i)) {
         switch(i) {
+          case 8:
+            driveSpeed = driveSpeed+0.1;
+            if (driveSpeed >= 1.0) {
+              driveSpeed = 0;
+            }
+            SmartDashboard.putNumber("Max speed: ",driveSpeed);
+            break;
+          case 7:
+            driveSpeed = driveSpeed-0.1;
+            if (driveSpeed <= 0) {
+              driveSpeed = 1;
+            }
+            SmartDashboard.putNumber("Max speed: ",driveSpeed);
+            break;
           case 4:
-            if (pipelineIndex >= 3) {
+            pipelineIndex++;
+            if (pipelineIndex == 3) {
               pipelineIndex = 0;
-            } else {
-              pipelineIndex++;
             }
             LimelightHelpers.setPipelineIndex("", pipelineIndex);
+            SmartDashboard.putNumber("Pipeline:", pipelineIndex);
           case 3:
             autoBalance = !autoBalance;
             break;
           case 1:
             limelightmode = !limelightmode;
+            SmartDashboard.putBoolean("Limelight:", limelightmode);
             break;
           default:
             if (debugButtons) {
@@ -180,13 +200,13 @@ public class Robot extends TimedRobot {
     double targetXAxis = LimelightHelpers.getTX("");
     double targetYAxis = LimelightHelpers.getTY("");
     double targetArea = LimelightHelpers.getTA("");
-    double speedNerf = 100;
+    double speedNerf = 85;
 
     if (!between(-2.5,2.5, targetXAxis)) {
-      leftMotor1.set(ControlMode.PercentOutput, targetXAxis/speedNerf);
-      leftMotor2.set(ControlMode.PercentOutput, targetXAxis/speedNerf);
-      rightMotor1.set(ControlMode.PercentOutput, (targetXAxis/speedNerf)*-1);
-      rightMotor2.set(ControlMode.PercentOutput, (targetXAxis/speedNerf)*-1);
+      rightMotor1.set(ControlMode.PercentOutput, targetXAxis/speedNerf);
+      rightMotor2.set(ControlMode.PercentOutput, targetXAxis/speedNerf);
+      leftMotor1.set(ControlMode.PercentOutput, (targetXAxis/speedNerf)*-1);
+      leftMotor2.set(ControlMode.PercentOutput, (targetXAxis/speedNerf)*-1);
       motorUpdate(targetXAxis/speedNerf,targetXAxis/speedNerf,(targetXAxis/speedNerf)*-1,(targetXAxis/speedNerf)*-1);
     } else {
       resetMotors();
