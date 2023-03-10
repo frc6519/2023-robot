@@ -228,7 +228,7 @@ public class Robot extends TimedRobot {
   }
 
   public void drive(double speed) {
-    leftMotor1.set(ControlMode.PercentOutput, speed);
+    speed = speed*-1; leftMotor1.set(ControlMode.PercentOutput, speed);
     leftMotor2.set(ControlMode.PercentOutput, speed);
     rightMotor1.set(ControlMode.PercentOutput, speed);
     rightMotor2.set(ControlMode.PercentOutput, speed);
