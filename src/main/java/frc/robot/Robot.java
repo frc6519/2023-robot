@@ -84,6 +84,7 @@ public class Robot extends TimedRobot {
     currentAngle = ahrs.getYaw();
     batteryVoltage = PowerJNI.getVinVoltage();
     SmartDashboard.putNumber("Battery Voltage: ",batteryVoltage);
+    SmartDashboard.putString("Battery Status: ", resolveBatteryStatus());
     SmartDashboard.putString("Autobalance: ",String.valueOf(autoBalance));
     if (ahrs.isConnected()) {
       SmartDashboard.putNumber("Roll: ",ahrs.getRoll());
@@ -99,6 +100,7 @@ public class Robot extends TimedRobot {
       SmartDashboard.putBoolean("Gyro calibrating: ", false);
     }
     SmartDashboard.putString("Control Mode: ",controlMode);
+    tmpDriveSpeed = SmartDashboard.getNumber("Max speed: ", driveSpeed);
   }
 
   @Override
@@ -125,10 +127,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     if (batteryVoltage <= 8.00) {
-      System.out.println("Should stop the robot, or reduce speed");
       driveSpeed = tmpDriveSpeed/2;
     } else {
-      System.out.println("Battery usage is fine"); 
       driveSpeed = tmpDriveSpeed;
     }
     if (!autoBalance && !limelightmode) {
@@ -275,6 +275,16 @@ public class Robot extends TimedRobot {
       return true;
     } else {
       return false;
+    }
+  }
+
+  public String resolveBatteryStatus() {
+    if (batteryVoltage <= 8.00) {
+      System.out.println("Should stop the robot, or reduce speed");
+      return "Bad";
+    } else {
+      System.out.println("Battery usage is fine"); 
+      return "Ok";
     }
   }
 
