@@ -208,8 +208,6 @@ public class Robot extends TimedRobot {
     } else {
       resetMotors();
     }
-
-    System.out.println(targetXAxis+'\n'+targetYAxis);
   }
 
   public void autoBalancePeriodic() {
@@ -280,10 +278,8 @@ public class Robot extends TimedRobot {
 
   public String resolveBatteryStatus() {
     if (batteryVoltage <= 8.00) {
-      System.out.println("Should stop the robot, or reduce speed");
       return "Bad";
     } else {
-      System.out.println("Battery usage is fine"); 
       return "Ok";
     }
   }
