@@ -66,6 +66,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Arm Output: ",0);
     SmartDashboard.putNumber("Max speed: ",driveSpeed);
     SmartDashboard.putBoolean("Limelight:", limelightmode);
+    SmartDashboard.putString("Auto Timer: ", "Not started.");
   }
 
   @Override
@@ -106,6 +107,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     int time = (int) timer.get();
+    SmartDashboard.putString("Auto Timer: ", String.valueOf(timer.get()));
     if (between(0,2,time)) {
       drive(0.2);
     } else if (between(3, 4,time)) {
@@ -149,7 +151,6 @@ public class Robot extends TimedRobot {
         limelightPeriodic();
       }
     }
-    System.out.println(driveSpeed);
     for (int i = 1; i < macroStick.getButtonCount(); i++) {
       if (macroStick.getRawButtonPressed(i)) {
         switch(i) {
@@ -253,7 +254,7 @@ public class Robot extends TimedRobot {
   }
 
   public void rotate(double speed) {
-    leftMotor1.set(ControlMode.PercentOutput, speed);
+    speed = speed*-1; leftMotor1.set(ControlMode.PercentOutput, speed);
     leftMotor2.set(ControlMode.PercentOutput, speed);
     rightMotor1.set(ControlMode.PercentOutput, speed*-1);
     rightMotor2.set(ControlMode.PercentOutput, speed*-1);
