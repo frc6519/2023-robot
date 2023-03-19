@@ -7,7 +7,7 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
-
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoMode.PixelFormat;
@@ -32,6 +32,8 @@ public class Robot extends TimedRobot {
   private final TalonSRX rightMotor2 = new TalonSRX(4);
   // Claw
   private final TalonSRX armMotor1 = new TalonSRX(5);
+  private final Spark leftClawMotor = new Spark(0);
+  private final Spark rightClawMotor = new Spark(1);
   // Xbox Controller
   XboxController xcontroller =  new XboxController(0);
   // Customization options
@@ -151,6 +153,7 @@ public class Robot extends TimedRobot {
         limelightPeriodic();
       }
     }
+    // Regular Macros
     for (int i = 1; i < macroStick.getButtonCount(); i++) {
       if (macroStick.getRawButtonPressed(i)) {
         switch(i) {
@@ -188,6 +191,14 @@ public class Robot extends TimedRobot {
             }
         }
       }
+    }
+    // Claw Macros
+    if (macroStick.getLeftBumper()) {
+      // Close
+    } else if (macroStick.getRightBumper()) {
+      // Open
+    } else {
+      // Disable rev
     }
   }
 
