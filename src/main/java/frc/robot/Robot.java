@@ -193,12 +193,15 @@ public class Robot extends TimedRobot {
       }
     }
     // Claw Macros
-    if (macroStick.getLeftBumper()) {
-      // Close
-    } else if (macroStick.getRightBumper()) {
-      // Open
-    } else {
-      // Disable rev
+    if (macroStick.getLeftBumper()) { // Close
+      leftClawMotor.set(0.1);
+      rightClawMotor.set(-0.1);
+    } else if (macroStick.getRightBumper()) { // Open
+      leftClawMotor.set(-0.1);
+      rightClawMotor.set(0.1);
+    } else { // Reset
+      leftClawMotor.set(0);
+      rightClawMotor.set(0)
     }
   }
 
