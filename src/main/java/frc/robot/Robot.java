@@ -111,17 +111,19 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     int time = (int) timer.get();
     SmartDashboard.putString("Auto Timer: ", String.valueOf(timer.get()));
-    if (between(0,2,time)) {
-      drive(0.2);
-    } else if (between(3, 4,time)) {
-      drive(-0.2);
-    } else if (between(5, 6, time)) {
-      rotate(-turnSpeed);
-    } else if (between(7, 8, time)) {
-      rotate(turnSpeed);
-    } else {
-      resetMotors();
-    }
+    // if (between(0,2,time)) {
+    //   drive(0.2);
+    // } else if (between(3, 4,time)) {
+    //   drive(-0.2);
+    // } else if (between(5, 6, time)) {
+    //   rotate(-turnSpeed);
+    // } else if (between(7, 8, time)) {
+    //   rotate(turnSpeed);
+    // } else {
+    //   resetMotors();
+    // }
+
+    // Duy is writing the auto code now
   }
 
   @Override
