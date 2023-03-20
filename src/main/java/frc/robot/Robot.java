@@ -45,6 +45,7 @@ public class Robot extends TimedRobot {
   private double driveSpeed = 0.7;
   private int pipelineIndex = 0;
   private double tmpDriveSpeed = driveSpeed;
+  private double oneInch;
   // Gyroscope
   private static final AHRS ahrs = new AHRS(Port.kUSB); 
 
@@ -201,7 +202,7 @@ public class Robot extends TimedRobot {
       rightClawMotor.set(0.1);
     } else { // Reset
       leftClawMotor.set(0);
-      rightClawMotor.set(0)
+      rightClawMotor.set(0);
     }
   }
 
@@ -248,6 +249,18 @@ public class Robot extends TimedRobot {
     rightMotor2.set(ControlMode.PercentOutput, speed);
     motorUpdate(speed,speed,speed,speed);
   }
+
+  public void driveInch(double inch) {
+    int time = (int) timer.get();
+    SmartDashboard.putString("Auto Timer: ", String.valueOf(timer.get()));
+    if (between(0,inch,time)) {
+      drive(oneInch);
+      timer.reset();
+    } else {
+      resetMotors();
+      timer.reset();
+    }
+  }    
 
   public void gyro_rotate(double angle) {
     if (!between(angle-1,angle+1,currentAngle)) {
