@@ -294,7 +294,7 @@ public class Robot extends TimedRobot {
   public void driveInch(double inch) {
     int time = (int) timer.get();
     double oneInch = inch/147.5; // Duy made this
-    System.out.println(oneInch);
+    System.out.println(oneInch+"\n"+time);
     if (between(0,2,time)) {
       drive(oneInch);
     } else {
