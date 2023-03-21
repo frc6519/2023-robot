@@ -7,7 +7,7 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoMode.PixelFormat;
@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
@@ -46,12 +48,42 @@ public class Robot extends TimedRobot {
   private int pipelineIndex = 0;
   private double tmpDriveSpeed = driveSpeed;
   private int autoCount = 0;
+  // Auto preset
+  private static final String red1 = "Red 1";
+  private static final String red2 = "Red 2";
+  private static final String red3 = "Red 3";
+  private static final String blue1 = "Blue 1";
+  private static final String blue2 = "Blue 2";
+  private static final String blue3 = "Blue 3";
+  private String m_autoSelected;
+  private final SendableChooser<String> sc = new SendableChooser<>();
+  // Charging location
+  private static final String sleft = "Left";
+  private static final String smiddle = "Middle";
+  private static final String sright = "Right";
+  private String s_autoSelected;
+  private final SendableChooser<String> ssc = new SendableChooser<>();
   // Gyroscope
   private static final AHRS ahrs = new AHRS(Port.kUSB); 
 
   // Functions/Methods
   @Override
   public void robotInit() {
+    // Auto preset
+    sc.addOption("Red 1", red1);
+    sc.addOption("Red 2", red2);
+    sc.addOption("Red 3", red3);
+    sc.addOption("Blue 1", blue1);
+    sc.addOption("Blue 2", blue2);
+    sc.addOption("Blue 3", blue3);
+    sc.setDefaultOption("Red 1", red1);
+    SmartDashboard.putData(sc);
+    // Charging location
+    ssc.addOption("Left", sleft);
+    ssc.addOption("Middle", smiddle);
+    ssc.addOption("Right", sright);
+    ssc.setDefaultOption("Middle", smiddle);
+    SmartDashboard.putData(ssc);
     timer.reset();
     leftMotor1.configFactoryDefault(); leftMotor1.set(ControlMode.PercentOutput, 0.00);
     leftMotor2.configFactoryDefault(); leftMotor2.set(ControlMode.PercentOutput, 0.00);
@@ -74,6 +106,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    m_autoSelected = sc.getSelected();
     System.out.println("Autonomous Time!");
     timer.reset();
     timer.start();
