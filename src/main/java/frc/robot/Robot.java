@@ -45,7 +45,7 @@ public class Robot extends TimedRobot {
   private double driveSpeed = 0.7;
   private int pipelineIndex = 0;
   private double tmpDriveSpeed = driveSpeed;
-  private double oneInch;
+  private int autoCount = 0;
   // Gyroscope
   private static final AHRS ahrs = new AHRS(Port.kUSB); 
 
@@ -110,7 +110,12 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     int time = (int) timer.get();
-    SmartDashboard.putString("Auto Timer: ", String.valueOf(timer.get()));
+    SmartDashboard.putString("Auto Timer: ", String.valueOf(time));
+    if (autoCount == 0) {
+      driveInch(1);
+    } else {
+      resetMotors();
+    }
     // if (between(0,2,time)) {
     //   drive(0.2);
     // } else if (between(3, 4,time)) {
@@ -124,6 +129,7 @@ public class Robot extends TimedRobot {
     // }
 
     // Duy is writing the auto code now
+    autoCount++;
   }
 
   @Override
@@ -254,13 +260,12 @@ public class Robot extends TimedRobot {
 
   public void driveInch(double inch) {
     int time = (int) timer.get();
-    SmartDashboard.putString("Auto Timer: ", String.valueOf(timer.get()));
-    if (between(0,inch,time)) {
+    double oneInch = inch/147.5; // Duy made this
+    System.out.println(oneInch);
+    if (between(0,2,time)) {
       drive(oneInch);
-      timer.reset();
     } else {
       resetMotors();
-      timer.reset();
     }
   }    
 
