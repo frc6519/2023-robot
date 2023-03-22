@@ -34,8 +34,8 @@ public class Robot extends TimedRobot {
   private final TalonSRX rightMotor2 = new TalonSRX(4);
   // Claw
   private final TalonSRX armMotor1 = new TalonSRX(5);
-  private final Spark leftClawMotor = new Spark(0);
-  private final Spark rightClawMotor = new Spark(1);
+  private final Spark leftClawMotor = new Spark(1);
+  private final Spark rightClawMotor = new Spark(2);
   // Xbox Controller
   XboxController xcontroller =  new XboxController(0);
   // Customization options
