@@ -186,7 +186,7 @@ public class Robot extends TimedRobot {
       if (xcontroller.getLeftTriggerAxis() >= 0.01) {
         armMotor(xcontroller.getLeftTriggerAxis());
       } else {
-        armMotor(xcontroller.getRightTriggerAxis()*-1);
+        armMotor((xcontroller.getRightTriggerAxis()*-1)/8);
       }
     } else {
       if (autoBalance && !limelightmode) {
