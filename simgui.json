@@ -18,7 +18,9 @@
       "/FMSInfo": "FMSInfo",
       "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
       "/SmartDashboard/Auto choices": "String Chooser",
-      "/SmartDashboard/Camera Options": "String Chooser"
+      "/SmartDashboard/Camera Options": "String Chooser",
+      "/SmartDashboard/SendableChooser[0]": "String Chooser",
+      "/SmartDashboard/SendableChooser[1]": "String Chooser"
     }
   }
 }

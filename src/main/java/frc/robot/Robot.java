@@ -63,6 +63,7 @@ public class Robot extends TimedRobot {
   private static final String sright = "Right";
   private String s_autoSelected;
   private final SendableChooser<String> ssc = new SendableChooser<>();
+  private Timer timerInch = new Timer();
   // Gyroscope
   private static final AHRS ahrs = new AHRS(Port.kUSB); 
 
@@ -143,9 +144,9 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     int time = (int) timer.get();
-    SmartDashboard.putString("Auto Timer: ", String.valueOf(time));
-    if (autoCount == 0) {
-      driveInch(1);
+    SmartDashboard.putString("Auto Timer: ", String.valueOf(timer.get()));
+    if (between(0, 15, time)) {
+      driveInch(6);
     } else {
       resetMotors();
     }
@@ -162,7 +163,6 @@ public class Robot extends TimedRobot {
     // }
 
     // Duy is writing the auto code now
-    autoCount++;
   }
 
   @Override
@@ -291,14 +291,20 @@ public class Robot extends TimedRobot {
     motorUpdate(speed,speed,speed,speed);
   }
 
+  //The function runs 1 inch of distance for every 1 second passed. 
+  //Example:"if you want to make it travel 12 inches in 2 seconds
+  //you would have to make it 6 inches for the number being sent to the function as it 
+  //will now travel for 6 inches per second adding up to 12 inches traveled."
+  //This only works depending on the weight of the robot
   public void driveInch(double inch) {
-    int time = (int) timer.get();
     double oneInch = inch/147.5; // Duy made this
-    System.out.println(oneInch+"\n"+time);
-    if (between(0,2,time)) {
+    timerInch.start();
+    int timeInch = (int) timerInch.get();
+    if (between(0,2,timeInch)) {
       drive(oneInch);
     } else {
       resetMotors();
+      System.out.println("working");
     }
   }    
 
