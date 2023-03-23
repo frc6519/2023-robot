@@ -107,6 +107,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autoSelected = sc.getSelected();
+    autoBalance = false;
     System.out.println("Autonomous Time!");
     timer.reset();
     timer.start();
@@ -114,7 +115,7 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopInit() { controlMode = "Teleop";}
+  public void teleopInit() { controlMode = "Teleop"; autoBalance = false;}
 
   @Override
   public void robotPeriodic() {
@@ -144,24 +145,14 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     int time = (int) timer.get();
     SmartDashboard.putString("Auto Timer: ", String.valueOf(time));
-    if (autoCount == 0) {
-      driveInch(1);
+    if (between(0, 2, time)) {
+      drive(0.3);
+    } else if (between(2,6,time)) {
+      drive(-0.3);
     } else {
-      resetMotors();
+      autoBalance = true;
+      autoBalancePeriodic();
     }
-    // if (between(0,2,time)) {
-    //   drive(0.2);
-    // } else if (between(3, 4,time)) {
-    //   drive(-0.2);
-    // } else if (between(5, 6, time)) {
-    //   rotate(-turnSpeed);
-    // } else if (between(7, 8, time)) {
-    //   rotate(turnSpeed);
-    // } else {
-    //   resetMotors();
-    // }
-
-    // Duy is writing the auto code now
     autoCount++;
   }
 
