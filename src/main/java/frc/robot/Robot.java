@@ -34,8 +34,8 @@ public class Robot extends TimedRobot {
   private final TalonSRX rightMotor2 = new TalonSRX(4);
   // Claw
   private final TalonSRX armMotor1 = new TalonSRX(5);
-  private final Spark leftClawMotor = new Spark(0);
-  private final Spark rightClawMotor = new Spark(1);
+  private final Spark leftClawMotor = new Spark(1);
+  private final Spark rightClawMotor = new Spark(2);
   // Xbox Controller
   XboxController xcontroller =  new XboxController(0);
   // Customization options
@@ -108,6 +108,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autoSelected = sc.getSelected();
+    autoBalance = false;
     System.out.println("Autonomous Time!");
     timer.reset();
     timer.start();
@@ -115,7 +116,7 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopInit() { controlMode = "Teleop";}
+  public void teleopInit() { controlMode = "Teleop"; autoBalance = false;}
 
   @Override
   public void robotPeriodic() {
@@ -147,8 +148,14 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Auto Timer: ", String.valueOf(timer.get()));
     if (between(0, 15, time)) {
       driveInch(6);
+    SmartDashboard.putString("Auto Timer: ", String.valueOf(time));
+    if (between(0, 2, time)) {
+      drive(0.3);
+    } else if (between(2,6,time)) {
+      drive(-0.3);
     } else {
-      resetMotors();
+      autoBalance = true;
+      autoBalancePeriodic();
     }
     // if (between(0,2,time)) {
     //   drive(0.2);
@@ -186,7 +193,7 @@ public class Robot extends TimedRobot {
       if (xcontroller.getLeftTriggerAxis() >= 0.01) {
         armMotor(xcontroller.getLeftTriggerAxis());
       } else {
-        armMotor(xcontroller.getRightTriggerAxis()*-1);
+        armMotor((xcontroller.getRightTriggerAxis()*-1)/8);
       }
     } else {
       if (autoBalance && !limelightmode) {
