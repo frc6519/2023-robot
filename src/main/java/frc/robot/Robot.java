@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
   // Autonomous & Teleop vars
   private final Timer timer = new Timer();
-   private Timer timerInch = new Timer();
+  private Timer timerInch = new Timer();
   private boolean autoBalance = false;
   private boolean limelightmode = false;
   private String controlMode = "Disabled";
@@ -114,7 +114,7 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopInit() { controlMode = "Teleop"; autoBalance = false;}
+  public void teleopInit() { controlMode = "Teleop"; autoBalance = false; reachedApriltag = false; deployAutobalance = false; }
 
   @Override
   public void robotPeriodic() {
@@ -172,7 +172,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {controlMode = "Disabled";};
   @Override
-  public void simulationPeriodic() {};
+  public void simulationPeriodic() {controlMode = "Simulation";};
 
   @Override
   public void teleopPeriodic() {
