@@ -27,6 +27,8 @@ public class Robot extends TimedRobot {
   private boolean limelightmode = false;
   private String controlMode = "Disabled";
   private double batteryVoltage = PowerJNI.getVinVoltage();
+  private boolean reachedApriltag = false;
+  private boolean deployAutobalance = false;
   // Motors
   private final TalonSRX leftMotor1 = new TalonSRX(1); // Confirm these ids later
   private final TalonSRX leftMotor2 = new TalonSRX(2);
@@ -107,6 +109,8 @@ public class Robot extends TimedRobot {
     timer.reset();
     timer.start();
     controlMode = "Autonomous";
+    reachedApriltag = false;
+    deployAutobalance = false;
   }
 
   @Override
@@ -141,11 +145,20 @@ public class Robot extends TimedRobot {
     int time = (int) timer.get();
     SmartDashboard.putString("Auto Timer: ", String.valueOf(timer.get()));
     if (a_autoSelected == ethan) { // Ethan
-      if (between(0, 2, time)) {
-        drive(0.3);
-      } else if (between(2,6,time)) {
-        drive(-0.3);
-      } else {
+      double targetArea = LimelightHelpers.getTA("");
+      SmartDashboard.putNumber("LimelightArea", targetArea);
+      
+      if (targetArea <= 20 && !reachedApriltag) { // 20 is a placeholder, this is probably a dangerous value dont run this unless you ask first
+        // Approach the aprilTag 
+        drive(0.1); // Approach at 10% speed
+        // Here we would either drop the cone or if we push it we ignore this part
+        reachedApriltag = true;
+      } else if (reachedApriltag && !deployAutobalance) { // Reverse onto charging station
+        drive(-0.1);
+        if (ahrs.getPitch() >= 2) { // Reached the charging station
+          deployAutobalance = true;
+        }
+      } else if (deployAutobalance) { // Balance on the charging station
         autoBalance = true;
         autoBalancePeriodic();
       }
