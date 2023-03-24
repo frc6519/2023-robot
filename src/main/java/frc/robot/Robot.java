@@ -96,6 +96,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Max speed: ",driveSpeed);
     SmartDashboard.putBoolean("Limelight:", limelightmode);
     SmartDashboard.putString("Auto Timer: ", "Not started.");
+    clawSpeed(0,0);
   }
 
   @Override
@@ -226,14 +227,11 @@ public class Robot extends TimedRobot {
     }
     // Claw Macros
     if (macroStick.getLeftBumper()) { // Close
-      leftClawMotor.set(0.1);
-      rightClawMotor.set(-0.1);
+      clawSpeed(-0.1,0.1);
     } else if (macroStick.getRightBumper()) { // Open
-      leftClawMotor.set(-0.1);
-      rightClawMotor.set(0.1);
+      clawSpeed(0.1,-0.1);
     } else { // Reset
-      leftClawMotor.set(0);
-      rightClawMotor.set(0);
+      clawSpeed(0,0);
     }
   }
 
@@ -358,5 +356,12 @@ public class Robot extends TimedRobot {
   public void armMotor(double power) {
     armMotor1.set(ControlMode.PercentOutput,power);
     SmartDashboard.putNumber("Arm Output: ",power);
+  }
+  
+  public void clawMotor(double lspeed, double rspeed) {
+    leftClawMotor.set(lspeed);
+    rightClawMotor.set(rspeed);
+    SmartDashboard.putNumber("Left Claw Output: ",lspeed);
+    SmartDashboard.putNumber("Right Claw Output: ",rspeed); 
   }
 }
