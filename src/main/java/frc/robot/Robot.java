@@ -30,7 +30,7 @@ public class Robot extends TimedRobot {
   private boolean reachedApriltag = false;
   private boolean deployAutobalance = false;
   // Motors
-  private final TalonSRX leftMotor1 = new TalonSRX(1); // Confirm these ids later
+  private final TalonSRX leftMotor1 = new TalonSRX(1);
   private final TalonSRX leftMotor2 = new TalonSRX(2);
   private final TalonSRX rightMotor1 = new TalonSRX(3);
   private final TalonSRX rightMotor2 = new TalonSRX(4);
@@ -42,7 +42,7 @@ public class Robot extends TimedRobot {
   XboxController xcontroller =  new XboxController(0);
   // Customization options
   private final XboxController macroStick = xcontroller; 
-  private final boolean debugButtons = true; // When a button is pressed we print out the buttons id, for easy debugging
+  private final boolean debugButtons = false;
   private float turnSpeed = 0.2f;
   private int pitchOffset = 0;
   private double currentAngle;
