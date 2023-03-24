@@ -64,6 +64,10 @@ public class Robot extends TimedRobot {
   private String s_autoSelected;
   private final SendableChooser<String> ssc = new SendableChooser<>();
   private Timer timerInch = new Timer();
+  private static final String duy = "Duy";
+  private static final String ethan = "Ethan";
+  private String a_autoSelected;
+  private final SendableChooser<String> ac = new SendableChooser<>();
   // Gyroscope
   private static final AHRS ahrs = new AHRS(Port.kUSB); 
 
@@ -85,6 +89,12 @@ public class Robot extends TimedRobot {
     ssc.addOption("Right", sright);
     ssc.setDefaultOption("Middle", smiddle);
     SmartDashboard.putData(ssc);
+    // Autocode (for testing)
+    ac.addOption("Ethan",ethan);
+    ac.addOption("Duy",duy);
+    ac.setDefaultOption("Ethan",ethan);
+    SmartDashboard.putData(ac);
+    // Regular
     timer.reset();
     leftMotor1.configFactoryDefault(); leftMotor1.set(ControlMode.PercentOutput, 0.00);
     leftMotor2.configFactoryDefault(); leftMotor2.set(ControlMode.PercentOutput, 0.00);
@@ -146,18 +156,19 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     int time = (int) timer.get();
     SmartDashboard.putString("Auto Timer: ", String.valueOf(timer.get()));
-    // Duy
-    if (between(0, 15, time)) {
-      driveInch(6);
-    }
-    // Ethan
-    if (between(0, 2, time)) {
-      drive(0.3);
-    } else if (between(2,6,time)) {
-      drive(-0.3);
-    } else {
-      autoBalance = true;
-      autoBalancePeriodic();
+    if (a_autoSelected == ethan) { // Ethan
+      if (between(0, 2, time)) {
+        drive(0.3);
+      } else if (between(2,6,time)) {
+        drive(-0.3);
+      } else {
+        autoBalance = true;
+        autoBalancePeriodic();
+      }
+    } else { // Duy
+      if (between(0, 15, time)) {
+        driveInch(6);
+      }
     }
   }
 
