@@ -48,15 +48,6 @@ public class Robot extends TimedRobot {
   private int pipelineIndex = 0;
   private double tmpDriveSpeed = driveSpeed;
   private int autoCount = 0;
-  // Auto preset
-  private static final String red1 = "Red 1";
-  private static final String red2 = "Red 2";
-  private static final String red3 = "Red 3";
-  private static final String blue1 = "Blue 1";
-  private static final String blue2 = "Blue 2";
-  private static final String blue3 = "Blue 3";
-  private String m_autoSelected;
-  private final SendableChooser<String> sc = new SendableChooser<>();
   // Charging location
   private static final String sleft = "Left";
   private static final String smiddle = "Middle";
@@ -64,6 +55,7 @@ public class Robot extends TimedRobot {
   private String s_autoSelected;
   private final SendableChooser<String> ssc = new SendableChooser<>();
   private Timer timerInch = new Timer();
+  // Autocode selector
   private static final String duy = "Duy";
   private static final String ethan = "Ethan";
   private String a_autoSelected;
@@ -74,15 +66,6 @@ public class Robot extends TimedRobot {
   // Functions/Methods
   @Override
   public void robotInit() {
-    // Auto preset
-    sc.addOption("Red 1", red1);
-    sc.addOption("Red 2", red2);
-    sc.addOption("Red 3", red3);
-    sc.addOption("Blue 1", blue1);
-    sc.addOption("Blue 2", blue2);
-    sc.addOption("Blue 3", blue3);
-    sc.setDefaultOption("Red 1", red1);
-    SmartDashboard.putData(sc);
     // Charging location
     ssc.addOption("Left", sleft);
     ssc.addOption("Middle", smiddle);
@@ -117,7 +100,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autoSelected = sc.getSelected();
+    a_autoSelected = ac.getSelected();
     autoBalance = false;
     System.out.println("Autonomous Time!");
     timer.reset();
