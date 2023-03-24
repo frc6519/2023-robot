@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
   // Autonomous & Teleop vars
   private final Timer timer = new Timer();
+   private Timer timerInch = new Timer();
   private boolean autoBalance = false;
   private boolean limelightmode = false;
   private String controlMode = "Disabled";
@@ -56,7 +57,6 @@ public class Robot extends TimedRobot {
   private static final String sright = "Right";
   private String s_autoSelected;
   private final SendableChooser<String> ssc = new SendableChooser<>();
-  private Timer timerInch = new Timer();
   // Autocode selector
   private static final String duy = "Duy";
   private static final String ethan = "Ethan";
