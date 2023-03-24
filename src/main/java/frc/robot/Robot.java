@@ -50,12 +50,10 @@ public class Robot extends TimedRobot {
   private double driveSpeed = 0.7;
   private int pipelineIndex = 0;
   private double tmpDriveSpeed = driveSpeed;
-  private int autoCount = 0;
   // Charging location
   private static final String sleft = "Left";
   private static final String smiddle = "Middle";
   private static final String sright = "Right";
-  private String s_autoSelected;
   private final SendableChooser<String> ssc = new SendableChooser<>();
   // Autocode selector
   private static final String duy = "Duy";
@@ -99,7 +97,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Max speed: ",driveSpeed);
     SmartDashboard.putBoolean("Limelight:", limelightmode);
     SmartDashboard.putString("Auto Timer: ", "Not started.");
-    clawSpeed(0,0);
+    clawMotor(0,0);
   }
 
   @Override
@@ -240,11 +238,11 @@ public class Robot extends TimedRobot {
     }
     // Claw Macros
     if (macroStick.getLeftBumper()) { // Close
-      clawSpeed(-0.1,0.1);
+      clawMotor(-0.1,0.1);
     } else if (macroStick.getRightBumper()) { // Open
-      clawSpeed(0.1,-0.1);
+      clawMotor(0.1,-0.1);
     } else { // Reset
-      clawSpeed(0,0);
+      clawMotor(0,0);
     }
   }
 
