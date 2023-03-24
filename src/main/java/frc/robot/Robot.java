@@ -7,6 +7,8 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
@@ -16,7 +18,7 @@ import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
+// import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -37,8 +39,8 @@ public class Robot extends TimedRobot {
   private final TalonSRX rightMotor2 = new TalonSRX(4);
   // Claw
   private final TalonSRX armMotor1 = new TalonSRX(5);
-  private final Spark leftClawMotor = new Spark(1);
-  private final Spark rightClawMotor = new Spark(2);
+  private final CANSparkMax leftClawMotor = new CANSparkMax(1, MotorType.kBrushless);
+  private final CANSparkMax rightClawMotor = new CANSparkMax(2, MotorType.kBrushless);
   // Xbox Controller
   XboxController xcontroller =  new XboxController(0);
   // Customization options
@@ -84,6 +86,8 @@ public class Robot extends TimedRobot {
     rightMotor1.configFactoryDefault(); rightMotor1.set(ControlMode.PercentOutput, 0.00);
     rightMotor2.configFactoryDefault(); rightMotor2.set(ControlMode.PercentOutput, 0.00);
     armMotor1.configFactoryDefault(); armMotor1.set(ControlMode.PercentOutput, 0.00);
+    leftClawMotor.restoreFactoryDefaults();
+    rightClawMotor.restoreFactoryDefaults();
     ahrs.calibrate();
     UsbCamera cam = CameraServer.startAutomaticCapture(0);
     cam.setPixelFormat(PixelFormat.kMJPEG);
@@ -140,8 +144,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
-    int time = (int) timer.get();
-    SmartDashboard.putString("Auto Timer: ", String.valueOf(timer.get()));
+    double time = timer.get();
+    SmartDashboard.putString("Auto Timer: ", String.valueOf((int) timer.get()));
     if (a_autoSelected == ethan) { // Ethan
       double targetArea = LimelightHelpers.getTA("");
       SmartDashboard.putNumber("LimelightArea", targetArea);
@@ -149,8 +153,11 @@ public class Robot extends TimedRobot {
       if (targetArea <= 20 && !reachedApriltag) { // 20 is a placeholder, this is probably a dangerous value dont run this unless you ask first
         // Approach the aprilTag 
         drive(0.1); // Approach at 10% speed
+        System.out.println(time);
         // Here we would either drop the cone or if we push it we ignore this part
-        reachedApriltag = true;
+        if (targetArea >= 20) {
+          reachedApriltag = true;
+        }
       } else if (reachedApriltag && !deployAutobalance) { // Reverse onto charging station
         drive(-0.1);
         if (ahrs.getPitch() >= 2) { // Reached the charging station
