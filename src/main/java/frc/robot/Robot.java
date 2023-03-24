@@ -90,6 +90,7 @@ public class Robot extends TimedRobot {
     leftMotor1.setInverted(true);
     leftMotor2.setInverted(true);
     SmartDashboard.putString("Autobalance: ",String.valueOf(autoBalance));
+    SmartDashboard.putString("Autobalance Job: ", "Not started.");
     SmartDashboard.putString("Control Mode: ",controlMode);
     motorUpdate(0,0,0,0);
     SmartDashboard.putNumber("Arm Output: ",0);
@@ -103,7 +104,6 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     a_autoSelected = ac.getSelected();
     autoBalance = false;
-    System.out.println("Autonomous Time!");
     timer.reset();
     timer.start();
     controlMode = "Autonomous";
@@ -259,13 +259,13 @@ public class Robot extends TimedRobot {
     if (ahrs.isConnected() && !ahrs.isCalibrating()) {
       double pitch = ahrs.getPitch();
       if (pitch >= (5+pitchOffset)) {
-        System.out.println("Go backwards");
+        SmartDashboard.putString("Autobalance Job: ", "Go backwards");
         drive(-0.25);
       } else if (pitch <= (-5+pitchOffset)) {
-        System.out.println("Go forwards");
+        SmartDashboard.putString("Autobalance Job: ", "Go forwards");
         drive(0.25);
       } else {
-        System.out.println("Already balanced");
+        SmartDashboard.putString("Autobalance Job: ", "Already balanced");
         resetMotors();
       }
     }
