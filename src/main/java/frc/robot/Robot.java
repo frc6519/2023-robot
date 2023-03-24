@@ -152,11 +152,16 @@ public class Robot extends TimedRobot {
       
       if (targetArea <= 20 && !reachedApriltag) { // 20 is a placeholder, this is probably a dangerous value dont run this unless you ask first
         // Approach the aprilTag 
-        drive(0.1); // Approach at 10% speed
-        System.out.println(time);
-        // Here we would either drop the cone or if we push it we ignore this part
-        if (targetArea >= 20) {
-          reachedApriltag = true;
+        if (between (0,1,time)) {
+          armMotor(0.1);
+        } else {
+          drive(0.1); // Approach at 10% speed
+          System.out.println(time);
+          System.out.println("ending");
+          // Here we would either drop the cone or if we push it we ignore this part
+          if (targetArea >= 20) {
+            reachedApriltag = true;
+          }
         }
       } else if (reachedApriltag && !deployAutobalance) { // Reverse onto charging station
         drive(-0.1);
@@ -167,8 +172,8 @@ public class Robot extends TimedRobot {
         autoBalance = true;
         autoBalancePeriodic();
       }
-    } else { // Duy
-      if (between(0, 15, time)) {
+      } else { // Duy
+      if (between(15, 15, time ) && a_autoSelected == duy) {
         driveInch(6);
       }
     }
@@ -305,12 +310,13 @@ public class Robot extends TimedRobot {
   public void driveInch(double inch) {
     double oneInch = inch/147.5; // Duy made this
     timerInch.start();
-    int timeInch = (int) timerInch.get();
+    double timeInch = timerInch.get();
     if (between(0,2,timeInch)) {
       drive(oneInch);
+      System.out.println("Starting");
     } else {
       resetMotors();
-      System.out.println("working");
+      System.out.println("ending");
     }
   }    
 
