@@ -156,18 +156,17 @@ public class Robot extends TimedRobot {
       
       if (targetArea <= 20 && !reachedApriltag) { // 20 is a placeholder, this is probably a dangerous value dont run this unless you ask first
         // Approach the aprilTag 
-        if (between (0,1,time)) {
-          armMotor(0.1);
-        } else {
+          if (between (0,1,time)) {
+            armMotor(0.1);
+          } else {
+            armMotor(0);
+          }
           drive(0.1); // Approach at 10% speed
-          System.out.println(time);
-          System.out.println("ending");
           // Here we would either drop the cone or if we push it we ignore this part
           if (targetArea >= 20) {
             reachedApriltag = true;
           }
-        }
-      } else if (reachedApriltag && !deployAutobalance) { // Reverse onto charging station
+        } else if (reachedApriltag && !deployAutobalance) { // Reverse onto charging station
         drive(-0.1);
         if (ahrs.getPitch() >= 2) { // Reached the charging station
           deployAutobalance = true;
@@ -177,7 +176,7 @@ public class Robot extends TimedRobot {
         autoBalancePeriodic();
       }
     } else { // Duy
-      if (between(0, 15, time)) {
+      if (between(15, 15, time)) {
         driveInch(6);
       }
     }
