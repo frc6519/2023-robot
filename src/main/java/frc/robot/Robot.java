@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
@@ -39,6 +40,7 @@ public class Robot extends TimedRobot {
   private final TalonSRX rightMotor2 = new TalonSRX(4);
   // Claw
   private final TalonSRX armMotor1 = new TalonSRX(5);
+  private final TalonSRX armMotor2 = new TalonSRX(6);
   private final CANSparkMax leftClawMotor = new CANSparkMax(1, MotorType.kBrushless);
   private final CANSparkMax rightClawMotor = new CANSparkMax(2, MotorType.kBrushless);
   // Xbox Controller
@@ -81,11 +83,13 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData(ac);
     // Regular
     timer.reset();
+    armMotor2.setInverted(true);
     leftMotor1.configFactoryDefault(); leftMotor1.set(ControlMode.PercentOutput, 0.00);
     leftMotor2.configFactoryDefault(); leftMotor2.set(ControlMode.PercentOutput, 0.00);
     rightMotor1.configFactoryDefault(); rightMotor1.set(ControlMode.PercentOutput, 0.00);
     rightMotor2.configFactoryDefault(); rightMotor2.set(ControlMode.PercentOutput, 0.00);
     armMotor1.configFactoryDefault(); armMotor1.set(ControlMode.PercentOutput, 0.00);
+    armMotor2.configFactoryDefault(); armMotor2.set(ControlMode.PercentOutput, 0.00); 
     leftClawMotor.restoreFactoryDefaults();
     rightClawMotor.restoreFactoryDefaults();
     ahrs.calibrate();
@@ -169,6 +173,7 @@ public class Robot extends TimedRobot {
       }
     } else { // Duy
       if (between(0, 15, time)) {
+        
         driveInch(6);
       }
     }
@@ -373,6 +378,7 @@ public class Robot extends TimedRobot {
 
   public void armMotor(double power) {
     armMotor1.set(ControlMode.PercentOutput,power);
+    armMotor2.set(ControlMode.PercentOutput, power);
     SmartDashboard.putNumber("Arm Output: ",power);
   }
   
