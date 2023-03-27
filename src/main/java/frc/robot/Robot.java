@@ -47,13 +47,14 @@ public class Robot extends TimedRobot {
   XboxController xcontroller =  new XboxController(0);
   // Customization options
   private final XboxController macroStick = xcontroller; 
-  private final boolean debugButtons = false;
+  private final boolean debugButtons = true;
   private float turnSpeed = 0.2f;
   private int pitchOffset = 0;
   private double currentAngle;
   private double driveSpeed = 0.7;
   private int pipelineIndex = 0;
   private double tmpDriveSpeed = driveSpeed;
+  private boolean armBrake = false;
   // Charging location
   private static final String sleft = "Left";
   private static final String smiddle = "Middle";
@@ -103,6 +104,7 @@ public class Robot extends TimedRobot {
     motorUpdate(0,0,0,0);
     SmartDashboard.putNumber("Arm Output: ",0);
     SmartDashboard.putNumber("Max speed: ",driveSpeed);
+    SmartDashboard.putBoolean("Arm brake:", armBrake);
     SmartDashboard.putBoolean("Limelight:", limelightmode);
     SmartDashboard.putString("Auto Timer: ", "Not started.");
     clawMotor(0,0);
@@ -239,6 +241,17 @@ public class Robot extends TimedRobot {
             SmartDashboard.putNumber("Pipeline:", pipelineIndex);
           case 3:
             autoBalance = !autoBalance;
+            break;
+          case 2:
+            armBrake = !armBrake;
+            if (armBrake) {
+              armMotor1.setNeutralMode(NeutralMode.Brake);
+              armMotor2.setNeutralMode(NeutralMode.Brake);
+            } else {
+              armMotor1.setNeutralMode(NeutralMode.Coast);
+              armMotor2.setNeutralMode(NeutralMode.Coast);
+            }
+            SmartDashboard.putBoolean("Arm brake:", armBrake);
             break;
           case 1:
             limelightmode = !limelightmode;
