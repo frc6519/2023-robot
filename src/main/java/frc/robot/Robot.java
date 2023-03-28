@@ -59,8 +59,8 @@ public class Robot extends TimedRobot {
   // Charging location
   private static final String sside = "Side";
   private static final String smiddle = "Middle";
+  private String ssc_autoSelected;
   private final SendableChooser<String> ssc = new SendableChooser<>();
-  private String s_autoSelected;
   // Gyroscope
   private static final AHRS ahrs = new AHRS(Port.kUSB); 
 
@@ -103,7 +103,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    s_autoSelected = ssc.getSelected();
+    ssc_autoSelected = ssc.getSelected();
     autoBalance = false;
     timer.reset();
     timer.start();
