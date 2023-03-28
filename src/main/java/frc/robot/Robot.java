@@ -61,6 +61,7 @@ public class Robot extends TimedRobot {
   private static final String smiddle = "Middle";
   private String ssc_autoSelected;
   private final SendableChooser<String> ssc = new SendableChooser<>();
+  private int ssc_targetArea;
   // Gyroscope
   private static final AHRS ahrs = new AHRS(Port.kUSB); 
 
@@ -96,6 +97,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Max speed: ",driveSpeed);
     SmartDashboard.putBoolean("Claw toggle:", clawToggle);
     SmartDashboard.putBoolean("Arm brake:", armBrake);
+    SmartDashboard.putNumber("Auto target area:", ssc_targetArea);
     SmartDashboard.putBoolean("Limelight:", limelightmode);
     SmartDashboard.putString("Auto Timer: ", "Not started.");
     clawMotor(0,0);
@@ -104,6 +106,12 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     ssc_autoSelected = ssc.getSelected();
+    if (ssc_autoSelected == smiddle) {
+      ssc_targetArea = 40;
+    } else if (ssc_autoSelected == sside) {
+      ssc_targetArea = 30;
+    }
+    SmartDashboard.putNumber("Auto target area:", ssc_targetArea);
     autoBalance = false;
     timer.reset();
     timer.start();
@@ -147,7 +155,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Auto Timer: ", String.valueOf((int) timer.get()));
     double targetArea = LimelightHelpers.getTA("");
     SmartDashboard.putNumber("LimelightArea", targetArea);
-    if (targetArea <= 20 && !reachedApriltag) { // 20 is a placeholder, this is probably a dangerous value dont run this unless you ask first
+    if (targetArea <= ssc_targetArea && !reachedApriltag) { // 20 is a placeholder, this is probably a dangerous value dont run this unless you ask first
       // Approach the aprilTag 
         if (between (0,1,time)) {
           armMotor(0.1);
