@@ -33,6 +33,7 @@ public class Robot extends TimedRobot {
   private double batteryVoltage = PowerJNI.getVinVoltage();
   private boolean reachedApriltag = false;
   private boolean deployAutobalance = false;
+  private boolean clawToggle = false;
   // Motors
   private final TalonSRX leftMotor1 = new TalonSRX(1);
   private final TalonSRX leftMotor2 = new TalonSRX(2);
@@ -49,22 +50,17 @@ public class Robot extends TimedRobot {
   private final XboxController macroStick = xcontroller; 
   private final boolean debugButtons = true;
   private float turnSpeed = 0.2f;
-  private int pitchOffset = 0;
+  private float pitchOffset = -1.5f;
   private double currentAngle;
   private double driveSpeed = 0.7;
   private int pipelineIndex = 0;
   private double tmpDriveSpeed = driveSpeed;
   private boolean armBrake = false;
   // Charging location
-  private static final String sleft = "Left";
+  private static final String sside = "Side";
   private static final String smiddle = "Middle";
-  private static final String sright = "Right";
   private final SendableChooser<String> ssc = new SendableChooser<>();
-  // Autocode selector
-  private static final String duy = "Duy";
-  private static final String ethan = "Ethan";
-  private String a_autoSelected;
-  private final SendableChooser<String> ac = new SendableChooser<>();
+  private String s_autoSelected;
   // Gyroscope
   private static final AHRS ahrs = new AHRS(Port.kUSB); 
 
@@ -72,16 +68,10 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     // Charging location
-    ssc.addOption("Left", sleft);
+    ssc.addOption("Side", sside);
     ssc.addOption("Middle", smiddle);
-    ssc.addOption("Right", sright);
     ssc.setDefaultOption("Middle", smiddle);
     SmartDashboard.putData(ssc);
-    // Autocode (for testing)
-    ac.addOption("Ethan",ethan);
-    ac.addOption("Duy",duy);
-    ac.setDefaultOption("Ethan",ethan);
-    SmartDashboard.putData(ac);
     // Regular
     timer.reset();
     armMotor2.setInverted(true);
@@ -104,6 +94,7 @@ public class Robot extends TimedRobot {
     motorUpdate(0,0,0,0);
     SmartDashboard.putNumber("Arm Output: ",0);
     SmartDashboard.putNumber("Max speed: ",driveSpeed);
+    SmartDashboard.putBoolean("Claw toggle:", clawToggle);
     SmartDashboard.putBoolean("Arm brake:", armBrake);
     SmartDashboard.putBoolean("Limelight:", limelightmode);
     SmartDashboard.putString("Auto Timer: ", "Not started.");
@@ -112,17 +103,19 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    a_autoSelected = ac.getSelected();
+    s_autoSelected = ssc.getSelected();
     autoBalance = false;
     timer.reset();
     timer.start();
     controlMode = "Autonomous";
     reachedApriltag = false;
     deployAutobalance = false;
+    armMotor1.setNeutralMode(NeutralMode.Brake);
+    armMotor2.setNeutralMode(NeutralMode.Brake);
   }
 
   @Override
-  public void teleopInit() { controlMode = "Teleop"; autoBalance = false; reachedApriltag = false; deployAutobalance = false; }
+  public void teleopInit() { controlMode = "Teleop"; autoBalance = false; reachedApriltag = false; deployAutobalance = false; armMotor1.setNeutralMode(NeutralMode.Coast); armMotor2.setNeutralMode(NeutralMode.Coast);}
 
   @Override
   public void robotPeriodic() {
@@ -152,35 +145,32 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     double time = timer.get();
     SmartDashboard.putString("Auto Timer: ", String.valueOf((int) timer.get()));
-    if (a_autoSelected == ethan) { // Ethan
-      double targetArea = LimelightHelpers.getTA("");
-      SmartDashboard.putNumber("LimelightArea", targetArea);
-      
-      if (targetArea <= 20 && !reachedApriltag) { // 20 is a placeholder, this is probably a dangerous value dont run this unless you ask first
-        // Approach the aprilTag 
-          if (between (0,1,time)) {
-            armMotor(0.1);
-          } else {
-            armMotor(0);
-          }
-          drive(0.1); // Approach at 10% speed
-          // Here we would either drop the cone or if we push it we ignore this part
-          if (targetArea >= 20) {
-            reachedApriltag = true;
-          }
-        } else if (reachedApriltag && !deployAutobalance) { // Reverse onto charging station
-        drive(-0.1);
-        if (ahrs.getPitch() >= 2) { // Reached the charging station
-          deployAutobalance = true;
+    double targetArea = LimelightHelpers.getTA("");
+    SmartDashboard.putNumber("LimelightArea", targetArea);
+    if (targetArea <= 20 && !reachedApriltag) { // 20 is a placeholder, this is probably a dangerous value dont run this unless you ask first
+      // Approach the aprilTag 
+        if (between (0,1,time)) {
+          armMotor(0.1);
+        } else {
+          armMotor(0);
         }
-      } else if (deployAutobalance) { // Balance on the charging station
-        autoBalance = true;
-        autoBalancePeriodic();
+        if (between(1,2,time)) {
+          drive(0.1); // Approach at 10% speed
+        } else {
+          drive(0);
+        }
+        // Here we would either drop the cone or if we push it we ignore this part
+        if (targetArea >= 20) {
+          reachedApriltag = true;
+        }
+      } else if (reachedApriltag && !deployAutobalance) { // Reverse onto charging station
+      drive(-0.1);
+      if (ahrs.getPitch() >= 2) { // Reached the charging station
+        deployAutobalance = true;
       }
-    } else { // Duy
-      if (between(15, 15, time)) {
-        driveInch(6);
-      }
+    } else if (deployAutobalance) { // Balance on the charging station
+      autoBalance = true;
+      autoBalancePeriodic();
     }
   }
 
@@ -244,6 +234,7 @@ public class Robot extends TimedRobot {
             break;
           case 2:
             armBrake = !armBrake;
+            clawToggle = !clawToggle;
             if (armBrake) {
               armMotor1.setNeutralMode(NeutralMode.Brake);
               armMotor2.setNeutralMode(NeutralMode.Brake);
@@ -252,6 +243,7 @@ public class Robot extends TimedRobot {
               armMotor2.setNeutralMode(NeutralMode.Coast);
             }
             SmartDashboard.putBoolean("Arm brake:", armBrake);
+            SmartDashboard.putBoolean("Claw toggle:", clawToggle);
             break;
           case 1:
             limelightmode = !limelightmode;
@@ -270,7 +262,9 @@ public class Robot extends TimedRobot {
     } else if (macroStick.getRightBumper()) { // Open
       clawMotor(0.1,-0.1);
     } else { // Reset
-      clawMotor(0,0);
+      if (!clawToggle) {
+        clawMotor(0,0);
+      }
     }
   }
 
