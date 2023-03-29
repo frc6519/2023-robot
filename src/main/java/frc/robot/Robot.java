@@ -19,8 +19,6 @@ import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
-// import edu.wpi.first.wpilibj.motorcontrol.Spark;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
@@ -34,6 +32,9 @@ public class Robot extends TimedRobot {
   private boolean reachedApriltag = false;
   private boolean deployAutobalance = false;
   private boolean clawToggle = false;
+  private double id;
+  private int color; // 0 - Red, 1 - Blue
+  private int direction; // 0 - left, 1 - middle, 2 - right
   // Motors
   private final TalonSRX leftMotor1 = new TalonSRX(1);
   private final TalonSRX leftMotor2 = new TalonSRX(2);
@@ -56,11 +57,6 @@ public class Robot extends TimedRobot {
   private int pipelineIndex = 0;
   private double tmpDriveSpeed = driveSpeed;
   private boolean armBrake = false;
-  // Charging location
-  private static final String sside = "Side";
-  private static final String smiddle = "Middle";
-  private String ssc_autoSelected;
-  private final SendableChooser<String> ssc = new SendableChooser<>();
   private int ssc_targetArea;
   // Gyroscope
   private static final AHRS ahrs = new AHRS(Port.kUSB); 
@@ -68,11 +64,6 @@ public class Robot extends TimedRobot {
   // Functions/Methods
   @Override
   public void robotInit() {
-    // Charging location
-    ssc.addOption("Side", sside);
-    ssc.addOption("Middle", smiddle);
-    ssc.setDefaultOption("Middle", smiddle);
-    SmartDashboard.putData(ssc);
     // Regular
     timer.reset();
     armMotor2.setInverted(true);
@@ -105,12 +96,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    ssc_autoSelected = ssc.getSelected();
-    if (ssc_autoSelected == smiddle) {
-      ssc_targetArea = 2;
-    } else if (ssc_autoSelected == sside) {
-      ssc_targetArea = 30;
-    }
+    ssc_targetArea = 2;
     SmartDashboard.putNumber("Auto target area:", ssc_targetArea);
     autoBalance = false;
     timer.reset();
@@ -120,6 +106,38 @@ public class Robot extends TimedRobot {
     deployAutobalance = false;
     armMotor1.setNeutralMode(NeutralMode.Brake);
     armMotor2.setNeutralMode(NeutralMode.Brake);
+    id = LimelightHelpers.getFiducialID("");
+    if (id == 3 || id == 2 || id == 1) {
+      color = 0;
+    } else if (id == 6 || id == 7 || id == 8) {
+      color = 1;
+    }
+    switch((int)id) {
+      case 3:
+        color = 0;
+        direction = 2;
+        break;
+      case 2:
+        color = 0;
+        direction = 1;
+        break;
+      case 1:
+        color = 0;
+        direction = 0;
+        break;
+      case 6:
+        color = 1;
+        direction = 0;
+        break;
+      case 7:
+        color = 1;
+        direction = 1;
+        break;
+      case 8:
+        color = 1;
+        direction = 2;
+        break;
+    }
   }
 
   @Override
