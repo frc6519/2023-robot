@@ -107,7 +107,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     ssc_autoSelected = ssc.getSelected();
     if (ssc_autoSelected == smiddle) {
-      ssc_targetArea = 40;
+      ssc_targetArea = 2;
     } else if (ssc_autoSelected == sside) {
       ssc_targetArea = 30;
     }
@@ -123,7 +123,7 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopInit() { controlMode = "Teleop"; autoBalance = false; reachedApriltag = false; deployAutobalance = false; armMotor1.setNeutralMode(NeutralMode.Coast); armMotor2.setNeutralMode(NeutralMode.Coast);}
+  public void teleopInit() { controlMode = "Teleop"; autoBalance = false; reachedApriltag = false; deployAutobalance = false; armMotor1.setNeutralMode(NeutralMode.Coast); armMotor2.setNeutralMode(NeutralMode.Coast); timer.reset();}
 
   @Override
   public void robotPeriodic() {
@@ -157,28 +157,27 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("LimelightArea", targetArea);
     if (targetArea <= ssc_targetArea && !reachedApriltag) { // 20 is a placeholder, this is probably a dangerous value dont run this unless you ask first
       // Approach the aprilTag 
-        if (between (0,1,time)) {
-          armMotor(0.1);
-        } else {
-          armMotor(0);
-        }
-        if (between(1,2,time)) {
-          drive(0.1); // Approach at 10% speed
-        } else {
-          drive(0);
-        }
-        // Here we would either drop the cone or if we push it we ignore this part
-        if (targetArea >= 20) {
-          reachedApriltag = true;
-        }
-      } else if (reachedApriltag && !deployAutobalance) { // Reverse onto charging station
+      // if (between (0,1,time)) { // Raise the arm for one second
+      //   armMotor(0.1);
+      // } else {
+      //   armMotor(0);
+      // }
+      drive(0.1); // Approach at 10% speed
+      // Here we would either drop the cone or if we push it we ignore this part
+      if (targetArea >= ssc_targetArea) {
+        reachedApriltag = true; 
+      }
+    } else if (reachedApriltag && !deployAutobalance) { // Reverse onto charging station
       drive(-0.1);
-      if (ahrs.getPitch() >= 2) { // Reached the charging station
+      if (ahrs.getPitch() >= 2+pitchOffset) { // Reached the charging station
         deployAutobalance = true;
       }
     } else if (deployAutobalance) { // Balance on the charging station
       autoBalance = true;
       autoBalancePeriodic();
+    }
+    if (between(16,16,time)) {
+      System.out.println("X_X If you are seeing this than something has gone very wrong.");
     }
   }
 
