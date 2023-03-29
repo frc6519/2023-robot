@@ -33,8 +33,8 @@ public class Robot extends TimedRobot {
   private boolean deployAutobalance = false;
   private boolean clawToggle = false;
   private double id;
-  private int color; // 0 - Red, 1 - Blue
-  private int direction; // 0 - left, 1 - middle, 2 - right
+  private int color = -1; // 0 - Red, 1 - Blue
+  private int direction = -1; // 0 - left, 1 - middle, 2 - right
   // Motors
   private final TalonSRX leftMotor1 = new TalonSRX(1);
   private final TalonSRX leftMotor2 = new TalonSRX(2);
@@ -107,11 +107,6 @@ public class Robot extends TimedRobot {
     armMotor1.setNeutralMode(NeutralMode.Brake);
     armMotor2.setNeutralMode(NeutralMode.Brake);
     id = LimelightHelpers.getFiducialID("");
-    if (id == 3 || id == 2 || id == 1) {
-      color = 0;
-    } else if (id == 6 || id == 7 || id == 8) {
-      color = 1;
-    }
     switch((int)id) {
       case 3:
         color = 0;
@@ -291,6 +286,36 @@ public class Robot extends TimedRobot {
         clawMotor(0,0);
       }
     }
+    id = LimelightHelpers.getFiducialID("");
+    System.out.println((int)id);
+    switch((int)id) {
+      case 3:
+        color = 0;
+        direction = 2;
+        break;
+      case 2:
+        color = 0;
+        direction = 1;
+        break;
+      case 1:
+        color = 0;
+        direction = 0;
+        break;
+      case 6:
+        color = 1;
+        direction = 0;
+        break;
+      case 7:
+        color = 1;
+        direction = 1;
+        break;
+      case 8:
+        color = 1;
+        direction = 2;
+        break;
+    }
+    System.out.println(color);
+    System.out.println(direction);
   }
 
   public void limelightPeriodic() {
