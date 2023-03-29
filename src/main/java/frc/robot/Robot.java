@@ -168,6 +168,13 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Auto Timer: ", String.valueOf((int) timer.get()));
     double targetArea = LimelightHelpers.getTA("");
     SmartDashboard.putNumber("LimelightArea", targetArea);
+
+    // if (between (0,1,time)) { will test during comp for terminal velocity
+    //   drive(0.1);
+    // } else {
+    //   resetMotors();
+    // }
+
     if (targetArea <= ssc_targetArea && !reachedApriltag) { // 20 is a placeholder, this is probably a dangerous value dont run this unless you ask first
       // Approach the aprilTag 
       // if (between (0,1,time)) { // Raise the arm for one second
@@ -191,6 +198,7 @@ public class Robot extends TimedRobot {
     }
     if (between(16,16,time)) {
       System.out.println("X_X If you are seeing this than something has gone very wrong.");
+      //driveInch(1,2); //putting function here with random values for later
     }
   }
 
@@ -367,16 +375,14 @@ public class Robot extends TimedRobot {
   //you would have to make it 6 inches for the number being sent to the function as it 
   //will now travel for 6 inches per second adding up to 12 inches traveled."
   //This only works depending on the weight of the robot
-  public void driveInch(double inch) {
+  public void driveInch(double inch, double second) {
     double oneInch = inch/147.5; // Duy made this
     timerInch.start();
     double timeInch = timerInch.get();
-    if (between(0,2,timeInch)) {
+    if (between(0,second,timeInch)) {
       drive(oneInch);
-      System.out.println("Starting");
     } else {
       resetMotors();
-      System.out.println("ending");
     }
   }    
 
