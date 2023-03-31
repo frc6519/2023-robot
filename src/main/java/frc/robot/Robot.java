@@ -181,15 +181,23 @@ public class Robot extends TimedRobot {
     if (between(1,3,time)) {
       drive(0.3);
     }
-    //   reachedApriltag = true;
+
+    // if (between(3,7,time)) {      //hard code autobalance
+    //   drive(-0.2);
     // }
-    // if (reachedApriltag && !deployAutobalance) { // Reverse onto charging station
-    //   drive(-0.1);
-    //   if (ahrs.getPitch() >= 2+pitchOffset) { // Reached the charging station
+
+    if (between(3,6,time)) {   //estimated time to be slanted and also timer added for safety because pitch might not be detected and not switch to autobalance 
+    drive(-0.2); // we need to find the right speed and right time for the robot to be slanted to run autoBalance
+    } else {
+      autoBalance = true;
+      autoBalancePeriodic();
+    }
+
+    // drive(-0.2);     //This is the code that trusts the pitch will be detected and that it will switch to autobalance
+    // if (ahrs.getPitch() >= 2+pitchOffset) { // if robot is slanted it will switch to autoBalance
     //     deployAutobalance = true;
     //     reachedApriltag = false;
-    //   }
-    // } else if (deployAutobalance) { // Balance on the charging station
+    // } else if (deployAutobalance) { // Balance on the charging station ALSO Can be else statement if you want
     //   autoBalance = true;
     //   autoBalancePeriodic();
     // }
@@ -223,7 +231,7 @@ public class Robot extends TimedRobot {
         autoBalancePeriodic();
       } else if(!autoBalance && limelightmode) {
         limelightPeriodic();
-      }
+      }                                     //putting comment here to question you about this code
     }
     if (xcontroller.getXButtonPressed()) {
       autoBalance = !autoBalance;
