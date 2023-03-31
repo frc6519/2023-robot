@@ -32,9 +32,9 @@ public class Robot extends TimedRobot {
   private boolean reachedApriltag = false;
   private boolean deployAutobalance = false;
   private boolean clawToggle = false;
-  private double id;
-  private int color = -1; // 0 - Red, 1 - Blue
-  private int direction = -1; // 0 - left, 1 - middle, 2 - right
+  // private double id;
+  // private int color = -1; // 0 - Red, 1 - Blue
+  // private int direction = -1; // 0 - left, 1 - middle, 2 - right
   // Motors
   private final TalonSRX leftMotor1 = new TalonSRX(1);
   private final TalonSRX leftMotor2 = new TalonSRX(2);
@@ -47,11 +47,12 @@ public class Robot extends TimedRobot {
   private final CANSparkMax rightClawMotor = new CANSparkMax(2, MotorType.kBrushless);
   // Xbox Controller
   XboxController xcontroller =  new XboxController(0);
+  XboxController xcontroller2 = new XboxController(1);
   // Customization options
   private final XboxController macroStick = xcontroller; 
-  private final boolean debugButtons = true;
+  private final boolean debugButtons = false;
   private float turnSpeed = 0.2f;
-  private float pitchOffset = -1.5f;
+  private float pitchOffset;
   private double currentAngle;
   private double driveSpeed = 0.7;
   private int pipelineIndex = 0;
@@ -92,10 +93,13 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("Limelight:", limelightmode);
     SmartDashboard.putString("Auto Timer: ", "Not started.");
     clawMotor(0,0);
+    pitchOffset = ahrs.getPitch();
+    SmartDashboard.putNumber("Pitch offset:", pitchOffset);
   }
 
   @Override
   public void autonomousInit() {
+    // LimelightHelpers.setPipelineIndex("", 2);
     ssc_targetArea = 2;
     SmartDashboard.putNumber("Auto target area:", ssc_targetArea);
     autoBalance = false;
@@ -106,33 +110,36 @@ public class Robot extends TimedRobot {
     deployAutobalance = false;
     armMotor1.setNeutralMode(NeutralMode.Brake);
     armMotor2.setNeutralMode(NeutralMode.Brake);
-    id = LimelightHelpers.getFiducialID("");
-    switch((int)id) {
-      case 3:
-        color = 0;
-        direction = 2;
-        break;
-      case 2:
-        color = 0;
-        direction = 1;
-        break;
-      case 1:
-        color = 0;
-        direction = 0;
-        break;
-      case 6:
-        color = 1;
-        direction = 0;
-        break;
-      case 7:
-        color = 1;
-        direction = 1;
-        break;
-      case 8:
-        color = 1;
-        direction = 2;
-        break;
-    }
+    // id = LimelightHelpers.getFiducialID("");
+    // System.out.println((int)id);
+    // switch((int)id) {
+    //   case 3:
+    //     color = 0;
+    //     direction = 2;
+    //     break;
+    //   case 2:
+    //     color = 0;
+    //     direction = 1;
+    //     break;
+    //   case 1:
+    //     color = 0;
+    //     direction = 0;
+    //     break;
+    //   case 6:
+    //     color = 1;
+    //     direction = 0;
+    //     break;
+    //   case 7:
+    //     color = 1;
+    //     direction = 1;
+    //     break;
+    //   case 8:
+    //     color = 1;
+    //     direction = 2;
+    //     break;
+    // }
+    // System.out.println(color);
+    // System.out.println(direction);
   }
 
   @Override
@@ -165,33 +172,27 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     double time = timer.get();
-    SmartDashboard.putString("Auto Timer: ", String.valueOf((int) timer.get()));
+    SmartDashboard.putString("Auto Timer: ", String.valueOf((int) time));
     double targetArea = LimelightHelpers.getTA("");
     SmartDashboard.putNumber("LimelightArea", targetArea);
-    if (targetArea <= ssc_targetArea && !reachedApriltag) { // 20 is a placeholder, this is probably a dangerous value dont run this unless you ask first
-      // Approach the aprilTag 
-      // if (between (0,1,time)) { // Raise the arm for one second
-      //   armMotor(0.1);
-      // } else {
-      //   armMotor(0);
-      // }
-      drive(0.1); // Approach at 10% speed
-      // Here we would either drop the cone or if we push it we ignore this part
-      if (targetArea >= ssc_targetArea) {
-        reachedApriltag = true; 
-      }
-    } else if (reachedApriltag && !deployAutobalance) { // Reverse onto charging station
-      drive(-0.1);
-      if (ahrs.getPitch() >= 2+pitchOffset) { // Reached the charging station
-        deployAutobalance = true;
-      }
-    } else if (deployAutobalance) { // Balance on the charging station
-      autoBalance = true;
-      autoBalancePeriodic();
+    if (between(0,1,time)) {
+      drive(-0.3);
     }
-    if (between(16,16,time)) {
-      System.out.println("X_X If you are seeing this than something has gone very wrong.");
+    if (between(1,3,time)) {
+      drive(0.3);
     }
+    //   reachedApriltag = true;
+    // }
+    // if (reachedApriltag && !deployAutobalance) { // Reverse onto charging station
+    //   drive(-0.1);
+    //   if (ahrs.getPitch() >= 2+pitchOffset) { // Reached the charging station
+    //     deployAutobalance = true;
+    //     reachedApriltag = false;
+    //   }
+    // } else if (deployAutobalance) { // Balance on the charging station
+    //   autoBalance = true;
+    //   autoBalancePeriodic();
+    // }
   }
 
   @Override
@@ -212,10 +213,10 @@ public class Robot extends TimedRobot {
       rightMotor1.set(ControlMode.PercentOutput,xcontroller.getRightY()*driveSpeed);
       rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()*driveSpeed);
       motorUpdate(xcontroller.getLeftY()*driveSpeed,xcontroller.getLeftY()*driveSpeed,xcontroller.getRightY()*driveSpeed,xcontroller.getRightY()*driveSpeed);
-      if (xcontroller.getLeftTriggerAxis() >= 0.01) {
-        armMotor(xcontroller.getLeftTriggerAxis());
+      if (xcontroller2.getLeftTriggerAxis() >= 0.01) {
+        armMotor(xcontroller2.getLeftTriggerAxis()*0.6);
       } else {
-        armMotor((xcontroller.getRightTriggerAxis()*-1)/8);
+        armMotor((xcontroller2.getRightTriggerAxis()*-1)/8);
       }
     } else {
       if (autoBalance && !limelightmode) {
@@ -224,98 +225,95 @@ public class Robot extends TimedRobot {
         limelightPeriodic();
       }
     }
-    // Regular Macros
-    for (int i = 1; i < macroStick.getButtonCount(); i++) {
-      if (macroStick.getRawButtonPressed(i)) {
-        switch(i) {
-          case 8:
-            driveSpeed = driveSpeed+0.1;
-            if (driveSpeed >= 1.0) {
-              driveSpeed = 0;
-            }
-            SmartDashboard.putNumber("Max speed: ",driveSpeed);
-            break;
-          case 7:
-            driveSpeed = driveSpeed-0.1;
-            if (driveSpeed <= 0) {
-              driveSpeed = 1;
-            }
-            SmartDashboard.putNumber("Max speed: ",driveSpeed);
-            break;
-          case 4:
-            pipelineIndex++;
-            if (pipelineIndex == 3) {
-              pipelineIndex = 0;
-            }
-            LimelightHelpers.setPipelineIndex("", pipelineIndex);
-            SmartDashboard.putNumber("Pipeline:", pipelineIndex);
-          case 3:
-            autoBalance = !autoBalance;
-            break;
-          case 2:
-            armBrake = !armBrake;
-            clawToggle = !clawToggle;
-            if (armBrake) {
-              armMotor1.setNeutralMode(NeutralMode.Brake);
-              armMotor2.setNeutralMode(NeutralMode.Brake);
-            } else {
-              armMotor1.setNeutralMode(NeutralMode.Coast);
-              armMotor2.setNeutralMode(NeutralMode.Coast);
-            }
-            SmartDashboard.putBoolean("Arm brake:", armBrake);
-            SmartDashboard.putBoolean("Claw toggle:", clawToggle);
-            break;
-          case 1:
-            limelightmode = !limelightmode;
-            SmartDashboard.putBoolean("Limelight:", limelightmode);
-            break;
-          default:
-            if (debugButtons) {
-              System.out.println("Button Pressed: "+i);
-            }
-        }
+    if (xcontroller.getXButtonPressed()) {
+      autoBalance = !autoBalance;
+    } else if (xcontroller2.getBButtonPressed()) {
+      armBrake = !armBrake;
+      clawToggle = !clawToggle;
+      if (armBrake) {
+        armMotor1.setNeutralMode(NeutralMode.Brake);
+        armMotor2.setNeutralMode(NeutralMode.Brake);
+      } else {
+        armMotor1.setNeutralMode(NeutralMode.Coast);
+        armMotor2.setNeutralMode(NeutralMode.Coast);
       }
+      SmartDashboard.putBoolean("Arm brake:", armBrake);
+      SmartDashboard.putBoolean("Claw toggle:", clawToggle);
+    } else if (xcontroller.getRawButtonPressed(8)) {
+      driveSpeed = driveSpeed+0.1;
+      if (driveSpeed >= 1.0) {
+        driveSpeed = 0;
+      }
+      SmartDashboard.putNumber("Max speed: ",driveSpeed);
+    } else if (xcontroller.getRawButtonPressed(7)) {
+      driveSpeed = driveSpeed-0.1;
+      if (driveSpeed <= 0) {
+        driveSpeed = 1;
+      }
+      SmartDashboard.putNumber("Max speed: ",driveSpeed);
     }
+    // Regular Macros
+    // for (int i = 1; i < macroStick.getButtonCount(); i++) {
+    //   if (macroStick.getRawButtonPressed(i)) {
+    //     switch(i) {
+    //       case 8:
+    //         driveSpeed = driveSpeed+0.1;
+    //         if (driveSpeed >= 1.0) {
+    //           driveSpeed = 0;
+    //         }
+    //         SmartDashboard.putNumber("Max speed: ",driveSpeed);
+    //         break;
+    //       case 7:
+    //         driveSpeed = driveSpeed-0.1;
+    //         if (driveSpeed <= 0) {
+    //           driveSpeed = 1;
+    //         }
+    //         SmartDashboard.putNumber("Max speed: ",driveSpeed);
+    //         break;
+    //       case 4:
+    //         pipelineIndex++;
+    //         if (pipelineIndex == 3) {
+    //           pipelineIndex = 0;
+    //         }
+    //         LimelightHelpers.setPipelineIndex("", pipelineIndex);
+    //         SmartDashboard.putNumber("Pipeline:", pipelineIndex);
+    //       case 3:
+    //         autoBalance = !autoBalance;
+    //         break;
+    //       case 2:
+    //         armBrake = !armBrake;
+    //         clawToggle = !clawToggle;
+    //         if (armBrake) {
+    //           armMotor1.setNeutralMode(NeutralMode.Brake);
+    //           armMotor2.setNeutralMode(NeutralMode.Brake);
+    //         } else {
+    //           armMotor1.setNeutralMode(NeutralMode.Coast);
+    //           armMotor2.setNeutralMode(NeutralMode.Coast);
+    //         }
+    //         SmartDashboard.putBoolean("Arm brake:", armBrake);
+    //         SmartDashboard.putBoolean("Claw toggle:", clawToggle);
+    //         break;
+    //       case 1:
+    //         limelightmode = !limelightmode;
+    //         SmartDashboard.putBoolean("Limelight:", limelightmode);
+    //         break;
+    //       default:
+    //         if (debugButtons) {
+    //           System.out.println("Button Pressed: "+i);
+    //         }
+    //     }
+    //   }
+    // }
     // Claw Macros
-    if (macroStick.getLeftBumper()) { // Close
+    if (xcontroller2.getLeftBumper()) { // Close
       clawMotor(-0.1,0.1);
-    } else if (macroStick.getRightBumper()) { // Open
+    } else if (xcontroller2.getRightBumper()) { // Open
       clawMotor(0.1,-0.1);
     } else { // Reset
       if (!clawToggle) {
         clawMotor(0,0);
       }
     }
-    id = LimelightHelpers.getFiducialID("");
-    System.out.println((int)id);
-    switch((int)id) {
-      case 3:
-        color = 0;
-        direction = 2;
-        break;
-      case 2:
-        color = 0;
-        direction = 1;
-        break;
-      case 1:
-        color = 0;
-        direction = 0;
-        break;
-      case 6:
-        color = 1;
-        direction = 0;
-        break;
-      case 7:
-        color = 1;
-        direction = 1;
-        break;
-      case 8:
-        color = 1;
-        direction = 2;
-        break;
-    }
-    System.out.println(color);
-    System.out.println(direction);
   }
 
   public void limelightPeriodic() {
