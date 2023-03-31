@@ -365,16 +365,14 @@ public class Robot extends TimedRobot {
   //you would have to make it 6 inches for the number being sent to the function as it 
   //will now travel for 6 inches per second adding up to 12 inches traveled."
   //This only works depending on the weight of the robot
-  public void driveInch(double inch) {
+  public void driveInch(double inch, double second) {
     double oneInch = inch/147.5; // Duy made this
     timerInch.start();
     double timeInch = timerInch.get();
-    if (between(0,2,timeInch)) {
+    if (between(0,second,timeInch)) {
       drive(oneInch);
-      System.out.println("Starting");
     } else {
       resetMotors();
-      System.out.println("ending");
     }
   }    
 
