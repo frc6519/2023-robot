@@ -55,6 +55,7 @@ public class Robot extends TimedRobot {
   private float pitchOffset;
   private double currentAngle;
   private double driveSpeed = 0.7;
+  private double armSpeed = 0.6;
   private int pipelineIndex = 0;
   private double tmpDriveSpeed = driveSpeed;
   private boolean armBrake = false;
@@ -175,23 +176,22 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Auto Timer: ", String.valueOf((int) time));
     double targetArea = LimelightHelpers.getTA("");
     SmartDashboard.putNumber("LimelightArea", targetArea);
-    if (between(0,1,time)) {
-      drive(-0.3);
-    }
-    if (between(1,3,time)) {
+    if (between(0,0.5,time)) {
+      drive(-0.6);
+    } else if (between(1,3,time)) {
       drive(0.3);
-    }
-
-    // if (between(3,7,time)) {      //hard code autobalance
-    //   drive(-0.2);
-    // }
-
-    if (between(3,6,time)) {   //estimated time to be slanted and also timer added for safety because pitch might not be detected and not switch to autobalance 
-    drive(-0.2); // we need to find the right speed and right time for the robot to be slanted to run autoBalance
+    } else if (between(3, 6, time)) {
+      drive(-0.5);
     } else {
-      autoBalance = true;
-      autoBalancePeriodic();
+      resetMotors();
     }
+
+    // if (between(3,5,time)) {   //estimated time to be slanted and also timer added for safety because pitch might not be detected and not switch to autobalance 
+    // drive(-0.5); // we need to find the right speed and right time for the robot to be slanted to run autoBalance
+    // } else {
+    //   autoBalance = true;
+    //   autoBalancePeriodic();
+    // }
 
     // drive(-0.2);     //This is the code that trusts the pitch will be detected and that it will switch to autobalance
     // if (ahrs.getPitch() >= 2+pitchOffset) { // if robot is slanted it will switch to autoBalance
@@ -222,7 +222,7 @@ public class Robot extends TimedRobot {
       rightMotor2.set(ControlMode.PercentOutput,xcontroller.getRightY()*driveSpeed);
       motorUpdate(xcontroller.getLeftY()*driveSpeed,xcontroller.getLeftY()*driveSpeed,xcontroller.getRightY()*driveSpeed,xcontroller.getRightY()*driveSpeed);
       if (xcontroller2.getLeftTriggerAxis() >= 0.01) {
-        armMotor(xcontroller2.getLeftTriggerAxis()*0.6);
+        armMotor(xcontroller2.getLeftTriggerAxis()*armSpeed);
       } else {
         armMotor((xcontroller2.getRightTriggerAxis()*-1)/8);
       }
@@ -247,13 +247,13 @@ public class Robot extends TimedRobot {
       }
       SmartDashboard.putBoolean("Arm brake:", armBrake);
       SmartDashboard.putBoolean("Claw toggle:", clawToggle);
-    } else if (xcontroller.getRawButtonPressed(8)) {
+    } else if (xcontroller.getRightBumperPressed()) {
       driveSpeed = driveSpeed+0.1;
       if (driveSpeed >= 1.0) {
         driveSpeed = 0;
       }
       SmartDashboard.putNumber("Max speed: ",driveSpeed);
-    } else if (xcontroller.getRawButtonPressed(7)) {
+    } else if (xcontroller.getLeftBumperPressed()) {
       driveSpeed = driveSpeed-0.1;
       if (driveSpeed <= 0) {
         driveSpeed = 1;
@@ -322,6 +322,19 @@ public class Robot extends TimedRobot {
         clawMotor(0,0);
       }
     }
+    if (xcontroller2.getRawButtonPressed(7)) {
+      armSpeed = armSpeed-0.1;
+      if (armSpeed <= 0) {
+        armSpeed = 1;
+      }
+      SmartDashboard.putNumber("Arm speed: ",armSpeed);
+    } else if (xcontroller2.getRawButtonPressed(8)) {
+      armSpeed = armSpeed+0.1;
+      if (armSpeed >= 1.0) {
+        armSpeed = 0;
+      }
+      SmartDashboard.putNumber("Arm speed: ",armSpeed);
+    }
   }
 
   public void limelightPeriodic() {
@@ -349,10 +362,10 @@ public class Robot extends TimedRobot {
       double pitch = ahrs.getPitch();
       if (pitch >= (5+pitchOffset)) {
         SmartDashboard.putString("Autobalance Job: ", "Go backwards");
-        drive(-0.25);
+        drive(-0.4);
       } else if (pitch <= (-5+pitchOffset)) {
         SmartDashboard.putString("Autobalance Job: ", "Go forwards");
-        drive(0.25);
+        drive(0.4);
       } else {
         SmartDashboard.putString("Autobalance Job: ", "Already balanced");
         resetMotors();
